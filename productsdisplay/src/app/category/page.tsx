@@ -1,8 +1,11 @@
+import fetchData from "@/utils/data";
 
-export default function Page() {
+export default async function Page() {
+    const data = await fetchData();
+
     return (
         <div>
-            TODO: all items
+            {data.map(product => JSON.stringify(product))}
         </div>
     );
 }

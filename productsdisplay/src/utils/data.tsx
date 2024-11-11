@@ -4,7 +4,7 @@ import { parse } from "@vanillaes/csv";
 export default async function fetchData() {
     const file = (await fs.readFile("data/data.csv", "utf8")).toString();
     const parsedData = parse(file);
-    const data = [];
+    const data: Product[] = [];
     
     for (const product of parsedData) {
         data.push({

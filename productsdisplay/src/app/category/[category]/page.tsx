@@ -1,6 +1,10 @@
+import fetchData from "@/utils/data";
+
+export default async function Page() {
+    const data = await fetchData();
 
 
-export default function Page() {
+
     return (
         <div>
             TODO: single category

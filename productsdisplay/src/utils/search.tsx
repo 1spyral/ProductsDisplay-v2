@@ -1,6 +1,6 @@
 import Fuse, { FuseResult } from "fuse.js";
 
-const search = (data: Product[], query: string = "", category: string[] = []) => {
+export default function search(data: Product[], query: string = "", category: string[] = []) {
     // Configure Fuse.js
     const options = {
         keys: ['name', 'description', 'category'],

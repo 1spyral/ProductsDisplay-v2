@@ -1,8 +1,6 @@
-import { Fragment } from "react";
-
 export default function ImageControls({ index, setIndex, length }: { index: number, setIndex: (index: number) => void, length: number }) {
     return (
-        <Fragment>
+        <>
             <button
                 className="
                     absolute inset-y-1/2 -translate-y-1/2
@@ -35,6 +33,6 @@ export default function ImageControls({ index, setIndex, length }: { index: numb
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={6} d="M9 5l7 7-7 7" />
                 </svg>
             </button>
-        </Fragment>
+        </>
     );
 }

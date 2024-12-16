@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import ImageWheel from "./ImageWheel";
 import ImageControls from "./ImageControls";
 import Dots from "./Dots";
@@ -9,7 +9,7 @@ export default function ImageCarousel({ photos }: { photos: Photo[] }) {
     const [index, setIndex] = useState(0);
 
     return (
-        <Fragment>
+        <>
             <div className="relative w-full h-32">
                 <ImageWheel photos={photos} index={index} />
                 {photos.length > 1 && (
@@ -19,6 +19,6 @@ export default function ImageCarousel({ photos }: { photos: Photo[] }) {
             {photos.length > 1 && (
                 <Dots length={photos.length} index={index} setIndex={setIndex} />
             )}
-        </Fragment>
+        </>
     );
 }

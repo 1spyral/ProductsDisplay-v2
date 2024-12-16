@@ -1,4 +1,4 @@
-import ProductPage from "@/components/ProductPage";
+import ProductPage from "@/components/Product/ProductPage";
 
 export default function Page({ params }: {
     params: Promise<{ id: string }>;

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import ImageWheel from "./ImageWheel";
-import ImageControls from "./ImageControls";
+import Arrows from "./Arrows";
 import Dots from "./Dots";
 
 export default function ImageCarousel({ photos }: { photos: Photo[] }) {
@@ -13,7 +13,7 @@ export default function ImageCarousel({ photos }: { photos: Photo[] }) {
             <div className="relative w-full h-32">
                 <ImageWheel photos={photos} index={index} />
                 {photos.length > 1 && (
-                    <ImageControls index={index} setIndex={setIndex} length={photos.length} />
+                    <Arrows index={index} setIndex={setIndex} length={photos.length} />
                 )}
             </div>
             {photos.length > 1 && (

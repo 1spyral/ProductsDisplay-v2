@@ -1,4 +1,4 @@
-export default function ImageControls({ index, setIndex, length }: { index: number, setIndex: (index: number) => void, length: number }) {
+export default function Arrows({ index, setIndex, length }: { index: number, setIndex: (index: number) => void, length: number }) {
     return (
         <>
             <button
@@ -11,7 +11,10 @@ export default function ImageControls({ index, setIndex, length }: { index: numb
                     bg-black
                     flex items-center justify-center
                 "
-                onClick={() => setIndex((index - 1 + length) % length)}
+                onClick={(e: React.MouseEvent) => {
+                    setIndex((index - 1 + length) % length);
+                    e.preventDefault();
+                }}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={6} d="M15 19l-7-7 7-7" />
@@ -27,7 +30,10 @@ export default function ImageControls({ index, setIndex, length }: { index: numb
                     bg-black
                     flex items-center justify-center
                 "
-                onClick={() => setIndex((index + 1) % length)}
+                onClick={(e: React.MouseEvent) => {
+                    setIndex((index + 1) % length);
+                    e.preventDefault();
+                }}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={6} d="M9 5l7 7-7 7" />

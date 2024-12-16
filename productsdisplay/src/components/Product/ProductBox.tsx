@@ -1,5 +1,5 @@
 import getPhotos from "@/utils/photo";
-import ImageCarousel from "./Image/ImageCarousel";
+import ImageCarousel from "@/components/Image/ImageCarousel";
 import Link from "next/link";
 
 function shortenDescription(description: String): String {
@@ -13,7 +13,7 @@ export default function ProductBox({ product }: { product: Product }) {
     const photos = getPhotos(product);
 
     return (
-        <Link href={`/product/${product.id}`} passHref>
+        <Link href={`/product/${product.id}`}>
             <div className="
                 flex flex-col 
                 m-2 

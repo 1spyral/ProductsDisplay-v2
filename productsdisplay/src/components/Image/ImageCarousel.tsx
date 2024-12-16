@@ -2,19 +2,23 @@
 
 import { Fragment, useState } from "react";
 import ImageWheel from "./ImageWheel";
+import ImageControls from "./ImageControls";
 import Dots from "./Dots";
 
-export default function ImageCarousel({ photos }: { photos: Photo[]}) {
+export default function ImageCarousel({ photos }: { photos: Photo[] }) {
     const [index, setIndex] = useState(0);
 
     return (
         <Fragment>
-            <div className="h-full w-full">
-                <ImageWheel photos={photos} index={index}></ImageWheel>
+            <div className="relative w-full h-32">
+                <ImageWheel photos={photos} index={index} />
+                {photos.length > 1 && (
+                    <ImageControls index={index} setIndex={setIndex} length={photos.length} />
+                )}
             </div>
-            <button className="" onClick={() => setIndex((index - 1) % photos.length)}>&#10094;</button>
-            <button className="" onClick={() => setIndex((index + 1) % photos.length)}>&#10095;</button>
-            <Dots length={photos.length} index={index} setIndex={setIndex}></Dots>
+            {photos.length > 1 && (
+                <Dots length={photos.length} index={index} setIndex={setIndex} />
+            )}
         </Fragment>
     );
 }

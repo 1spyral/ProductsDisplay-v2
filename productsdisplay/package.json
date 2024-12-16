@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
     "@vanillaes/csv": "^3.0.4",
     "fuse.js": "^7.0.0",

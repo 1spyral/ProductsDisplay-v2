@@ -1,5 +1,3 @@
-"use client"
-
 import Image from "next/image";
 
 export default function ImageWheel({ photos, index }: { photos: Photo[], index: number }) {
@@ -11,7 +9,7 @@ export default function ImageWheel({ photos, index }: { photos: Photo[], index: 
                     className={`absolute top-0 left-0 w-full h-full object-contain transition-opacity duration-500 ease-in-out ${i === index ? "opacity-100" : "opacity-0"}`}
                     src={photo.path}
                     alt={photo.alt}
-                    layout="fill"
+                    fill={true}
                     quality={100}
                     unoptimized
                 />

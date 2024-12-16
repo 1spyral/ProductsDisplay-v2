@@ -1,5 +1,3 @@
-"use client";
-
 import Dot from "./Dot";
 
 export default function Dots({ length, index, setIndex }: { length: number, index: number, setIndex: (index: number) => void }) {

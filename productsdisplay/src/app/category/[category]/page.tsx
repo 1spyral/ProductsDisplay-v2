@@ -12,8 +12,6 @@ export default async function Page({
     const filteredData = search(data, "", [(await params).category]);
 
     return (
-        <div className="w-full flex justify-center">
-            <ProductList products={filteredData}></ProductList>
-        </div>
+        <ProductList products={filteredData}></ProductList>
     );
 }

@@ -1,3 +1,4 @@
+"use client";
 
 export default function Dot({ dotIndex, index, setIndex }: { dotIndex: number, index: number, setIndex: (index: number) => void }) {
     return (

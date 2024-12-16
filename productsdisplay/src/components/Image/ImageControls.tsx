@@ -1,3 +1,5 @@
+"use client";
+
 import { Fragment } from "react";
 
 export default function ImageControls({ index, setIndex, length }: { index: number, setIndex: (index: number) => void, length: number }) {

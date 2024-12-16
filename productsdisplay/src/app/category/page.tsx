@@ -7,8 +7,6 @@ export default async function Page() {
     const data = await fetchData();
 
     return (
-        <div className="w-full flex justify-center">
-            <ProductList products={data}></ProductList>
-        </div>
+        <ProductList products={data}></ProductList>
     );
 }

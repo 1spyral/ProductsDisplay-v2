@@ -1,3 +1,5 @@
+"use client"
+
 import Image from "next/image";
 
 export default function ImageWheel({ photos, index }: { photos: Photo[], index: number }) {

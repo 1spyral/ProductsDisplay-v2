@@ -1,8 +1,9 @@
 import getPhotos from "@/utils/photo";
 import ImageCarousel from "@/components/Image/ImageCarousel";
+import { Product } from "@/types/Product";
 import Link from "next/link";
 
-function shortenDescription(description: String): String {
+function shortenDescription(description: string): string {
     if (description.length > 100) {
         return description.substring(0, 99) + "...";
     }

@@ -1,9 +1,11 @@
 import ProductPage from "@/components/Product/ProductPage";
 
-export default function Page({ params }: {
+export default async function Page({ params }: {
     params: Promise<{ id: string }>;
 }) {
+    const { id } = await params;
+
     return (
-        <ProductPage></ProductPage>
+        <ProductPage id={id}></ProductPage>
     );
 }

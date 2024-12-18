@@ -8,7 +8,7 @@ export default function ProductModal({ children }: { children: React.ReactNode})
     return (
         <>
             <button onClick={() => {
-                router.back()
+                router.back();
             }}>
                 Close Modal
             </button>

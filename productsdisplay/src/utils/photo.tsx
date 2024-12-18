@@ -1,5 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
+import { Product } from "@/types/Product";
+import { Photo } from "@/types/Photo";
 
 const PATH = "public/data/images/"
 const OUTPUT_PATH = "/data/images/"
@@ -11,7 +13,7 @@ function isImage(filePath: string) {
 }
 
 function getPaths(id: string) {
-    let paths: string[] = [];
+    const paths: string[] = [];
 
     const dir = PATH + id;
 

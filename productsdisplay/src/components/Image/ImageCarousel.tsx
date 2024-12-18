@@ -4,6 +4,7 @@ import { useState } from "react";
 import ImageWheel from "./ImageWheel";
 import Arrows from "./Arrows";
 import Dots from "./Dots";
+import { Photo } from "@/types/Photo";
 
 export default function ImageCarousel({ photos }: { photos: Photo[] }) {
     const [index, setIndex] = useState(0);

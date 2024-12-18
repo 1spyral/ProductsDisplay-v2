@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import { parse } from "@vanillaes/csv";
+import { Product } from "@/types/Product";
 
 export default async function fetchData() {
     const file = (await fs.readFile("public/data/data.csv", "utf8")).toString();

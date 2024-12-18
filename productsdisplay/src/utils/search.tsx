@@ -1,6 +1,7 @@
 import Fuse, { FuseResult } from "fuse.js";
+import { Product } from "@/types/Product";
 
-export default function search(data: Product[], query: string = "", category: string[] = []) {
+export default function search(data: Product[], query = "", category: string[] = []) {
     // Configure Fuse.js
     const options = {
         keys: ['name', 'description', 'category'],

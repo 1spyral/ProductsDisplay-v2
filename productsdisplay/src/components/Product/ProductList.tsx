@@ -1,4 +1,5 @@
 import ProductBox from "./ProductBox";
+import { Product } from "@/types/Product";
 
 export default function ProductList({ products }: { products: Product[] }) {
     return (

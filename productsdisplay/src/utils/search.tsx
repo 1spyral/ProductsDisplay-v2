@@ -1,7 +1,9 @@
+"use cache";
+
 import Fuse, { FuseResult } from "fuse.js";
 import { Product } from "@/types/Product";
 
-export default function search(data: Product[], query = "", category: string[] = []) {
+export default async function search(data: Product[], query = "", category: string[] = []) {
     // Configure Fuse.js
     const options = {
         keys: ['name', 'description', 'category'],

@@ -1,3 +1,5 @@
+"use cache";
+
 import * as fs from "fs";
 import * as path from "path";
 import { Product } from "@/types/Product";
@@ -41,7 +43,7 @@ function buildPhoto(id: string, filePath: string, name: string, index: number): 
     };
 }
 
-export default function getPhotos({ id, name }: Product) {
+export default async function getPhotos({ id, name }: Product) {
     const photos: Photo[] = [];
 
     const paths = getPaths(id);

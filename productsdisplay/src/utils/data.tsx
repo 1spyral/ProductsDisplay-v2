@@ -1,3 +1,5 @@
+"use cache";
+
 import { promises as fs } from "fs";
 import { parse } from "@vanillaes/csv";
 import { Product } from "@/types/Product";

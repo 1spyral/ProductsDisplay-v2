@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import Navbar from "@/components/Navbar";
+import { ScrollProvider } from "@/context/ScrollContext";
 
 export const metadata: Metadata = {
   title: "",
@@ -17,7 +18,9 @@ export default function RootLayout({ children }: {
         className="bg-white antialiased"
       >
         <Navbar />
-        {children}
+        <ScrollProvider>
+          {children}
+        </ScrollProvider>
       </body>
     </html>
   );

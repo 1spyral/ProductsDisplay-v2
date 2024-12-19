@@ -7,7 +7,7 @@ export default async function Page({ params }: {
     params: Promise<{ category: string }>;
 }) {
     const data = await fetchData();
-    const filteredData = search(data, "", [(await params).category]);
+    const filteredData = await search(data, "", [(await params).category]);
 
     return (
         <ProductList products={filteredData}></ProductList>

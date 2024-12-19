@@ -8,10 +8,9 @@ import { Photo } from "@/types/Photo";
 
 interface ImageCarouselProps {
     photos: Photo[];
-    dotsPosition?: "inside" | "outside";
 }
 
-export default function ImageCarousel({ photos, dotsPosition = "inside" }: ImageCarouselProps) {
+export default function ImageCarousel({ photos }: ImageCarouselProps) {
     const [index, setIndex] = useState(0);
 
     return (
@@ -23,9 +22,7 @@ export default function ImageCarousel({ photos, dotsPosition = "inside" }: Image
                 )}
             </div>
             {photos.length > 1 && (
-                <div className={`w-full ${dotsPosition === "outside" ? "mt-2" : ""}`}>
-                    <Dots length={photos.length} index={index} setIndex={setIndex} />
-                </div>
+                <Dots length={photos.length} index={index} setIndex={setIndex} />
             )}
         </div>
     );

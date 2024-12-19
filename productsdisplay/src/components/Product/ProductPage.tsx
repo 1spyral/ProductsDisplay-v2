@@ -17,7 +17,7 @@ export default async function ProductPage({ id }: {
     return (
         <div className="flex flex-col md:flex-row w-full h-full flex-grow overflow-hidden">
             <div className="w-full md:w-1/2 md:h-full h-1/2 p-4">
-                <ImageCarousel photos={await getPhotos(product)} dotsPosition="outside" />
+                <ImageCarousel photos={await getPhotos(product)} />
             </div>
             <div className="w-full md:w-1/2 md:h-full h-1/2 p-4 flex flex-col">
                 <div className="flex-grow overflow-y-auto scrollbar-hide">

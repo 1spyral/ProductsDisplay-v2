@@ -1,5 +1,4 @@
 import ProductList from "@/components/Product/ProductList";
-
 import fetchData from "@/utils/data";
 
 

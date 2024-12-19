@@ -3,7 +3,7 @@ import { Photo } from "@/types/Photo";
 
 export default function ImageWheel({ photos, index }: { photos: Photo[], index: number }) {
     return (
-        <div className="relative w-full h-32 overflow-hidden">
+        <div className="relative w-full h-full overflow-hidden">
             {photos.map((photo, i) => (
                 <Image
                     key={photo.alt}

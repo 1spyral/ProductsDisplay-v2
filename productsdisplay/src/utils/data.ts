@@ -1,13 +1,13 @@
-"use cache";
-
 import { Product } from "@/types/Product";
-import getPool from "./db";
+import pool from "./db";
+
+import { unstable_cache as cache } from "next/cache";
 
 const TABLE_NAME = "products";
 
-export default async function fetchData(): Promise<Product[]> {
+export const fetchData = cache(async () => {
     try {
-        const client = await (await getPool()).connect();
+        const client = await pool.connect();
         const { rows } = await client.query(`SELECT * FROM ${TABLE_NAME}`);
         client.release();
 
@@ -23,4 +23,4 @@ export default async function fetchData(): Promise<Product[]> {
         console.error("Error fetching data", error);
         return [];
     }
-};
+}, ["data"], { revalidate: 60, tags: ["data"] });

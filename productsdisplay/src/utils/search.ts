@@ -1,5 +1,3 @@
-"use cache";
-
 import Fuse, { FuseResult } from "fuse.js";
 import { Product } from "@/types/Product";
 

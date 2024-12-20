@@ -1,5 +1,3 @@
-"use cache";
-
 import * as fs from "fs";
 import * as path from "path";
 import { Product } from "@/types/Product";
@@ -15,24 +13,29 @@ function isImage(filePath: string) {
 }
 
 function getPaths(id: string) {
-    const paths: string[] = [];
+    try {
+        const paths: string[] = [];
 
-    const dir = PATH + id;
+        const dir = PATH + id;
 
-    // Read the contents of the directory
-    const files = fs.readdirSync(dir);
+        // Read the contents of the directory
+        const files = fs.readdirSync(dir);
 
-    files.forEach(file => {
-        const filePath = path.join(OUTPUT_PATH, id, file);
+        files.forEach(file => {
+            const filePath = path.join(OUTPUT_PATH, id, file);
 
-        if (isImage(filePath)) {
-            paths.push(filePath);
-        }
-    })
+            if (isImage(filePath)) {
+                paths.push(filePath);
+            }
+        })
 
-    paths.sort();
-    return paths;
-
+        paths.sort();
+        return paths;
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    catch (error) {
+        return [];
+    }
 }
 
 function buildPhoto(id: string, filePath: string, name: string, index: number): Photo {

@@ -1,13 +1,19 @@
 "use cache";
 
 import { Product } from "@/types/Product";
-import getPool from "./db";
+import pool from "./db";
+
+import { unstable_cacheLife as cacheLife } from "next/cache";
 
 const TABLE_NAME = "products";
 
 export default async function fetchData(): Promise<Product[]> {
+    cacheLife("seconds");
+    //cacheLife("minutes");
+    //cacheLife("default");
+    console.log("Revalidating fetchData()");
     try {
-        const client = await (await getPool()).connect();
+        const client = await pool.connect();
         const { rows } = await client.query(`SELECT * FROM ${TABLE_NAME}`);
         client.release();
 

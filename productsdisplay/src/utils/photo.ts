@@ -1,7 +1,9 @@
-import * as fs from "fs";
 import * as path from "path";
 import { Product } from "@/types/Product";
 import { Photo } from "@/types/Photo";
+
+import * as fs from "fs";
+import { unstable_cache as cache } from "next/cache";
 
 const PATH = "public/data/images/"
 const OUTPUT_PATH = "/data/images/"
@@ -46,7 +48,9 @@ function buildPhoto(id: string, filePath: string, name: string, index: number): 
     };
 }
 
-export default async function getPhotos({ id, name }: Product) {
+export const getPhotos = cache(async ({ id, name }: Product) => {
+    console.log(`Getting photos for ${id}`)
+
     const photos: Photo[] = [];
 
     const paths = getPaths(id);
@@ -55,4 +59,4 @@ export default async function getPhotos({ id, name }: Product) {
     }
 
     return photos;
-}
+}, ["photos"], { revalidate: 60, tags: ["photos"] });

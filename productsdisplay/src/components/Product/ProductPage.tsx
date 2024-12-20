@@ -1,4 +1,4 @@
-import getPhotos from "@/utils/photo";
+import { getPhotos } from "@/utils/photo";
 import { fetchData } from "@/utils/data";
 import { Product } from "@/types/Product";
 import ImageCarousel from "@/components/Image/ImageCarousel";

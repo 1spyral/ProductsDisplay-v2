@@ -1,4 +1,4 @@
-import getPhotos from "@/utils/photo";
+import { getPhotos } from "@/utils/photo";
 import ProductBox from "./ProductBox";
 import { Product } from "@/types/Product";
 

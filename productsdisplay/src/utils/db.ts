@@ -1,8 +1,12 @@
-"use server";
+import { Pool } from 'pg';
 
-import { Pool } from "pg";
+declare global {
+    // Allow global `var` declarations
+    // eslint-disable-next-line no-var
+    var _pool: Pool | undefined;
+}
 
-export default async function getPool() {
+const pool = global._pool || (() => {    
     console.log("Opening pool to database:\n");
 
     console.log("DB_USER:", process.env.DB_USER);
@@ -10,8 +14,8 @@ export default async function getPool() {
     console.log("DB_DATABASE:", process.env.DB_DATABASE);
     console.log("DB_PASSWORD:", process.env.DB_PASSWORD ? '*'.repeat(process.env.DB_PASSWORD.length) : '');
     console.log("DB_PORT:", process.env.DB_PORT);
-
-    const pool = new Pool({
+    
+    return new Pool({
         user: process.env.DB_USER,
         host: process.env.DB_HOST,
         database: process.env.DB_DATABASE,
@@ -21,6 +25,24 @@ export default async function getPool() {
         idleTimeoutMillis: 30000,
         connectionTimeoutMillis: 2000,
     });
+})();
 
-    return pool;
+if (process.env.NODE_ENV !== 'production') {
+    global._pool = pool;
 }
+
+// Close the pool when the process ends
+const closePool = async () => {
+    try {
+        await pool.end();
+        console.log("Database pool closed.");
+    } catch (error) {
+        console.error("Error closing database pool:", error);
+    }
+};
+
+process.on('SIGINT', closePool);
+process.on('SIGTERM', closePool);
+process.on('exit', closePool);
+
+export default pool;

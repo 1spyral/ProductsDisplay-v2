@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import fetchData from "@/utils/data";
+import { fetchData } from "@/utils/data";
 
 export async function GET() {
     return NextResponse.json({ message: await fetchData() });

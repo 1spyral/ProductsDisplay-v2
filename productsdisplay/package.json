@@ -14,7 +14,7 @@
   "dependencies": {
     "@vanillaes/csv": "^3.0.4",
     "fuse.js": "^7.0.0",
-    "next": "^15.1.1-canary.13",
+    "next": "^15.1.2",
     "pg": "^8.13.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

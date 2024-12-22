@@ -1,9 +1,21 @@
-import Image from "next/image";
+import CategoryButton from "@/components/CategoryButton";
+import { fetchData } from "@/utils/data";
 
-export default function Home() {
-  return (
-    <div>
-      <Image src="/globe.svg" alt="Vercel Logo" width={72} height={16} />
-    </div>
-  );
+export const revalidate = 43200;
+
+export default async function Home() {
+	const data = await fetchData();
+    const categories = Array.from(new Set(data.map(product => product.category)));
+
+	return (
+		<div className="px-8 py-2">
+			<h1 className="text-2xl font-bold mb-4">Categories</h1>
+			<div className="flex flex-wrap gap-4">
+				{categories.map(category => (
+					<CategoryButton key={category} category={category} />
+				))}
+				<CategoryButton category="" />
+			</div>
+		</div>
+	);
 }

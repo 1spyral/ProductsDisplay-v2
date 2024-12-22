@@ -2,7 +2,7 @@ import ProductModal from "@/components/Product/ProductModal";
 import ProductPage from "@/components/Product/ProductPage";
 import { fetchData } from "@/utils/data";
 
-export const revalidate = 60;
+export const revalidate = 43200;
 
 export const dynamicParams = true;
 

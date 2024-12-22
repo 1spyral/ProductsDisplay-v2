@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "engines": {
-    "node": "22.x"
+    "node": "22.x.x"
   },
   "dependencies": {
     "fuse.js": "^7.0.0",

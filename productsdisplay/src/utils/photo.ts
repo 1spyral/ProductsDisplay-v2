@@ -48,7 +48,7 @@ function buildPhoto(id: string, filePath: string, name: string, index: number): 
     };
 }
 
-export const getPhotos = cache(async ({ id, name }: Product) => {
+export const getPhotos = cache(async ({ id, name }: Product) => {    
     console.log(`Getting photos for ${id}`)
 
     const photos: Photo[] = [];
@@ -59,4 +59,4 @@ export const getPhotos = cache(async ({ id, name }: Product) => {
     }
 
     return photos;
-}, ["photos"], { revalidate: 60, tags: ["photos"] });
+}, ["photos"], { revalidate: 43200, tags: ["photos"] });

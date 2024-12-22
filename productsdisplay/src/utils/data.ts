@@ -23,4 +23,4 @@ export const fetchData = cache(async () => {
         console.error("Error fetching data", error);
         return [];
     }
-}, ["data"], { revalidate: 60, tags: ["data"] });
+}, ["data"], { revalidate: 43200, tags: ["data"] });

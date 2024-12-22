@@ -30,6 +30,9 @@ const seedDatabase = async () => {
         const data = await fetchData();
 
         for (const product of data) {
+            if (!product.id) {
+                continue;
+            }
             const query = "INSERT INTO products (id, name, description, category) VALUES ($1, $2, $3, $4)";
             await client.query(query, [product.id, product.name, product.description, product.category]);
         }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { ScrollProvider } from "@/context/ScrollContext";
 
 export const metadata: Metadata = {
@@ -17,8 +18,11 @@ export default function RootLayout({ children }: {
 			<body className="bg-white antialiased h-full flex flex-col overflow-hidden">
 				<Navbar />
 				<ScrollProvider>
-					<div className="flex-grow overflow-y-auto">
-						{children}
+					<div className="flex-grow flex flex-col overflow-y-auto">
+						<div className="flex-grow">
+							{children}
+						</div>
+						<Footer />
 					</div>
 				</ScrollProvider>
 			</body>

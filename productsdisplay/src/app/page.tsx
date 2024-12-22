@@ -8,7 +8,7 @@ export default async function Home() {
     const categories = Array.from(new Set(data.map(product => product.category)));
 
 	return (
-		<div className="px-8 py-2">
+		<div className="px-8">
 			<h1 className="text-2xl font-bold mb-4">Categories</h1>
 			<div className="flex flex-wrap gap-4">
 				{categories.map(category => (

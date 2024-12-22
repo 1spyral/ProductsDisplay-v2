@@ -20,7 +20,6 @@ export default async function Page({ params }: {
 }) {
     const { category } = await params;
 
-    const data = await fetchData();
     const filteredData = await search("", [category]);
 
     if (!filteredData.length) {

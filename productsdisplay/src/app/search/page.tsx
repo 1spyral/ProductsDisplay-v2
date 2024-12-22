@@ -4,7 +4,7 @@ import search from "@/utils/search";
 
 type SearchParams = { [key: string]: string | string[] | undefined }
 
-export default async function Page({ searchParams }: { searchParams: SearchParams }) {
+export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
     const query = (await searchParams).query;
 
     const searchQuery = Array.isArray(query) ? query.join(" ") : query || "";

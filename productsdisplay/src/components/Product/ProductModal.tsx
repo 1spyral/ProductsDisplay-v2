@@ -1,22 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useScroll } from "@/context/ScrollContext";
 
 export default function ProductModal({ children }: { children: React.ReactNode }) {
     const router = useRouter();
-    const { scrollPosition } = useScroll();
 
     const handleClose = () => {
         router.back();
     };
-
-    useEffect(() => {
-        if (scrollPosition) {
-            window.scrollTo(0, scrollPosition);
-        }
-    }, [scrollPosition]);
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">

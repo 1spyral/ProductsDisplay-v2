@@ -1,0 +1,1 @@
+web: if [ "$PROJECT_NAME" = "productsdisplay" ]; then bin/run_cloud_sql_proxy && cd productsdisplay && npm install && npm run build && npm start; elif [ "$PROJECT_NAME" = "seed" ]; then cd seed && npm run seed; else echo "No project specified!" && exit 1; fi

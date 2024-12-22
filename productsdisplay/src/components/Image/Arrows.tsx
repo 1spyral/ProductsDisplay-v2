@@ -3,7 +3,7 @@ export default function Arrows({ index, setIndex, length }: { index: number, set
         <>
             <button
                 className="
-                    absolute inset-y-1/2 -translate-y-1/2
+                    absolute inset-y-1/2 -translate-y-1/2 left-0
                     p-2.5 w-8 h-12
                     cursor-pointer
                     opacity-20 hover:opacity-70 transition-opacity

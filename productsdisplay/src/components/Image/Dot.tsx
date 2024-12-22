@@ -17,6 +17,6 @@ export default function Dot({ dotIndex, index, setIndex }: { dotIndex: number, i
                 setIndex(dotIndex);
                 e.preventDefault();
             }}
-        ></div>
+        />
     );
 }

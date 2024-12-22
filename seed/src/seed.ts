@@ -1,5 +1,5 @@
 import { Client } from "pg";
-import fetchData from "./data";
+import { fetchData } from "./data";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -7,18 +7,18 @@ dotenv.config();
 const TABLE_NAME = "products";
 
 // Debugging: Log environment variables
-console.log("USER:", process.env.USER);
-console.log("HOST:", process.env.HOST);
-console.log("DATABASE:", process.env.DATABASE);
-console.log("PASSWORD:", process.env.PASSWORD ? '*'.repeat(process.env.PASSWORD.length) : '');
-console.log("PORT:", process.env.PORT);
+console.log("OUT_DB_USER:", process.env.OUT_DB_USER);
+console.log("OUT_DB_HOST:", process.env.OUT_DB_HOST);
+console.log("OUT_DB_DATABASE:", process.env.OUT_DB_DATABASE);
+console.log("OUT_DB_PASSWORD:", process.env.OUT_DB_PASSWORD ? '*'.repeat(process.env.OUT_DB_PASSWORD.length) : '');
+console.log("OUT_DB_PORT:", process.env.OUT_DB_PORT);
 
 const client = new Client({
-    user: process.env.USER,
-    host: process.env.HOST,
-    database: process.env.DATABASE,
-    password: process.env.PASSWORD,
-    port: parseInt(process.env.PORT as string),
+    user: process.env.OUT_DB_USER,
+    host: process.env.OUT_DB_HOST,
+    database: process.env.OUT_DB_DATABASE,
+    password: process.env.OUT_DB_PASSWORD,
+    port: parseInt(process.env.OUT_DB_PORT as string),
 });
 
 const seedDatabase = async () => {

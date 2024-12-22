@@ -67,3 +67,6 @@ TEST-results.xml
 /data/
 .env
 /dist/
+credentials.json
+help.txt
+cloud-sql-proxy.exe

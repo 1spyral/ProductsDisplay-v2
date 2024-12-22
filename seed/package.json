@@ -16,11 +16,10 @@
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/pg": "^8.11.10",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.24.2",
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "@vanillaes/csv": "^3.0.4",
     "dotenv": "^16.4.7",
     "fs": "^0.0.1-security",
     "pg": "^8.13.1"

@@ -1,4 +1,5 @@
 import CategoryButton from "@/components/CategoryButton";
+import Searchbar from "@/components/Searchbar";
 import { fetchData } from "@/utils/data";
 
 export const revalidate = 43200;
@@ -16,6 +17,8 @@ export default async function Home() {
 				))}
 				<CategoryButton category="" />
 			</div>
+			<h1 className="text-2xl font-bold mt-8 mb-4">Search</h1>
+			<Searchbar />
 		</div>
 	);
 }

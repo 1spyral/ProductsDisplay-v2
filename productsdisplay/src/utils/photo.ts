@@ -55,7 +55,7 @@ export const getPhotos = cache(async ({ id, name }: Product) => {
 
     const paths = await getPaths(id);
     for (let i = 0; i < paths.length; i++) {
-        photos.push(buildPhoto(id, paths[i], name, i));
+        photos.push(buildPhoto(id, paths[i], name || "", i));
     }
 
     return photos;

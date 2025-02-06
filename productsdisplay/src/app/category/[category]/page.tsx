@@ -1,13 +1,13 @@
 import ProductList from "@/components/Product/ProductList";
-import { fetchData } from "@/utils/data";
 import search from "@/utils/search";
+import { getProducts } from "@/db/queries";
 
 export const revalidate = 43200;
 
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-    const data = await fetchData();
+    const data = await getProducts();
     const categories = Array.from(new Set(data.map(product => product.category)));
 
     return categories.map(category => ({ 

@@ -1,11 +1,11 @@
 import CategoryButton from "@/components/CategoryButton";
 import Searchbar from "@/components/Searchbar";
-import { fetchData } from "@/utils/data";
+import { getProducts } from "@/db/queries";
 
 export const revalidate = 43200;
 
 export default async function Home() {
-	const data = await fetchData();
+	const data = await getProducts();
     const categories = Array.from(new Set(data.map(product => product.category)));
 
 	return (
@@ -13,7 +13,7 @@ export default async function Home() {
 			<h1 className="text-2xl font-bold mb-4">Categories</h1>
 			<div className="flex flex-wrap gap-4">
 				{categories.map(category => (
-					<CategoryButton key={category} category={category} />
+					<CategoryButton key={category} category={category || ""} />
 				))}
 				<CategoryButton category="" />
 			</div>

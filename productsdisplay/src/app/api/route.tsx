@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { fetchData } from "@/utils/data";
+import { getProducts } from "@/db/queries";
 
 export async function GET() {
-    return NextResponse.json({ message: await fetchData() });
+    return NextResponse.json({ message: await getProducts() });
 }
 
 export async function POST() {

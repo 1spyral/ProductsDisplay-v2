@@ -1,10 +1,8 @@
 import { db } from '@/db/drizzle';
 import { products } from '@/db/schema';
-import { InferSelectModel } from 'drizzle-orm';
+import { Product } from '@/types/Product';
 
-export type Product = InferSelectModel<typeof products>;
-
-export async function getProducts() {
+export async function getProducts(): Promise<Product[]> {
     return db
         .select({
             id: products.id,

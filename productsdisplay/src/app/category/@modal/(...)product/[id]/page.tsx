@@ -1,13 +1,13 @@
 import ProductModal from "@/components/Product/ProductModal";
 import ProductPage from "@/components/Product/ProductPage";
-import { fetchData } from "@/utils/data";
+import { getProducts } from "@/db/queries";
 
 export const revalidate = 43200;
 
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-    const data = await fetchData();
+    const data = await getProducts();
 
     return data.map(product => ({ 
         params: { id: product.id } 

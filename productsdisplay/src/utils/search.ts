@@ -1,10 +1,10 @@
 import Fuse, { FuseResult } from "fuse.js";
 
-import { fetchData } from "./data";
 import { Product } from "@/types/Product";
+import {getProducts} from "@/db/queries";
 
 export default async function search(query = "", category: string[] = []) {
-    let data = await fetchData();
+    let data = await getProducts();
     
     // Configure Fuse.js
     const options = {
@@ -13,7 +13,7 @@ export default async function search(query = "", category: string[] = []) {
     };
 
     if (category.length > 0) {
-        data = data.filter(product => category.includes(product.category));
+        data = data.filter(product => category.includes(product.category || ""));
     }
     if (query) {
         const fuse = new Fuse<Product>(data, options);

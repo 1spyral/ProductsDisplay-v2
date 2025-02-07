@@ -11,5 +11,6 @@ export const client = postgres({
     database: process.env.DB_DATABASE,
     password: process.env.DB_PASSWORD,
     port: parseInt(process.env.DB_PORT as string),
+    max: 1
 })
 export const db = drizzle(client, { schema });

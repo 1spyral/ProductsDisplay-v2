@@ -4,14 +4,12 @@ import { getProducts } from "@/db/queries";
 
 export const revalidate = 43200;
 
-export const dynamicParams = true;
-
 export async function generateStaticParams() {
     const data = await getProducts();
     const categories = Array.from(new Set(data.map(product => product.category)));
 
     return categories.map(category => ({ 
-        params: { category } 
+        category
     }));
 }
 

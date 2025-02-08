@@ -4,7 +4,7 @@ import { getProducts } from "@/db/queries";
 
 export const revalidate = 43200;
 
-export default async function Home() {
+export default async function HomePage() {
 	const data = await getProducts();
     const categories = Array.from(new Set(data.map(product => product.category)));
 

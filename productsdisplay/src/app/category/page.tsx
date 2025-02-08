@@ -3,7 +3,7 @@ import { getProducts } from "@/db/queries";
 
 export const revalidate = 43200;
 
-export default async function Page() {
+export default async function AllCategoryPage() {
     const data = await getProducts();
 
     return (

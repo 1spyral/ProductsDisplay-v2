@@ -14,7 +14,7 @@ export const dynamicParams = true;
 //     }));
 // }
 
-export default async function Page({ params }: {
+export default async function SearchResultsProductModal({ params }: {
     params: Promise<{ id: string }>;
 }) {
     const { id } = await params;

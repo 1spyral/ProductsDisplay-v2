@@ -1,0 +1,51 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Decode the base64 encoded credentials and save to a file
+      - name: Decode credentials and set GOOGLE_APPLICATION_CREDENTIALS
+        run: |
+          echo "${{ secrets.GOOGLE_CLOUD_CREDENTIALS_BASE64 }}" | base64 --decode > /dev/shm/google-credentials.json
+
+      - name: Set up Cloud SQL Proxy
+        run: |
+          docker run -d \
+           --name cloud-sql-proxy \
+           -v /dev/shm/google-credentials.json:/config.json \
+           -p 5432:5432 \
+           gcr.io/cloud-sql-connectors/cloud-sql-proxy /cloud_sql_proxy \
+            --credentials_file /config.json \
+            ${{ secrets.CLOUDSQL_INSTANCE_CONNECTION_NAME }}          
+          docker logs cloud-sql-proxy
+
+      # Write GitHub secrets to .env file
+      - name: Create .env file with secrets
+        run: |
+          echo "NAME=${{ secrets.NAME }}" >> .env
+          echo "COPYRIGHT=${{ secrets.COPYRIGHT }}" >> .env
+          
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          
+          echo "IMAGE_PATH=${{ secrets.IMAGE_PATH }}" >> .env  
+          
+          psql -h 127.0.0.1 -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -p 5432 -c "SELECT 1"
+
+      # Build the Docker image
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --network=host --tag my-image-name:$(date +%s)

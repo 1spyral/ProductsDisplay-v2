@@ -25,14 +25,14 @@ export default function Searchbar() {
             <div className="flex">
                 <input 
                     type="text" 
-                    className="border p-2 flex-grow rounded" 
+                    className="border p-2 grow rounded-sm" 
                     placeholder="Search..." 
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onKeyDown={handleKeyPress}
                 />
                 <button 
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2" 
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm ml-2" 
                     onClick={handleSearch}
                 >
                     Search

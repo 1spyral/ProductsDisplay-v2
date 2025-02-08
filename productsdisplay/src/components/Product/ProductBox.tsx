@@ -28,7 +28,7 @@ export default function ProductBox({ product, photos }: { product: Product, phot
                 lg:h-112
             ">
                 <ImageCarousel photos={photos} />
-                <div className="flex-grow h-full">
+                <div className="grow h-full">
                     <h1 className="text-xl font-bold p-2.5 text-center">{product.name}</h1>
                     <p className="italic text-center">{shortenDescription(product.description || "")}</p>
                     <p className="text-center">{product.category}</p>

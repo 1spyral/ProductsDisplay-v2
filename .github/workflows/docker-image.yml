@@ -1,0 +1,64 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main", "deployment" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Decode the base64 encoded credentials and save to a file
+      - name: Decode credentials and set GOOGLE_APPLICATION_CREDENTIALS
+        run: |
+          echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS_JSON }}' > /dev/shm/google-credentials.json
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CLOUD_CREDENTIALS_JSON }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@e30db14379863a8c79331b04a9969f4c1e225e0b
+
+      - name: Set up Cloud SQL Proxy
+        run: |
+          curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.14.3/cloud-sql-proxy.linux.amd64
+          chmod +x cloud-sql-proxy
+          ./cloud-sql-proxy \
+          --credentials-file /dev/shm/google-credentials.json \
+          ${{ secrets.CLOUDSQL_INSTANCE_CONNECTION_NAME }}
+          
+
+#          docker run -d \
+#           --name cloud-sql-proxy \
+#           -v /dev/shm/google-credentials.json:/config.json \
+#           -p 5432:5432 \
+#           gcr.io/cloud-sql-connectors/cloud-sql-proxy /cloud_sql_proxy \
+#            --credentials-file /config.json \
+#            ${{ secrets.CLOUDSQL_INSTANCE_CONNECTION_NAME }}
+#          docker logs cloud-sql-proxy
+
+      # Write GitHub secrets to .env file
+      - name: Create .env file with secrets
+        run: |
+          echo "NAME=${{ secrets.NAME }}" >> .env
+          echo "COPYRIGHT=${{ secrets.COPYRIGHT }}" >> .env
+          
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          
+          echo "IMAGE_PATH=${{ secrets.IMAGE_PATH }}" >> .env
+
+      # Build the Docker image
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --network=host --tag my-image-name:$(date +%s)

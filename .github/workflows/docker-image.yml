@@ -6,9 +6,19 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  PROJECT_ID: '${{ secrets.PROJECT_ID }}'
+  REGION: '${{ secrets.REGION }}'
+  SERVICE: '${{ secrets.SERVICE }}'
+  WORKLOAD_IDENTITY_PROVIDER: '${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}'
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
 
     steps:
       - name: Checkout code
@@ -24,6 +34,29 @@ jobs:
           
           echo "IMAGE_PATH=${{ secrets.IMAGE_PATH }}" >> .env  
 
-      # Build the Docker image
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --network=host --tag my-image-name:$(date +%s)
+      - id: 'auth'
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@f112390a2df9932162083945e46d439060d66ec2 # google-github-actions/auth@v2
+        with:
+          project_id: '${{ env.PROJECT_ID }}'
+          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
+
+      - name: Docker Auth
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # docker/login-action@v3
+        with:
+          username: 'oauth2accesstoken'
+          password: '${{ steps.auth.outputs.auth_token }}'
+          registry: '${{ env.REGION }}-docker.pkg.dev'
+
+      - name: Build and Push Container
+        run: |-
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
+          docker build . --file Dockerfile --network=host --tag "${DOCKER_TAG}"
+          docker push "${DOCKER_TAG}"
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@33553064113a37d688aa6937bacbdc481580be17 # google-github-actions/deploy-cloudrun@v2
+        with:
+          service: '${{ env.SERVICE }}'
+          region: '${{ env.REGION }}'
+          image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}'

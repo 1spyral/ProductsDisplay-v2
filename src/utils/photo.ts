@@ -49,7 +49,7 @@ function buildPhoto(id: string, filePath: string, name: string, index: number): 
 }
 
 export const getPhotos = cache(async ({ id, name }: Product) => {    
-    console.log(`Getting photos for ${id}`)
+    // console.log(`Getting photos for ${id}`)
 
     const photos: Photo[] = [];
 

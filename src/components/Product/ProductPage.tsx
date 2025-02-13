@@ -1,14 +1,14 @@
 import { getPhotos } from "@/utils/photo";
 import { Product } from "@/types/Product";
 import ImageCarousel from "@/components/Image/ImageCarousel";
-import {getProducts} from "@/db/queries";
+import { getProduct } from "@/db/queries";
 
-export default async function ProductPage({ id }: { 
-    id: string; 
+export default async function ProductPage({ id }: {
+    id: string;
 }) {
-    const product: Product | undefined = (await getProducts()).find((product) => product.id === id);
+    const product: Product | null = await getProduct(id);
 
-    if (product === undefined) {
+    if (product === null) {
         return <div>Product not found</div>;
     }
 

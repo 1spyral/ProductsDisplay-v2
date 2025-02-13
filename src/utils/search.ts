@@ -1,7 +1,7 @@
 import Fuse, { FuseResult } from "fuse.js";
 
 import { Product } from "@/types/Product";
-import {getProducts} from "@/db/queries";
+import { getProducts } from "@/db/queries";
 
 export default async function search(query = "", category: string[] = []) {
     let data = await getProducts();

@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function Arrows({ index, setIndex, length }: { index: number, setIndex: (index: number) => void, length: number }) {
     return (
         <>

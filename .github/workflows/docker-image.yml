@@ -27,4 +27,3 @@ jobs:
       # Build the Docker image
       - name: Build the Docker image
         run: docker build . --file Dockerfile --network=host --tag my-image-name:$(date +%s)
-        

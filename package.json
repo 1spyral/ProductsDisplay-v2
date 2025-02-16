@@ -7,7 +7,7 @@
     "build": "next build && npm run cp",
     "start": "node .next/standalone/server.js",
     "lint": "next lint",
-    "cp": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/"
+    "cp": "bash -c \"cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/\""
   },
   "engines": {
     "node": "22.x.x"

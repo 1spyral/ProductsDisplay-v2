@@ -1,6 +1,5 @@
 import { Product } from "@/types/Product";
 import { Photo } from "@/types/Photo";
-
 import { unstable_cache as cache } from "next/cache";
 
 const EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif"]
@@ -48,7 +47,7 @@ function buildPhoto(id: string, filePath: string, name: string, index: number): 
     };
 }
 
-export const getPhotos = cache(async ({ id, name }: Product) => {    
+async function getPhotos({ id, name }: Product) {
     // console.log(`Getting photos for ${id}`)
 
     const photos: Photo[] = [];
@@ -59,4 +58,9 @@ export const getPhotos = cache(async ({ id, name }: Product) => {
     }
 
     return photos;
-}, ["photos"], { revalidate: 43200, tags: ["photos"] });
+}
+
+export default cache(getPhotos,
+    ["photos"],
+    { revalidate: 43200, tags: ["photos"] }
+)

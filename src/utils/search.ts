@@ -3,21 +3,18 @@ import { Product } from "@/types/Product"
 import { getProducts } from "@/db/queries"
 import { unstable_cache as cache } from "next/cache"
 
-async function search(query = "", category: string[] = []) {
-    let data = await getProducts();
+let data = await getProducts()
 
-    // Configure Fuse.js
-    const options = {
-        keys: ['name', 'description', 'category'],
-        threshold: 0.3
-    }
+// Configure Fuse.js
+const options = {
+    keys: ['name', 'description', 'category'],
+    threshold: 0.3
+}
 
-    if (category.length > 0) {
-        data = data.filter(product => category.includes(product.category || ""))
-    }
+const fuse = new Fuse<Product>(data, options)
+
+async function search(query = "") {
     if (query) {
-        const fuse = new Fuse<Product>(data, options);
-
         data = fuse.search(query).map((result: FuseResult<Product>) => result.item)
     }
 

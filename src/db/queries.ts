@@ -15,6 +15,18 @@ async function fetchProducts(): Promise<Product[]> {
         .from(products);
 }
 
+async function fetchProductsByCategory(category: string): Promise<Product[]> {
+    return db
+        .select({
+            id: products.id,
+            name: products.name,
+            description: products.description,
+            category: products.category,
+        })
+        .from(products)
+        .where(eq(products.category, category))
+}
+
 async function fetchProductById(id: string): Promise<Product | null> {
     return db
         .select({
@@ -35,8 +47,15 @@ export const getProducts = cache(
     { revalidate: 43200, tags: ["products"] }
 )
 
-export const getProduct = cache(
+export const getProductsByCategory = cache(
+    fetchProductsByCategory,
+    ["products_by_category"],
+    { revalidate: 43200, tags: ["products_by_category"] }
+)
+
+export const getProductById = cache(
     fetchProductById,
     ["product"],
     { revalidate: 43200, tags: ["product"] }
 )
+

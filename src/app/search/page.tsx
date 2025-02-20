@@ -1,5 +1,5 @@
 import ProductList from "@/components/Product/ProductList";
-import { Product } from "@/types/Product";
+import Product from"@/types/Product";
 import search from "@/utils/search";
 
 type SearchParams = { [key: string]: string | string[] | undefined }

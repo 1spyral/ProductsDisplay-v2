@@ -1,6 +1,6 @@
 import ProductModal from "@/components/Product/ProductModal";
 import ProductPage from "@/components/Product/ProductPage";
-import {getProducts} from "@/db/queries";
+import { getProducts } from "@/db/queries/productQueries";
 
 export const revalidate = 43200;
 

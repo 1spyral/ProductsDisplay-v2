@@ -1,5 +1,5 @@
-import { Product } from "@/types/Product";
-import { Photo } from "@/types/Photo";
+import Product from"@/types/Product";
+import Photo from "@/types/Photo";
 import { unstable_cache as cache } from "next/cache";
 
 const EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif"]

@@ -4,7 +4,7 @@ import { useState } from "react";
 import ImageWheel from "./ImageWheel";
 import Arrows from "./Arrows";
 import Dots from "./Dots";
-import { Photo } from "@/types/Photo";
+import Photo from "@/types/Photo";
 
 interface ImageCarouselProps {
     photos: Photo[];

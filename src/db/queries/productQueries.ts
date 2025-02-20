@@ -1,6 +1,6 @@
 import { db } from '@/db/drizzle';
 import { products } from '@/db/schema';
-import { Product } from '@/types/Product';
+import Product from '@/types/Product';
 import { eq } from "drizzle-orm";
 import { unstable_cache as cache } from "next/cache";
 
@@ -12,7 +12,7 @@ async function fetchProducts(): Promise<Product[]> {
             description: products.description,
             category: products.category,
         })
-        .from(products);
+        .from(products)
 }
 
 async function fetchProductsByCategory(category: string): Promise<Product[]> {
@@ -58,4 +58,3 @@ export const getProductById = cache(
     ["product"],
     { revalidate: 43200, tags: ["product"] }
 )
-

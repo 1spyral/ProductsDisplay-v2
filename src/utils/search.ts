@@ -1,6 +1,6 @@
 import Fuse, { FuseResult } from "fuse.js"
-import { Product } from "@/types/Product"
-import { getProducts } from "@/db/queries"
+import Product from"@/types/Product"
+import { getProducts } from "@/db/queries/productQueries"
 import { unstable_cache as cache } from "next/cache"
 
 let data = await getProducts()

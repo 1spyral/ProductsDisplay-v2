@@ -1,5 +1,5 @@
 import ProductList from "@/components/Product/ProductList";
-import { getProducts } from "@/db/queries";
+import { getProducts } from "@/db/queries/productQueries";
 
 export const revalidate = 43200;
 

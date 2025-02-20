@@ -1,27 +1,24 @@
 import ProductList from "@/components/Product/ProductList";
-import { getProducts, getProductsByCategory } from "@/db/queries";
+import { getProductsByCategory } from "@/db/queries/productQueries";
+import { getCategories } from "@/db/queries/categoryQueries"
+import Category from "@/types/Category"
 
 export const revalidate = 43200;
 
 export async function generateStaticParams() {
-    const data = await getProducts()
-    const categories = Array.from(new Set(data.map(product => product.category)))
-
-    return categories.map(category => ({ 
-        category
-    }))
+    return await getCategories()
 }
 
 export default async function CategoryPage({ params }: {
-    params: Promise<{ category: string }>
+    params: Promise<Category>
 }) {
-    const { category } = await params
+    const { category, name } = await params
 
     const filteredData = await getProductsByCategory(category)
 
     if (!filteredData.length) {
         return (
-            <h1>No products found in category {category}</h1>
+            <h1>No products found in category {name}</h1>
         )
     }
 

@@ -1,5 +1,5 @@
-import Image from "next/image";
-import Photo from "@/types/Photo";
+import Image from "next/image"
+import Photo from "@/types/Photo"
 
 export default function ImageWheel({ photos, index }: { photos: Photo[], index: number }) {
     return (
@@ -16,5 +16,5 @@ export default function ImageWheel({ photos, index }: { photos: Photo[], index: 
                 />
             ))}
         </div>
-    );
+    )
 }

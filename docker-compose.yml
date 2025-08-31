@@ -1,0 +1,13 @@
+name: productsdisplay
+
+networks:
+  edge:
+    external: true
+
+services:
+  web:
+    build: .
+    container_name: productsdisplay_web
+    restart: always
+    env_file: .env
+    networks: [edge]

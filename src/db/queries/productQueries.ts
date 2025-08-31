@@ -1,3 +1,5 @@
+"use server";
+
 import { db } from '@/db/drizzle';
 import { products } from '@/db/schema';
 import Product from '@/types/Product';
@@ -41,11 +43,12 @@ async function fetchProductById(id: string): Promise<Product | null> {
         .then(rows => rows[0] || null);
 }
 
-export const getProducts = cache(
-    fetchProducts,
-    ["products"],
-    { revalidate: 43200, tags: ["products"] }
-)
+// export const getProducts = cache(
+//     fetchProducts,
+//     ["products"],
+//     { revalidate: 43200, tags: ["products"] }
+// )
+export const getProducts = fetchProducts;
 
 export const getProductsByCategory = cache(
     fetchProductsByCategory,

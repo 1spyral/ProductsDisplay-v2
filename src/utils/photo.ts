@@ -1,3 +1,5 @@
+"use server";
+
 import Product from"@/types/Product";
 import Photo from "@/types/Photo";
 import { unstable_cache as cache } from "next/cache";
@@ -15,13 +17,18 @@ async function getPaths(id: string) {
             for (const ext of EXTENSIONS) {
                 const filePath = dir + i + ext;
                 try {
-                    const response = await fetch(filePath);
-                    if (response.status === 200) {
+                    const response = await fetch(filePath, {
+                        cache: 'no-store',
+                        headers: {
+                            'Cache-Control': 'no-cache'
+                        }
+                    });
+                    if (response.ok) {
                         paths.push(filePath);
                         found = true;
                     }
-                } catch (error) {
-                    console.error("Error fetching " + filePath, error);
+                } catch /* (error) */ {
+                    // console.error("Error fetching " + filePath);
                 }
             }
             if (!found) {

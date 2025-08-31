@@ -1,0 +1,7 @@
+services:
+  web:
+    build: .
+    container_name: productsdisplay_dev
+    env_file: .env
+    ports:
+      - "3007:3000"

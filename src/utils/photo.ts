@@ -38,8 +38,7 @@ async function getPaths(id: string) {
         }
         paths.sort();
         return paths;
-    } catch (error) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch {
         console.error("Error getting photos for " + id);
         return [];
     }

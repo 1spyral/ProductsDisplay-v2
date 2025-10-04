@@ -25,7 +25,9 @@ export default async function SearchResultsPage({
             <h1 className="text-2xl font-bold text-gray-900 uppercase mb-2">
               No Results Found
             </h1>
-            <p className="text-gray-700">No products found for "{query}"</p>
+            <p className="text-gray-700">
+              No products found for &quot;{query}&quot;
+            </p>
           </div>
         </div>
       </div>
@@ -40,7 +42,8 @@ export default async function SearchResultsPage({
         </h1>
         <p className="text-gray-700 mt-2">
           Found {products.length}{" "}
-          {products.length === 1 ? "product" : "products"} for "{query}"
+          {products.length === 1 ? "product" : "products"} for &quot;{query}
+          &quot;
         </p>
       </div>
       <div className="py-2">

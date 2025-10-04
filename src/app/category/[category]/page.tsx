@@ -49,7 +49,7 @@ export default async function CategoryPage({
           {filteredData.length === 1 ? "product" : "products"} available
         </p>
       </div>
-      <div className="py-2">
+      <div className="py-2 px-4 sm:px-8">
         <ProductList products={filteredData} />
       </div>
     </div>

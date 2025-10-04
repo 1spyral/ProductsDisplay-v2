@@ -46,7 +46,7 @@ export default async function SearchResultsPage({
           &quot;
         </p>
       </div>
-      <div className="py-2">
+      <div className="py-2 px-4 sm:px-8">
         <ProductList products={products} />
       </div>
     </div>

@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# Environment files
+.env
+.env*.local
+
+# Logs
+*.log
+
+# Docker
+docker-compose*.yml
+Dockerfile
+
+# Git
+.git/
+.gitignore
+
+# Public assets
+public/
+
+# Drizzle migrations (optional - remove if you want to format these)
+drizzle/
+

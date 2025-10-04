@@ -1,29 +1,29 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: [ "main", "development" ]
-  pull_request:
-    branches: [ "main" ]
+    push:
+        branches: ["main", "development"]
+    pull_request:
+        branches: ["main"]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
 
-      # Write GitHub secrets to .env file
-      - name: Create .env file with secrets
-        run: |
-          echo "NAME=${{ secrets.NAME }}" >> .env
-          echo "COPYRIGHT=${{ secrets.COPYRIGHT }}" >> .env
-          
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-          
-          echo "IMAGE_PATH=${{ secrets.IMAGE_PATH }}" >> .env  
+            # Write GitHub secrets to .env file
+            - name: Create .env file with secrets
+              run: |
+                  echo "NAME=${{ secrets.NAME }}" >> .env
+                  echo "COPYRIGHT=${{ secrets.COPYRIGHT }}" >> .env
 
-      # Build the Docker image
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --network=host --tag my-image-name:$(date +%s)
+                  echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+
+                  echo "IMAGE_PATH=${{ secrets.IMAGE_PATH }}" >> .env
+
+            # Build the Docker image
+            - name: Build the Docker image
+              run: docker build . --file Dockerfile --network=host --tag my-image-name:$(date +%s)

@@ -1,9 +1,17 @@
 import React from "react";
 
-export default function Dot({ dotIndex, index, setIndex }: { dotIndex: number, index: number, setIndex: (index: number) => void }) {
-    return (
-        <div
-            className={`
+export default function Dot({
+  dotIndex,
+  index,
+  setIndex,
+}: {
+  dotIndex: number;
+  index: number;
+  setIndex: (index: number) => void;
+}) {
+  return (
+    <div
+      className={`
                 inline-block 
                 w-2.5 
                 h-2.5 
@@ -15,10 +23,10 @@ export default function Dot({ dotIndex, index, setIndex }: { dotIndex: number, i
                 ease-in-out 
                 duration-300
             `}
-            onClick={(e: React.MouseEvent) => {
-                setIndex(dotIndex);
-                e.preventDefault();
-            }}
-        />
-    );
+      onClick={(e: React.MouseEvent) => {
+        setIndex(dotIndex);
+        e.preventDefault();
+      }}
+    />
+  );
 }

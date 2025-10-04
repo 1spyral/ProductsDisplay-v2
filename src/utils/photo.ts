@@ -1,10 +1,10 @@
 "use server";
 
-import Product from"@/types/Product";
+import Product from "@/types/Product";
 import Photo from "@/types/Photo";
 import { unstable_cache as cache } from "next/cache";
 
-const EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif"]
+const EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif"];
 
 async function getPaths(id: string) {
     try {
@@ -18,10 +18,10 @@ async function getPaths(id: string) {
                 const filePath = dir + i + ext;
                 try {
                     const response = await fetch(filePath, {
-                        cache: 'no-store',
+                        cache: "no-store",
                         headers: {
-                            'Cache-Control': 'no-cache'
-                        }
+                            "Cache-Control": "no-cache",
+                        },
                     });
                     if (response.ok) {
                         paths.push(filePath);
@@ -38,19 +38,23 @@ async function getPaths(id: string) {
         }
         paths.sort();
         return paths;
-    } 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    catch (error) {
+    } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         console.error("Error getting photos for " + id);
         return [];
     }
 }
 
-function buildPhoto(id: string, filePath: string, name: string, index: number): Photo {
+function buildPhoto(
+    id: string,
+    filePath: string,
+    name: string,
+    index: number
+): Photo {
     return {
         id: id,
         path: filePath,
-        alt: `${name} ${index + 1}`
+        alt: `${name} ${index + 1}`,
     };
 }
 
@@ -67,7 +71,7 @@ async function getPhotos({ id, name }: Product) {
     return photos;
 }
 
-export default cache(getPhotos,
-    ["photos"],
-    { revalidate: 43200, tags: ["photos"] }
-)
+export default cache(getPhotos, ["photos"], {
+    revalidate: 43200,
+    tags: ["photos"],
+});

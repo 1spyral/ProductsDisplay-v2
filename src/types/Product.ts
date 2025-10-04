@@ -1,6 +1,6 @@
 export default interface Product {
-    id: string
-    name: string | null
-    description: string | null
-    category: string
+    id: string;
+    name: string | null;
+    description: string | null;
+    category: string;
 }

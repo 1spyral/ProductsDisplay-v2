@@ -4,9 +4,7 @@ import { getProducts } from "@/db/queries/productQueries";
 export const revalidate = 43200;
 
 export default async function AllCategoryPage() {
-    const data = await getProducts();
+  const data = await getProducts();
 
-    return (
-        <ProductList products={data} />
-    );
+  return <ProductList products={data} />;
 }

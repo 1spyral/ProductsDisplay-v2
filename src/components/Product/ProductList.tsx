@@ -8,7 +8,7 @@ export default async function ProductList({
   products: Product[];
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-4/5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 w-full">
       {products.map(async (product) => (
         <ProductBox
           key={product.id}

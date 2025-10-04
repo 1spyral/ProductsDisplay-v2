@@ -17,12 +17,35 @@ export default async function SearchResultsPage({
 
   const products: Product[] = await search(searchQuery);
 
+  if (!products.length) {
+    return (
+      <div className="bg-gray-50 min-h-full p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white border-3 border-gray-400 p-8 text-center">
+            <h1 className="text-2xl font-bold text-gray-900 uppercase mb-2">
+              No Results Found
+            </h1>
+            <p className="text-gray-700">No products found for "{query}"</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <h1 className="text-2xl font-bold mb-4 px-20">Search for {query}</h1>
-      <div className="w-full flex justify-center">
+    <div className="bg-gray-50 min-h-full">
+      <div className="bg-white border-b-4 border-slate-700 py-6 px-4 mb-2">
+        <h1 className="text-3xl font-bold text-gray-900 uppercase tracking-wide">
+          Search Results
+        </h1>
+        <p className="text-gray-700 mt-2">
+          Found {products.length}{" "}
+          {products.length === 1 ? "product" : "products"} for "{query}"
+        </p>
+      </div>
+      <div className="py-2">
         <ProductList products={products} />
       </div>
-    </>
+    </div>
   );
 }

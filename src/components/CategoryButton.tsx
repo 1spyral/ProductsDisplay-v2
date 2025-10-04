@@ -9,9 +9,13 @@ export default function CategoryButton({
   return (
     <Link
       href={`/category/${category?.category || ""}`}
-      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm"
+      className="block bg-white border-3 border-gray-400 hover:border-slate-700 hover:bg-gray-50 transition-colors duration-200 p-6"
     >
-      {category ? getCategoryName(category) : "All"}
+      <div className="flex flex-col items-center justify-center text-center h-full min-h-[100px]">
+        <h3 className="text-xl font-bold text-gray-900 uppercase tracking-wide">
+          {category ? getCategoryName(category) : "All Products"}
+        </h3>
+      </div>
     </Link>
   );
 }

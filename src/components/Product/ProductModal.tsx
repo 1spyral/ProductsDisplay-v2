@@ -15,24 +15,24 @@ export default function ProductModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-      <div className="relative bg-white w-[90%] h-[90%] sm:w-4/5 sm:h-4/5 sm:p-6 rounded-lg shadow-xl">
+    <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4">
+      <div className="relative bg-white w-full h-full max-w-7xl border-4 border-slate-900">
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 text-gray-600 hover:text-red-500 focus:outline-hidden transition-colors duration-75 z-100"
+          className="absolute top-0 right-0 bg-slate-800 hover:bg-red-700 text-white font-bold px-6 py-4 transition-colors duration-200 z-50 border-l-4 border-b-4 border-slate-900"
           aria-label="Close Modal"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 hover:stroke-2 transition-stroke duration-75"
+            className="h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
+            strokeWidth={3}
           >
             <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
+              strokeLinecap="square"
+              strokeLinejoin="miter"
               d="M6 18L18 6M6 6l12 12"
             />
           </svg>

@@ -9,7 +9,7 @@ export default function CategoryLayout({
 }) {
   return (
     <>
-      <div className="w-full flex justify-center">{children}</div>
+      <div className="w-full">{children}</div>
       <div>{modal}</div>
     </>
   );

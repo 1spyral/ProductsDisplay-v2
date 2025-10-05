@@ -20,6 +20,7 @@
     "node": "22.x.x"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.17.1",
     "@tailwindcss/postcss": "^4.0.4",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.39.1",

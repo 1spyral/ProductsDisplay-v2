@@ -4,6 +4,7 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getProducts, updateProduct, checkProductIdExists } from "@/db/queries/productQueries";
 import { getCategories } from "@/db/queries/categoryQueries";
+import { uploadProductImage, deleteProductImage, updateImagePosition, reorderProductImages } from "@/lib/imageService";
 
 // TODO: Update to Redis-based rate limiting (e.g., @upstash/ratelimit) for production
 // Rate limiting store for server actions
@@ -193,5 +194,95 @@ export async function checkAdminProductIdExists(id: string) {
     } catch (error) {
         console.error("Failed to check product ID:", error);
         throw new Error("Failed to check product ID");
+    }
+}
+
+// Image Management Actions
+
+export async function uploadAdminProductImage(formData: FormData) {
+    await requireAuth();
+    // Rate limit: 20 uploads per 15 minutes
+    await checkRateLimit("uploadAdminProductImage", 20, 15 * 60 * 1000);
+
+    try {
+        const file = formData.get('file') as File;
+        const productId = formData.get('productId') as string;
+        const position = formData.get('position') ? parseInt(formData.get('position') as string) : 0;
+
+        if (!file || !productId) {
+            throw new Error("File and product ID are required");
+        }
+
+        const result = await uploadProductImage({
+            file,
+            productId,
+            position,
+        });
+
+        if (!result.success) {
+            throw new Error(result.error || "Failed to upload image");
+        }
+
+        return result;
+    } catch (error) {
+        console.error("Failed to upload image:", error);
+        throw new Error(error instanceof Error ? error.message : "Failed to upload image");
+    }
+}
+
+export async function deleteAdminProductImage(imageId: string) {
+    await requireAuth();
+    // Rate limit: 50 deletions per 15 minutes
+    await checkRateLimit("deleteAdminProductImage", 50, 15 * 60 * 1000);
+
+    try {
+        const result = await deleteProductImage(imageId);
+        
+        if (!result.success) {
+            throw new Error(result.error || "Failed to delete image");
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete image:", error);
+        throw new Error(error instanceof Error ? error.message : "Failed to delete image");
+    }
+}
+
+export async function updateAdminImagePosition(imageId: string, position: number) {
+    await requireAuth();
+    // Rate limit: 100 updates per 15 minutes
+    await checkRateLimit("updateAdminImagePosition", 100, 15 * 60 * 1000);
+
+    try {
+        const result = await updateImagePosition(imageId, position);
+        
+        if (!result.success) {
+            throw new Error(result.error || "Failed to update image position");
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update image position:", error);
+        throw new Error(error instanceof Error ? error.message : "Failed to update image position");
+    }
+}
+
+export async function reorderAdminProductImages(productId: string, imageIds: string[]) {
+    await requireAuth();
+    // Rate limit: 50 reorders per 15 minutes
+    await checkRateLimit("reorderAdminProductImages", 50, 15 * 60 * 1000);
+
+    try {
+        const result = await reorderProductImages(productId, imageIds);
+        
+        if (!result.success) {
+            throw new Error(result.error || "Failed to reorder images");
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to reorder images:", error);
+        throw new Error(error instanceof Error ? error.message : "Failed to reorder images");
     }
 }

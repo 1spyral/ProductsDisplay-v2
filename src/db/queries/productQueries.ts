@@ -57,10 +57,39 @@ export async function getProductsByIds(ids: string[]): Promise<Product[]> {
 export async function updateProduct(
     id: string,
     data: {
+        newId?: string;
         name?: string | null;
         description?: string | null;
         category?: string;
     }
 ): Promise<void> {
-    await db.update(products).set(data).where(eq(products.id, id));
+    // If ID is being changed, we need to handle it specially
+    if (data.newId && data.newId !== id) {
+        // First, check if the new ID already exists
+        const existingProduct = await getProductById(data.newId);
+        if (existingProduct) {
+            throw new Error(`Product with ID "${data.newId}" already exists`);
+        }
+        
+        // Update all fields including the ID
+        await db.update(products).set({
+            id: data.newId,
+            name: data.name,
+            description: data.description,
+            category: data.category,
+        }).where(eq(products.id, id));
+    } else {
+        // Regular update without ID change
+        const updateData: any = {};
+        if (data.name !== undefined) updateData.name = data.name;
+        if (data.description !== undefined) updateData.description = data.description;
+        if (data.category !== undefined) updateData.category = data.category;
+        
+        await db.update(products).set(updateData).where(eq(products.id, id));
+    }
+}
+
+export async function checkProductIdExists(id: string): Promise<boolean> {
+    const product = await getProductById(id);
+    return product !== null;
 }

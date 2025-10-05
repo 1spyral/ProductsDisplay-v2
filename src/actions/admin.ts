@@ -2,7 +2,7 @@
 
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getProducts, updateProduct } from "@/db/queries/productQueries";
+import { getProducts, updateProduct, checkProductIdExists } from "@/db/queries/productQueries";
 import { getCategories } from "@/db/queries/categoryQueries";
 
 // TODO: Update to Redis-based rate limiting (e.g., @upstash/ratelimit) for production
@@ -145,6 +145,7 @@ export async function getAdminCategories() {
 export async function updateAdminProduct(
     id: string,
     data: {
+        newId?: string;
         name?: string | null;
         description?: string | null;
         category?: string;
@@ -155,10 +156,42 @@ export async function updateAdminProduct(
     await checkRateLimit("updateAdminProduct", 50, 15 * 60 * 1000);
 
     try {
+        // Validate new ID format if provided
+        if (data.newId && data.newId !== id) {
+            // Basic ID validation
+            if (!data.newId.trim()) {
+                throw new Error("Product ID cannot be empty");
+            }
+            if (data.newId.length > 255) {
+                throw new Error("Product ID too long (max 255 characters)");
+            }
+            // You can add more validation rules here (e.g., no special characters)
+            if (!/^[a-zA-Z0-9-_]+$/.test(data.newId)) {
+                throw new Error("Product ID can only contain letters, numbers, hyphens, and underscores");
+            }
+        }
+
         await updateProduct(id, data);
         return { success: true };
     } catch (error) {
         console.error("Failed to update product:", error);
+        // Return specific error messages for validation failures
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
         throw new Error("Failed to update product");
+    }
+}
+
+export async function checkAdminProductIdExists(id: string) {
+    await requireAuth();
+    // Rate limit: 100 requests per 15 minutes (more generous for real-time validation)
+    // await checkRateLimit("checkAdminProductIdExists", 100, 15 * 60 * 1000);
+
+    try {
+        return await checkProductIdExists(id);
+    } catch (error) {
+        console.error("Failed to check product ID:", error);
+        throw new Error("Failed to check product ID");
     }
 }

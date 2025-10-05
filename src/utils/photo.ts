@@ -1,7 +1,15 @@
-"use server";
-
 import Product, { ProductImage } from "@/types/Product";
 import Photo from "@/types/Photo";
+
+function getImageBasePath(): string {
+    return process.env.NEXT_PUBLIC_IMAGE_PATH || "";
+}
+
+// Build image URL - can be used in both server and client components
+export function buildImageUrl(productId: string, objectKey: string): string {
+    const cdnBase = getImageBasePath();
+    return `${cdnBase}${productId}/${objectKey}`;
+}
 
 function buildPhotoFromImage(
     image: ProductImage,
@@ -9,12 +17,9 @@ function buildPhotoFromImage(
     productName: string,
     index: number
 ): Photo {
-    const cdnBase = process.env.IMAGE_PATH || "";
-    const fullPath = `${cdnBase}${productId}/${image.objectKey}`;
-
     return {
         id: image.id,
-        path: fullPath,
+        path: buildImageUrl(productId, image.objectKey),
         alt: `${productName} ${index + 1}`,
     };
 }

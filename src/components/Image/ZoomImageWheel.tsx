@@ -20,7 +20,7 @@ export default function ZoomImageWheel({
 
   // Detect if device supports touch
   useEffect(() => {
-    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
   }, []);
 
   // Desktop: hover to zoom, mouse move to pan
@@ -35,11 +35,11 @@ export default function ZoomImageWheel({
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!isTouchDevice) return;
-    
+
     const touch = e.touches[0];
     touchStartPos.current = { x: touch.clientX, y: touch.clientY };
     setIsDragging(false);
-    
+
     if (!zoom) {
       setZoom(true);
       const { left, top, width, height } =
@@ -52,15 +52,15 @@ export default function ZoomImageWheel({
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isTouchDevice || !zoom) return;
-    
+
     const touch = e.touches[0];
     const deltaX = Math.abs(touch.clientX - touchStartPos.current.x);
     const deltaY = Math.abs(touch.clientY - touchStartPos.current.y);
-    
+
     if (deltaX > 5 || deltaY > 5) {
       setIsDragging(true);
     }
-    
+
     const { left, top, width, height } =
       e.currentTarget.getBoundingClientRect();
     const x = ((touch.clientX - left) / width) * 100;
@@ -70,11 +70,11 @@ export default function ZoomImageWheel({
 
   const handleTouchEnd = () => {
     if (!isTouchDevice) return;
-    
+
     if (zoom && !isDragging) {
       setZoom(false);
     }
-    
+
     setIsDragging(false);
   };
 
@@ -100,7 +100,7 @@ export default function ZoomImageWheel({
           Drag to pan • Tap to exit
         </div>
       )}
-      
+
       {photos.map((photo, i) => (
         <Image
           key={photo.alt}

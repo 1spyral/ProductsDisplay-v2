@@ -1,22 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { getAdminProducts, getAdminCategories } from "@/actions/admin";
-
-type Product = {
-  id: string;
-  name: string | null;
-  description: string | null;
-  category: string;
-};
-
-type Category = {
-  category: string;
-  name: string | null;
-};
+import Product from "@/types/Product";
+import Category from "@/types/Category";
+import { buildImageUrl } from "@/utils/photo";
 
 type SortField = "id" | "name" | "category";
 type SortOrder = "asc" | "desc";
+
+// Helper function to get the first image URL for a product
+function getProductThumbnailUrl(product: Product): string | null {
+  if (!product.images || product.images.length === 0) {
+    return null;
+  }
+  const firstImage = product.images[0];
+  return buildImageUrl(product.id, firstImage.objectKey);
+}
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -100,9 +101,9 @@ export default function ProductsPage() {
 
   if (loading) {
     return (
-      <div className="p-8">
-        <div className="bg-white border-3 border-gray-400 p-8 text-center">
-          <p className="text-xl font-bold text-gray-900 uppercase">
+      <div className="p-4 sm:p-6 md:p-8">
+        <div className="bg-white border-3 border-gray-400 p-6 sm:p-8 text-center">
+          <p className="text-lg sm:text-xl font-bold text-gray-900 uppercase">
             Loading...
           </p>
         </div>
@@ -111,24 +112,26 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 md:p-8">
       {/* Header */}
-      <div className="bg-white border-4 border-slate-700 p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-3xl font-bold text-gray-900 uppercase tracking-wide">
-            Products
-          </h1>
-          <button className="bg-slate-700 hover:bg-slate-900 text-white font-bold py-2 px-6 uppercase tracking-wide transition-colors duration-200">
+      <div className="bg-white border-4 border-slate-700 p-4 sm:p-6 mb-4 sm:mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex flex-col gap-3">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 uppercase tracking-wide">
+              Products
+            </h1>
+            <p className="text-sm sm:text-base text-gray-700">
+              {filteredAndSortedProducts.length} products found
+            </p>
+          </div>
+          <button className="bg-slate-700 hover:bg-slate-900 text-white font-bold py-2 px-4 sm:px-6 uppercase tracking-wide transition-colors duration-200 whitespace-nowrap">
             Add Product
           </button>
         </div>
-        <p className="text-gray-700">
-          {filteredAndSortedProducts.length} products found
-        </p>
       </div>
 
       {/* Filters & Sort */}
-      <div className="bg-white border-3 border-gray-400 p-6 mb-6">
+      <div className="bg-white border-3 border-gray-400 p-4 sm:p-6 mb-4 sm:mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Search */}
           <div>
@@ -203,30 +206,33 @@ export default function ProductsPage() {
       </div>
 
       {/* Products Table */}
-      <div className="bg-white border-3 border-gray-400">
-        <table className="w-full">
+      <div className="bg-white border-3 border-gray-400 overflow-x-auto">
+        <table className="w-full min-w-[640px]">
           <thead>
             <tr className="border-b-3 border-gray-400">
+              <th className="text-left p-2 sm:p-4 font-bold text-gray-900 uppercase tracking-wide w-16 sm:w-24 text-xs sm:text-sm">
+                Image
+              </th>
               <th
                 onClick={() => handleSort("id")}
-                className="text-left p-4 font-bold text-gray-900 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors"
+                className="text-left p-2 sm:p-4 font-bold text-gray-900 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors text-xs sm:text-sm"
               >
                 ID {sortField === "id" && (sortOrder === "asc" ? "↑" : "↓")}
               </th>
               <th
                 onClick={() => handleSort("name")}
-                className="text-left p-4 font-bold text-gray-900 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors"
+                className="text-left p-2 sm:p-4 font-bold text-gray-900 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors text-xs sm:text-sm"
               >
                 Name {sortField === "name" && (sortOrder === "asc" ? "↑" : "↓")}
               </th>
               <th
                 onClick={() => handleSort("category")}
-                className="text-left p-4 font-bold text-gray-900 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors"
+                className="text-left p-2 sm:p-4 font-bold text-gray-900 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors text-xs sm:text-sm"
               >
                 Category{" "}
                 {sortField === "category" && (sortOrder === "asc" ? "↑" : "↓")}
               </th>
-              <th className="text-right p-4 font-bold text-gray-900 uppercase tracking-wide">
+              <th className="text-right p-2 sm:p-4 font-bold text-gray-900 uppercase tracking-wide text-xs sm:text-sm">
                 Actions
               </th>
             </tr>
@@ -234,33 +240,62 @@ export default function ProductsPage() {
           <tbody>
             {filteredAndSortedProducts.length === 0 ? (
               <tr>
-                <td colSpan={4} className="text-center p-8 text-gray-600">
+                <td
+                  colSpan={5}
+                  className="text-center p-4 sm:p-8 text-sm sm:text-base text-gray-600"
+                >
                   No products found
                 </td>
               </tr>
             ) : (
-              filteredAndSortedProducts.map((product) => (
-                <tr
-                  key={product.id}
-                  className="border-b-2 border-gray-300 hover:bg-gray-50 transition-colors"
-                >
-                  <td className="p-4 font-mono text-sm">{product.id}</td>
-                  <td className="p-4">
-                    {product.name || (
-                      <span className="text-gray-500 italic">No name</span>
-                    )}
-                  </td>
-                  <td className="p-4">{product.category}</td>
-                  <td className="p-4 text-right">
-                    <button className="bg-slate-700 hover:bg-slate-900 text-white font-bold py-1 px-4 text-sm uppercase transition-colors duration-200 mr-2">
-                      Edit
-                    </button>
-                    <button className="bg-red-700 hover:bg-red-900 text-white font-bold py-1 px-4 text-sm uppercase transition-colors duration-200">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
+              filteredAndSortedProducts.map((product) => {
+                const imageUrl = getProductThumbnailUrl(product);
+                return (
+                  <tr
+                    key={product.id}
+                    className="border-b-2 border-gray-300 hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="p-2 sm:p-4">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 relative bg-gray-100 border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
+                        {imageUrl ? (
+                          <Image
+                            src={imageUrl}
+                            alt={product.name || product.id}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <span className="text-gray-400 text-[10px] sm:text-xs text-center px-1">
+                            No Image
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="p-2 sm:p-4 font-mono text-xs sm:text-sm">
+                      {product.id}
+                    </td>
+                    <td className="p-2 sm:p-4 text-sm sm:text-base">
+                      {product.name || (
+                        <span className="text-gray-500 italic">No name</span>
+                      )}
+                    </td>
+                    <td className="p-2 sm:p-4 text-sm sm:text-base">
+                      {product.category}
+                    </td>
+                    <td className="p-2 sm:p-4 text-right">
+                      <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 justify-end">
+                        <button className="bg-slate-700 hover:bg-slate-900 text-white font-bold py-1 px-2 sm:px-4 text-xs sm:text-sm uppercase transition-colors duration-200 whitespace-nowrap">
+                          Edit
+                        </button>
+                        <button className="bg-red-700 hover:bg-red-900 text-white font-bold py-1 px-2 sm:px-4 text-xs sm:text-sm uppercase transition-colors duration-200 whitespace-nowrap">
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { 
   DndContext, 
@@ -26,23 +26,36 @@ import {
   deleteAdminProductImage, 
   reorderAdminProductImages 
 } from "@/actions/admin";
-import Modal from "./Modal";
+import Modal from "../Modal";
 
-interface ImageManagerProps {
-  productId: string;
-  images: ProductImage[];
-  onImagesUpdated: () => void;
+// Types for the unified component
+interface ImageItem {
+  id: string;
+  type: 'file' | 'existing';
+  file?: File; // For new uploads
+  productImage?: ProductImage; // For existing images
+  position: number;
 }
 
-interface SortableImageTileProps {
-  image: ProductImage;
-  productId: string;
-  onDelete: (imageId: string) => void;
-  onView: (imageUrl: string, alt: string) => void;
+interface UnifiedImageManagerProps {
+  mode: 'add' | 'edit';
+  productId?: string; // Required for edit mode
+  existingImages?: ProductImage[]; // For edit mode
+  selectedFiles?: File[]; // For add mode
+  onFilesChange?: (files: File[]) => void; // For add mode
+  onImagesUpdated?: () => void; // For edit mode
 }
 
-// Individual sortable image tile component
-function SortableImageTile({ image, productId, onDelete, onView }: SortableImageTileProps) {
+// Sortable tile component that handles both file previews and existing images
+interface SortableTileProps {
+  item: ImageItem;
+  productId?: string;
+  onRemove: (id: string) => void;
+  onView?: (imageUrl: string, alt: string) => void;
+  mode: 'add' | 'edit';
+}
+
+function SortableTile({ item, productId, onRemove, onView, mode }: SortableTileProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -53,7 +66,7 @@ function SortableImageTile({ image, productId, onDelete, onView }: SortableImage
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: image.id });
+  } = useSortable({ id: item.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -61,24 +74,42 @@ function SortableImageTile({ image, productId, onDelete, onView }: SortableImage
     opacity: isDragging ? 0.8 : 1,
   };
 
-  const imageUrl = buildImageUrl(productId, image.objectKey);
+  // Get image source based on type
+  const getImageSrc = () => {
+    if (item.type === 'file' && item.file) {
+      return URL.createObjectURL(item.file);
+    } else if (item.type === 'existing' && item.productImage && productId) {
+      return buildImageUrl(productId, item.productImage.objectKey);
+    }
+    return '';
+  };
 
-  const handleDelete = async (e: React.MouseEvent) => {
+  const getImageAlt = () => {
+    if (item.type === 'file') {
+      return `Selected image ${item.position + 1}`;
+    } else {
+      return `Product image ${item.position + 1}`;
+    }
+  };
+
+  const handleRemove = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isDeleting) return;
     
     setIsDeleting(true);
     try {
-      await onDelete(image.id);
+      await onRemove(item.id);
     } catch (error) {
-      console.error('Failed to delete image:', error);
+      console.error('Failed to remove image:', error);
     } finally {
       setIsDeleting(false);
     }
   };
 
   const handleView = () => {
-    onView(imageUrl, `Product image ${image.position + 1}`);
+    if (onView && (mode === 'edit' || item.type === 'file')) {
+      onView(getImageSrc(), getImageAlt());
+    }
   };
 
   return (
@@ -102,22 +133,25 @@ function SortableImageTile({ image, productId, onDelete, onView }: SortableImage
         </svg>
       </div>
 
-      <div className="aspect-square relative cursor-pointer" onClick={handleView}>
+      <div 
+        className={`aspect-square relative ${onView ? 'cursor-pointer' : ''}`} 
+        onClick={handleView}
+      >
         <Image
-          src={imageUrl}
-          alt={`Product image ${image.position + 1}`}
+          src={getImageSrc()}
+          alt={getImageAlt()}
           fill
           className="object-cover"
           unoptimized
         />
         
-        {/* Delete button on hover */}
+        {/* Remove button */}
         {isHovered && (
           <button
-            onClick={handleDelete}
+            onClick={handleRemove}
             disabled={isDeleting}
             className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 shadow-lg transition-colors duration-200 disabled:opacity-50 z-10"
-            title="Delete image"
+            title="Remove image"
           >
             {isDeleting ? (
               <div className="animate-spin h-3 w-3 border-2 border-white border-t-transparent rounded-full"></div>
@@ -135,14 +169,14 @@ function SortableImageTile({ image, productId, onDelete, onView }: SortableImage
 
         {/* Position indicator */}
         <div className="absolute bottom-1 left-1 bg-black bg-opacity-60 text-white text-xs px-1.5 py-0.5 rounded">
-          {image.position + 1}
+          {item.position + 1}
         </div>
       </div>
     </div>
   );
 }
 
-// Full-size image viewer modal
+// Image viewer modal
 interface ImageViewerModalProps {
   isOpen: boolean;
   imageUrl: string;
@@ -174,14 +208,19 @@ function ImageViewerModal({ isOpen, imageUrl, alt, onClose }: ImageViewerModalPr
   );
 }
 
-export default function ImageManager({ productId, images, onImagesUpdated }: ImageManagerProps) {
-  const [sortedImages, setSortedImages] = useState<ProductImage[]>(images);
+export default function UnifiedImageManager({
+  mode,
+  productId,
+  existingImages = [],
+  selectedFiles = [],
+  onFilesChange,
+  onImagesUpdated,
+}: UnifiedImageManagerProps) {
+  const [dragActive, setDragActive] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [viewerImage, setViewerImage] = useState<{ url: string; alt: string } | null>(null);
-  
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [dragActive, setDragActive] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -190,16 +229,23 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
     })
   );
 
-  // Update sorted images when props change
-  useEffect(() => {
-    setSortedImages([...images].sort((a, b) => a.position - b.position));
-  }, [images]);
-
-  // Also update editingProduct state when product ID changes (for migration scenarios)
-  useEffect(() => {
-    // Reset upload error when product changes
-    setUploadError("");
-  }, [productId]);
+  // Convert images/files to unified format
+  const imageItems: ImageItem[] = [
+    // Existing images (for edit mode)
+    ...existingImages.map((img): ImageItem => ({
+      id: img.id,
+      type: 'existing',
+      productImage: img,
+      position: img.position,
+    })),
+    // Selected files (for add mode)
+    ...selectedFiles.map((file, index): ImageItem => ({
+      id: `file-${file.name}-${index}`,
+      type: 'file',
+      file,
+      position: existingImages.length + index,
+    })),
+  ].sort((a, b) => a.position - b.position);
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -208,61 +254,101 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
       return;
     }
 
-    const oldIndex = sortedImages.findIndex((img) => img.id === active.id);
-    const newIndex = sortedImages.findIndex((img) => img.id === over.id);
+    const oldIndex = imageItems.findIndex((item) => item.id === active.id);
+    const newIndex = imageItems.findIndex((item) => item.id === over.id);
 
     if (oldIndex !== -1 && newIndex !== -1) {
-      const newOrder = arrayMove(sortedImages, oldIndex, newIndex);
-      setSortedImages(newOrder);
-
-      // Update positions in database
-      try {
-        const imageIds = newOrder.map(img => img.id);
-        await reorderAdminProductImages(productId, imageIds);
-        onImagesUpdated();
-      } catch (error) {
-        console.error('Failed to reorder images:', error);
-        // Revert on error
-        setSortedImages(sortedImages);
+      const newOrder = arrayMove(imageItems, oldIndex, newIndex);
+      
+      if (mode === 'add') {
+        // Update file order for add mode
+        const newFiles = newOrder
+          .filter(item => item.type === 'file')
+          .map(item => item.file!)
+          .filter(Boolean);
+        onFilesChange?.(newFiles);
+      } else if (mode === 'edit' && productId) {
+        // Update database order for edit mode
+        try {
+          const imageIds = newOrder
+            .filter(item => item.type === 'existing')
+            .map(item => item.productImage!.id);
+          await reorderAdminProductImages(productId, imageIds);
+          onImagesUpdated?.();
+        } catch (error) {
+          console.error('Failed to reorder images:', error);
+          setUploadError('Failed to reorder images');
+        }
       }
     }
   };
 
   const handleFileSelect = async (files: FileList) => {
-    if (files.length === 0) return;
+    const validFiles = Array.from(files).filter(file => {
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        console.warn(`Skipped non-image file: ${file.name}`);
+        return false;
+      }
+      // Check file size (4MB limit)
+      if (file.size > 4 * 1024 * 1024) {
+        console.warn(`Skipped large file (${Math.round(file.size / 1024 / 1024)}MB): ${file.name}`);
+        return false;
+      }
+      return true;
+    });
+    
+    if (validFiles.length !== files.length) {
+      const skipped = files.length - validFiles.length;
+      setUploadError(`Skipped ${skipped} file(s) - only JPEG/PNG/WebP under 4MB are allowed`);
+      setTimeout(() => setUploadError(""), 3000);
+    }
+    
+    if (mode === 'add') {
+      // In add mode, just update the files list
+      onFilesChange?.([...selectedFiles, ...validFiles]);
+    } else if (mode === 'edit' && productId) {
+      // In edit mode, upload immediately
+      setIsUploading(true);
+      setUploadError("");
 
-    setIsUploading(true);
-    setUploadError("");
+      try {
+        const uploadPromises = validFiles.map(async (file, index) => {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('productId', productId);
+          formData.append('position', (existingImages.length + index).toString());
 
-    try {
-      // Upload files one by one
-      const uploadPromises = Array.from(files).map(async (file, index) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('productId', productId);
-        formData.append('position', (sortedImages.length + index).toString());
-
-        return uploadAdminProductImage(formData);
-      });
-      
-      await Promise.all(uploadPromises);
-      
-      // Refresh the images list
-      onImagesUpdated();
-    } catch (error) {
-      console.error('Failed to upload images:', error);
-      setUploadError(error instanceof Error ? error.message : 'Failed to upload images');
-    } finally {
-      setIsUploading(false);
+          return uploadAdminProductImage(formData);
+        });
+        
+        await Promise.all(uploadPromises);
+        onImagesUpdated?.();
+      } catch (error) {
+        console.error('Failed to upload images:', error);
+        setUploadError(error instanceof Error ? error.message : 'Failed to upload images');
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      handleFileSelect(e.target.files);
+  const handleRemoveItem = async (itemId: string) => {
+    const item = imageItems.find(i => i.id === itemId);
+    if (!item) return;
+
+    if (item.type === 'file') {
+      // Remove from files list
+      const newFiles = selectedFiles.filter((_, index) => `file-${selectedFiles[index].name}-${index}` !== itemId);
+      onFilesChange?.(newFiles);
+    } else if (item.type === 'existing' && item.productImage) {
+      // Delete from database
+      await deleteAdminProductImage(item.productImage.id);
+      onImagesUpdated?.();
     }
   };
 
+  // Drag and drop handlers
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragActive(false);
@@ -286,19 +372,6 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
     setDragActive(false);
   };
 
-  const handleDeleteImage = async (imageId: string) => {
-    try {
-      await deleteAdminProductImage(imageId);
-      // Immediately refresh the images list
-      onImagesUpdated();
-    } catch (error) {
-      console.error('Failed to delete image:', error);
-      // You might want to show an error message to the user
-      setUploadError(error instanceof Error ? error.message : 'Failed to delete image');
-      throw error; // Let the tile component handle the error display
-    }
-  };
-
   const openImageViewer = (url: string, alt: string) => {
     setViewerImage({ url, alt });
   };
@@ -315,27 +388,32 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
           Product Images
         </h3>
         <p className="text-xs text-gray-600">
-          {sortedImages.length} {sortedImages.length === 1 ? 'image' : 'images'} • Drag to reorder
+          {imageItems.length} {imageItems.length === 1 ? 'image' : 'images'} 
+          {mode === 'edit' ? ' • Drag to reorder' : ' selected'}
         </p>
       </div>
 
-      {/* Images Grid - constrained to available space */}
+      {/* Images Grid */}
       <div className="flex-1 overflow-y-auto py-3 min-h-0">
-        {sortedImages.length > 0 ? (
+        {imageItems.length > 0 ? (
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
           >
-            <SortableContext items={sortedImages.map(img => img.id)} strategy={verticalListSortingStrategy}>
+            <SortableContext 
+              items={imageItems.map(item => item.id)} 
+              strategy={verticalListSortingStrategy}
+            >
               <div className="grid grid-cols-3 gap-2">
-                {sortedImages.map((image) => (
-                  <SortableImageTile
-                    key={image.id}
-                    image={image}
+                {imageItems.map((item) => (
+                  <SortableTile
+                    key={item.id}
+                    item={item}
                     productId={productId}
-                    onDelete={handleDeleteImage}
-                    onView={openImageViewer}
+                    onRemove={handleRemoveItem}
+                    onView={mode === 'edit' ? openImageViewer : undefined}
+                    mode={mode}
                   />
                 ))}
               </div>
@@ -347,15 +425,15 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
               <svg className="w-8 h-8 mx-auto mb-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
               </svg>
-              <p className="text-xs">No images</p>
+              <p className="text-xs">{mode === 'add' ? 'No images selected' : 'No images'}</p>
             </div>
           </div>
         )}
       </div>
 
-      {/* Compact Upload Section */}
+      {/* Upload Section */}
       <div className="flex-shrink-0 pt-3 border-t border-gray-300">
-        <div
+        <div 
           className={`border-2 border-dashed rounded-lg p-3 text-center transition-colors duration-200 ${
             dragActive
               ? 'border-slate-700 bg-slate-50'
@@ -385,9 +463,9 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
                   className="text-slate-700 font-medium hover:text-slate-900 underline"
                   disabled={isUploading}
                 >
-                  Upload
+                  {mode === 'add' ? 'Select images' : 'Upload'}
                 </button>
-                {' '}or drag files (4MB max)
+                {' '}or drag & drop (4MB max each)
               </p>
             </>
           )}
@@ -404,7 +482,7 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
           type="file"
           accept="image/jpeg,image/png,image/webp"
           multiple
-          onChange={handleFileInputChange}
+          onChange={(e) => e.target.files && handleFileSelect(e.target.files)}
           className="hidden"
         />
       </div>

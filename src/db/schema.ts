@@ -23,7 +23,10 @@ export const products = pgTable(
         description: text(),
         category: text()
             .notNull()
-            .references(() => categories.category),
+            .references(() => categories.category, { 
+                onDelete: "restrict",
+                onUpdate: "cascade" 
+            }),
     },
     (table) => ({
         categoryIdx: index("products_category_idx").on(table.category),
@@ -36,7 +39,10 @@ export const productImages = pgTable(
         id: uuid().primaryKey().notNull().defaultRandom(),
         productId: text("product_id")
             .notNull()
-            .references(() => products.id),
+            .references(() => products.id, {
+                onDelete: "cascade",
+                onUpdate: "cascade"
+            }),
         createdAt: timestamp("created_at").notNull().defaultNow(),
         objectKey: text("object_key").notNull(),
         mimeType: text("mime_type").notNull(),

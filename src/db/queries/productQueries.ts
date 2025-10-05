@@ -16,7 +16,9 @@ export async function getProducts(): Promise<Product[]> {
         .from(products);
 }
 
-export async function getProductsByCategory(category: string): Promise<Product[]> {
+export async function getProductsByCategory(
+    category: string
+): Promise<Product[]> {
     return db
         .select({
             id: products.id,
@@ -44,7 +46,7 @@ export async function getProductById(id: string): Promise<Product | null> {
 
 export async function getProductsByIds(ids: string[]): Promise<Product[]> {
     if (ids.length === 0) return [];
-    
+
     return db
         .select({
             id: products.id,

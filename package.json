@@ -9,7 +9,12 @@
     "lint": "eslint .",
     "cp": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:drop": "drizzle-kit drop"
   },
   "engines": {
     "node": "22.x.x"

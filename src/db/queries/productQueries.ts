@@ -53,3 +53,14 @@ export async function getProductsByIds(ids: string[]): Promise<Product[]> {
         },
     });
 }
+
+export async function updateProduct(
+    id: string,
+    data: {
+        name?: string | null;
+        description?: string | null;
+        category?: string;
+    }
+): Promise<void> {
+    await db.update(products).set(data).where(eq(products.id, id));
+}

@@ -6,6 +6,7 @@ import { getAdminProducts, getAdminCategories } from "@/actions/admin";
 import Product from "@/types/Product";
 import Category from "@/types/Category";
 import { buildImageUrl } from "@/utils/photo";
+import EditProductModal from "@/components/EditProductModal";
 
 type SortField = "id" | "name" | "category";
 type SortOrder = "asc" | "desc";
@@ -31,6 +32,10 @@ export default function ProductsPage() {
   // Sorting
   const [sortField, setSortField] = useState<SortField>("id");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+
+  // Edit modal
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -97,6 +102,20 @@ export default function ProductsPage() {
       setSortField(field);
       setSortOrder("asc");
     }
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingProduct(null);
+  };
+
+  const handleProductUpdated = () => {
+    fetchData(); // Refresh the products list
   };
 
   if (loading) {
@@ -285,7 +304,10 @@ export default function ProductsPage() {
                     </td>
                     <td className="p-2 sm:p-4 text-right">
                       <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 justify-end">
-                        <button className="bg-slate-700 hover:bg-slate-900 text-white font-bold py-1 px-2 sm:px-4 text-xs sm:text-sm uppercase transition-colors duration-200 whitespace-nowrap">
+                        <button 
+                          onClick={() => handleEditProduct(product)}
+                          className="bg-slate-700 hover:bg-slate-900 text-white font-bold py-1 px-2 sm:px-4 text-xs sm:text-sm uppercase transition-colors duration-200 whitespace-nowrap"
+                        >
                           Edit
                         </button>
                         <button className="bg-red-700 hover:bg-red-900 text-white font-bold py-1 px-2 sm:px-4 text-xs sm:text-sm uppercase transition-colors duration-200 whitespace-nowrap">
@@ -300,6 +322,17 @@ export default function ProductsPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Edit Product Modal */}
+      {editingProduct && (
+        <EditProductModal
+          product={editingProduct}
+          categories={categories}
+          isOpen={isEditModalOpen}
+          onClose={handleCloseEditModal}
+          onProductUpdated={handleProductUpdated}
+        />
+      )}
     </div>
   );
 }

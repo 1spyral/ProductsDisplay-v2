@@ -2,7 +2,7 @@
 
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getProducts } from "@/db/queries/productQueries";
+import { getProducts, updateProduct } from "@/db/queries/productQueries";
 import { getCategories } from "@/db/queries/categoryQueries";
 
 // TODO: Update to Redis-based rate limiting (e.g., @upstash/ratelimit) for production
@@ -139,5 +139,26 @@ export async function getAdminCategories() {
     } catch (error) {
         console.error("Failed to fetch categories:", error);
         throw new Error("Failed to fetch categories");
+    }
+}
+
+export async function updateAdminProduct(
+    id: string,
+    data: {
+        name?: string | null;
+        description?: string | null;
+        category?: string;
+    }
+) {
+    await requireAuth();
+    // Rate limit: 50 requests per 15 minutes
+    await checkRateLimit("updateAdminProduct", 50, 15 * 60 * 1000);
+
+    try {
+        await updateProduct(id, data);
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to update product:", error);
+        throw new Error("Failed to update product");
     }
 }

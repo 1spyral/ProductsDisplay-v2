@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     allowedDevOrigins: ["http://localhost:3000"],
     experimental: {
         serverActions: {
-            bodySizeLimit: '4mb',
+            bodySizeLimit: "4mb",
         },
     },
     webpack(config) {

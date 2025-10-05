@@ -11,7 +11,7 @@ interface ProductNameFieldProps {
 export function ProductNameField({
   value,
   onChange,
-  placeholder = "Enter product name..."
+  placeholder = "Enter product name...",
 }: ProductNameFieldProps) {
   return (
     <div>
@@ -40,7 +40,7 @@ export function ProductDescriptionField({
   value,
   onChange,
   placeholder = "Enter product description...",
-  rows = 4
+  rows = 4,
 }: ProductDescriptionFieldProps) {
   return (
     <div>
@@ -69,7 +69,7 @@ export function ProductCategoryField({
   value,
   onChange,
   categories,
-  required = true
+  required = true,
 }: ProductCategoryFieldProps) {
   return (
     <div>

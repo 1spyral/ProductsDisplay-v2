@@ -6,8 +6,15 @@ import { createAdminProduct, uploadAdminProductImage } from "@/actions/admin";
 import { useProductForm } from "@/hooks/useProductForm";
 import ProductFormModal from "./ProductForm/ProductFormModal";
 import ProductIdField from "./ProductForm/ProductIdField";
-import { ProductNameField, ProductDescriptionField, ProductCategoryField } from "./ProductForm/ProductTextFields";
-import { ProductFormError, ProductFormActions } from "./ProductForm/ProductFormActions";
+import {
+  ProductNameField,
+  ProductDescriptionField,
+  ProductCategoryField,
+} from "./ProductForm/ProductTextFields";
+import {
+  ProductFormError,
+  ProductFormActions,
+} from "./ProductForm/ProductFormActions";
 import UnifiedImageManager from "./ProductForm/UnifiedImageManager";
 
 interface AddProductModalProps {
@@ -34,10 +41,10 @@ export default function AddProductModal({
     validation,
     isFormValid,
     resetForm,
-    getAddFormData
+    getAddFormData,
   } = useProductForm({
     categories,
-    mode: "add"
+    mode: "add",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,7 +54,7 @@ export default function AddProductModal({
 
     try {
       const submitData = getAddFormData();
-      
+
       // Create the product first
       await createAdminProduct(submitData);
 
@@ -56,20 +63,20 @@ export default function AddProductModal({
         try {
           const uploadPromises = selectedFiles.map(async (file, index) => {
             const uploadFormData = new FormData();
-            uploadFormData.append('file', file);
-            uploadFormData.append('productId', submitData.id);
-            uploadFormData.append('position', index.toString());
+            uploadFormData.append("file", file);
+            uploadFormData.append("productId", submitData.id);
+            uploadFormData.append("position", index.toString());
 
             return uploadAdminProductImage(uploadFormData);
           });
-          
+
           await Promise.all(uploadPromises);
         } catch (uploadError) {
-          console.error('Failed to upload some images:', uploadError);
+          console.error("Failed to upload some images:", uploadError);
           // Product is created but images failed - still consider it a success
         }
       }
-      
+
       onProductCreated();
       handleClose();
     } catch (error: unknown) {
@@ -104,24 +111,24 @@ export default function AddProductModal({
     <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-4">
       <ProductIdField
         value={formData.id}
-        onChange={(value) => updateField('id', value)}
+        onChange={(value) => updateField("id", value)}
         validation={validation}
         required
       />
 
       <ProductNameField
         value={formData.name}
-        onChange={(value) => updateField('name', value)}
+        onChange={(value) => updateField("name", value)}
       />
 
       <ProductDescriptionField
         value={formData.description}
-        onChange={(value) => updateField('description', value)}
+        onChange={(value) => updateField("description", value)}
       />
 
       <ProductCategoryField
         value={formData.category}
-        onChange={(value) => updateField('category', value)}
+        onChange={(value) => updateField("category", value)}
         categories={categories}
         required
       />

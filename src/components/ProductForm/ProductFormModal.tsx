@@ -18,7 +18,7 @@ export default function ProductFormModal({
   title,
   leftPanel,
   rightPanel,
-  className = ""
+  className = "",
 }: ProductFormModalProps) {
   return (
     <Modal
@@ -35,9 +35,7 @@ export default function ProductFormModal({
         </div>
 
         {/* Right Panel - Form Fields */}
-        <div className="w-1/2 pl-6 flex flex-col">
-          {rightPanel}
-        </div>
+        <div className="w-1/2 pl-6 flex flex-col">{rightPanel}</div>
       </div>
     </Modal>
   );

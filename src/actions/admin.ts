@@ -2,9 +2,20 @@
 
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getProducts, updateProduct, checkProductIdExists, createProduct, deleteProduct } from "@/db/queries/productQueries";
+import {
+    getProducts,
+    updateProduct,
+    checkProductIdExists,
+    createProduct,
+    deleteProduct,
+} from "@/db/queries/productQueries";
 import { getCategories } from "@/db/queries/categoryQueries";
-import { uploadProductImage, deleteProductImage, updateImagePosition, reorderProductImages } from "@/lib/imageService";
+import {
+    uploadProductImage,
+    deleteProductImage,
+    updateImagePosition,
+    reorderProductImages,
+} from "@/lib/imageService";
 
 // TODO: Update to Redis-based rate limiting (e.g., @upstash/ratelimit) for production
 // Rate limiting store for server actions
@@ -162,7 +173,9 @@ export async function createAdminProduct(data: {
             throw new Error("Product ID too long (max 255 characters)");
         }
         if (!/^[a-zA-Z0-9-_]+$/.test(data.id)) {
-            throw new Error("Product ID can only contain letters, numbers, hyphens, and underscores");
+            throw new Error(
+                "Product ID can only contain letters, numbers, hyphens, and underscores"
+            );
         }
 
         await createProduct({
@@ -171,7 +184,7 @@ export async function createAdminProduct(data: {
             description: data.description?.trim() || null,
             category: data.category,
         });
-        
+
         return { success: true, productId: data.id };
     } catch (error) {
         console.error("Failed to create product:", error);
@@ -226,7 +239,9 @@ export async function updateAdminProduct(
             }
             // You can add more validation rules here (e.g., no special characters)
             if (!/^[a-zA-Z0-9-_]+$/.test(data.newId)) {
-                throw new Error("Product ID can only contain letters, numbers, hyphens, and underscores");
+                throw new Error(
+                    "Product ID can only contain letters, numbers, hyphens, and underscores"
+                );
             }
         }
 
@@ -263,9 +278,11 @@ export async function uploadAdminProductImage(formData: FormData) {
     await checkRateLimit("uploadAdminProductImage", 20, 15 * 60 * 1000);
 
     try {
-        const file = formData.get('file') as File;
-        const productId = formData.get('productId') as string;
-        const position = formData.get('position') ? parseInt(formData.get('position') as string) : 0;
+        const file = formData.get("file") as File;
+        const productId = formData.get("productId") as string;
+        const position = formData.get("position")
+            ? parseInt(formData.get("position") as string)
+            : 0;
 
         if (!file || !productId) {
             throw new Error("File and product ID are required");
@@ -284,7 +301,9 @@ export async function uploadAdminProductImage(formData: FormData) {
         return result;
     } catch (error) {
         console.error("Failed to upload image:", error);
-        throw new Error(error instanceof Error ? error.message : "Failed to upload image");
+        throw new Error(
+            error instanceof Error ? error.message : "Failed to upload image"
+        );
     }
 }
 
@@ -295,7 +314,7 @@ export async function deleteAdminProductImage(imageId: string) {
 
     try {
         const result = await deleteProductImage(imageId);
-        
+
         if (!result.success) {
             throw new Error(result.error || "Failed to delete image");
         }
@@ -303,18 +322,23 @@ export async function deleteAdminProductImage(imageId: string) {
         return { success: true };
     } catch (error) {
         console.error("Failed to delete image:", error);
-        throw new Error(error instanceof Error ? error.message : "Failed to delete image");
+        throw new Error(
+            error instanceof Error ? error.message : "Failed to delete image"
+        );
     }
 }
 
-export async function updateAdminImagePosition(imageId: string, position: number) {
+export async function updateAdminImagePosition(
+    imageId: string,
+    position: number
+) {
     await requireAuth();
     // Rate limit: 100 updates per 15 minutes
     await checkRateLimit("updateAdminImagePosition", 100, 15 * 60 * 1000);
 
     try {
         const result = await updateImagePosition(imageId, position);
-        
+
         if (!result.success) {
             throw new Error(result.error || "Failed to update image position");
         }
@@ -322,18 +346,25 @@ export async function updateAdminImagePosition(imageId: string, position: number
         return { success: true };
     } catch (error) {
         console.error("Failed to update image position:", error);
-        throw new Error(error instanceof Error ? error.message : "Failed to update image position");
+        throw new Error(
+            error instanceof Error
+                ? error.message
+                : "Failed to update image position"
+        );
     }
 }
 
-export async function reorderAdminProductImages(productId: string, imageIds: string[]) {
+export async function reorderAdminProductImages(
+    productId: string,
+    imageIds: string[]
+) {
     await requireAuth();
     // Rate limit: 50 reorders per 15 minutes
     await checkRateLimit("reorderAdminProductImages", 50, 15 * 60 * 1000);
 
     try {
         const result = await reorderProductImages(productId, imageIds);
-        
+
         if (!result.success) {
             throw new Error(result.error || "Failed to reorder images");
         }
@@ -341,6 +372,8 @@ export async function reorderAdminProductImages(productId: string, imageIds: str
         return { success: true };
     } catch (error) {
         console.error("Failed to reorder images:", error);
-        throw new Error(error instanceof Error ? error.message : "Failed to reorder images");
+        throw new Error(
+            error instanceof Error ? error.message : "Failed to reorder images"
+        );
     }
 }

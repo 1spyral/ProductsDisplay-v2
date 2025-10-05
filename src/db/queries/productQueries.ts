@@ -70,30 +70,36 @@ export async function updateProduct(
         if (existingProduct) {
             throw new Error(`Product with ID "${data.newId}" already exists`);
         }
-        
+
         // Import the migration function here to avoid circular dependency
         const { migrateProductImages } = await import("@/lib/imageService");
-        
+
         // Migrate images first
         const migrationResult = await migrateProductImages(id, data.newId);
         if (!migrationResult.success) {
-            throw new Error(`Failed to migrate images: ${migrationResult.error}`);
+            throw new Error(
+                `Failed to migrate images: ${migrationResult.error}`
+            );
         }
-        
+
         // Update all fields including the ID
-        await db.update(products).set({
-            id: data.newId,
-            name: data.name,
-            description: data.description,
-            category: data.category,
-        }).where(eq(products.id, id));
+        await db
+            .update(products)
+            .set({
+                id: data.newId,
+                name: data.name,
+                description: data.description,
+                category: data.category,
+            })
+            .where(eq(products.id, id));
     } else {
         // Regular update without ID change
-        const updateData: any = {};
+        const updateData: Partial<typeof products.$inferInsert> = {};
         if (data.name !== undefined) updateData.name = data.name;
-        if (data.description !== undefined) updateData.description = data.description;
+        if (data.description !== undefined)
+            updateData.description = data.description;
         if (data.category !== undefined) updateData.category = data.category;
-        
+
         await db.update(products).set(updateData).where(eq(products.id, id));
     }
 }
@@ -114,7 +120,7 @@ export async function createProduct(data: {
     if (existingProduct) {
         throw new Error(`Product with ID "${data.id}" already exists`);
     }
-    
+
     await db.insert(products).values(data);
 }
 
@@ -124,28 +130,28 @@ export async function deleteProduct(id: string): Promise<void> {
     if (!product) {
         throw new Error(`Product with ID "${id}" not found`);
     }
-    
+
     // If product has images, we'll need to clean them up from GCS
     // Import the function here to avoid circular dependency
     if (product.images && product.images.length > 0) {
         try {
             const { deleteProductImage } = await import("@/lib/imageService");
-            
+
             // Delete all images (this handles both GCS and database cleanup)
-            const deletePromises = product.images.map(image => 
-                deleteProductImage(image.id).catch(error => {
+            const deletePromises = product.images.map((image) =>
+                deleteProductImage(image.id).catch((error) => {
                     console.warn(`Failed to delete image ${image.id}:`, error);
                     // Continue even if some images fail to delete
                 })
             );
-            
+
             await Promise.all(deletePromises);
         } catch (error) {
             console.warn("Failed to clean up some product images:", error);
             // Continue with product deletion even if image cleanup fails
         }
     }
-    
+
     // Delete product from database
     await db.delete(products).where(eq(products.id, id));
 }

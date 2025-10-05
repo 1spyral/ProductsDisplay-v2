@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { getAdminProducts, getAdminCategories, deleteAdminProduct } from "@/actions/admin";
+import {
+  getAdminProducts,
+  getAdminCategories,
+  deleteAdminProduct,
+} from "@/actions/admin";
 import Product from "@/types/Product";
 import Category from "@/types/Category";
 import { buildImageUrl } from "@/utils/photo";
@@ -39,7 +43,7 @@ export default function ProductsPage() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  // Add modal  
+  // Add modal
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Delete confirmation modal
@@ -139,7 +143,9 @@ export default function ProductsPage() {
       setTimeout(async () => {
         try {
           const updatedProducts = await getAdminProducts();
-          const updatedProduct = updatedProducts.find(p => p.id === editingProduct.id);
+          const updatedProduct = updatedProducts.find(
+            (p) => p.id === editingProduct.id
+          );
           if (updatedProduct) {
             setEditingProduct(updatedProduct);
           }
@@ -202,7 +208,7 @@ export default function ProductsPage() {
               {filteredAndSortedProducts.length} products found
             </p>
           </div>
-          <button 
+          <button
             onClick={handleAddProduct}
             className="bg-slate-700 hover:bg-slate-900 text-white font-bold py-2 px-4 sm:px-6 uppercase tracking-wide transition-colors duration-200 whitespace-nowrap"
           >
@@ -366,13 +372,13 @@ export default function ProductsPage() {
                     </td>
                     <td className="p-2 sm:p-4 text-right">
                       <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 justify-end">
-                        <button 
+                        <button
                           onClick={() => handleEditProduct(product)}
                           className="bg-slate-700 hover:bg-slate-900 text-white font-bold py-1 px-2 sm:px-4 text-xs sm:text-sm uppercase transition-colors duration-200 whitespace-nowrap"
                         >
                           Edit
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleDeleteProduct(product)}
                           className="bg-red-700 hover:bg-red-900 text-white font-bold py-1 px-2 sm:px-4 text-xs sm:text-sm uppercase transition-colors duration-200 whitespace-nowrap"
                         >

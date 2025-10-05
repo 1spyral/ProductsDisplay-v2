@@ -6,12 +6,10 @@ interface ProductFormErrorProps {
 
 export function ProductFormError({ error }: ProductFormErrorProps) {
   if (!error) return null;
-  
+
   return (
     <div className="bg-red-100 border-2 border-red-600 p-3 text-center">
-      <p className="text-red-900 font-bold text-sm uppercase">
-        {error}
-      </p>
+      <p className="text-red-900 font-bold text-sm uppercase">{error}</p>
     </div>
   );
 }
@@ -31,7 +29,7 @@ export function ProductFormActions({
   isLoading,
   isValid,
   submitText,
-  loadingText
+  loadingText,
 }: ProductFormActionsProps) {
   return (
     <div className="flex gap-3 pt-4 mt-auto">

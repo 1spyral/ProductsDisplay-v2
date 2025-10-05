@@ -2,29 +2,29 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { 
-  DndContext, 
-  closestCenter, 
-  KeyboardSensor, 
-  PointerSensor, 
-  useSensor, 
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
   useSensors,
-  DragEndEvent 
-} from '@dnd-kit/core';
-import { 
-  arrayMove, 
-  SortableContext, 
-  sortableKeyboardCoordinates, 
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
   verticalListSortingStrategy,
-  useSortable 
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { ProductImage } from "@/types/Product";
 import { buildImageUrl } from "@/utils/photo";
-import { 
-  uploadAdminProductImage, 
-  deleteAdminProductImage, 
-  reorderAdminProductImages 
+import {
+  uploadAdminProductImage,
+  deleteAdminProductImage,
+  reorderAdminProductImages,
 } from "@/actions/admin";
 import Modal from "./Modal";
 
@@ -42,7 +42,12 @@ interface SortableImageTileProps {
 }
 
 // Individual sortable image tile component
-function SortableImageTile({ image, productId, onDelete, onView }: SortableImageTileProps) {
+function SortableImageTile({
+  image,
+  productId,
+  onDelete,
+  onView,
+}: SortableImageTileProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -66,12 +71,12 @@ function SortableImageTile({ image, productId, onDelete, onView }: SortableImage
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isDeleting) return;
-    
+
     setIsDeleting(true);
     try {
       await onDelete(image.id);
     } catch (error) {
-      console.error('Failed to delete image:', error);
+      console.error("Failed to delete image:", error);
     } finally {
       setIsDeleting(false);
     }
@@ -96,13 +101,30 @@ function SortableImageTile({ image, productId, onDelete, onView }: SortableImage
         className="absolute top-1 left-1 bg-black bg-opacity-50 hover:bg-opacity-70 text-white rounded p-1 cursor-move z-10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
         title="Drag to reorder"
       >
-        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8 18l4 4 4-4M8 6l4-4 4 4M6 8l-4 4 4 4M18 8l4 4-4 4" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v20M2 12h20" />
+        <svg
+          className="w-3 h-3"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          strokeWidth={2.5}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M8 18l4 4 4-4M8 6l4-4 4 4M6 8l-4 4 4 4M18 8l4 4-4 4"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 2v20M2 12h20"
+          />
         </svg>
       </div>
 
-      <div className="aspect-square relative cursor-pointer" onClick={handleView}>
+      <div
+        className="aspect-square relative cursor-pointer"
+        onClick={handleView}
+      >
         <Image
           src={imageUrl}
           alt={`Product image ${image.position + 1}`}
@@ -110,7 +132,7 @@ function SortableImageTile({ image, productId, onDelete, onView }: SortableImage
           className="object-cover"
           unoptimized
         />
-        
+
         {/* Delete button on hover */}
         {isHovered && (
           <button
@@ -150,7 +172,12 @@ interface ImageViewerModalProps {
   onClose: () => void;
 }
 
-function ImageViewerModal({ isOpen, imageUrl, alt, onClose }: ImageViewerModalProps) {
+function ImageViewerModal({
+  isOpen,
+  imageUrl,
+  alt,
+  onClose,
+}: ImageViewerModalProps) {
   return (
     <Modal
       isOpen={isOpen}
@@ -174,12 +201,19 @@ function ImageViewerModal({ isOpen, imageUrl, alt, onClose }: ImageViewerModalPr
   );
 }
 
-export default function ImageManager({ productId, images, onImagesUpdated }: ImageManagerProps) {
+export default function ImageManager({
+  productId,
+  images,
+  onImagesUpdated,
+}: ImageManagerProps) {
   const [sortedImages, setSortedImages] = useState<ProductImage[]>(images);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
-  const [viewerImage, setViewerImage] = useState<{ url: string; alt: string } | null>(null);
-  
+  const [viewerImage, setViewerImage] = useState<{
+    url: string;
+    alt: string;
+  } | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
 
@@ -217,11 +251,11 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
 
       // Update positions in database
       try {
-        const imageIds = newOrder.map(img => img.id);
+        const imageIds = newOrder.map((img) => img.id);
         await reorderAdminProductImages(productId, imageIds);
         onImagesUpdated();
       } catch (error) {
-        console.error('Failed to reorder images:', error);
+        console.error("Failed to reorder images:", error);
         // Revert on error
         setSortedImages(sortedImages);
       }
@@ -238,20 +272,22 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
       // Upload files one by one
       const uploadPromises = Array.from(files).map(async (file, index) => {
         const formData = new FormData();
-        formData.append('file', file);
-        formData.append('productId', productId);
-        formData.append('position', (sortedImages.length + index).toString());
+        formData.append("file", file);
+        formData.append("productId", productId);
+        formData.append("position", (sortedImages.length + index).toString());
 
         return uploadAdminProductImage(formData);
       });
-      
+
       await Promise.all(uploadPromises);
-      
+
       // Refresh the images list
       onImagesUpdated();
     } catch (error) {
-      console.error('Failed to upload images:', error);
-      setUploadError(error instanceof Error ? error.message : 'Failed to upload images');
+      console.error("Failed to upload images:", error);
+      setUploadError(
+        error instanceof Error ? error.message : "Failed to upload images"
+      );
     } finally {
       setIsUploading(false);
     }
@@ -266,7 +302,7 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files) {
       handleFileSelect(e.dataTransfer.files);
     }
@@ -292,9 +328,11 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
       // Immediately refresh the images list
       onImagesUpdated();
     } catch (error) {
-      console.error('Failed to delete image:', error);
+      console.error("Failed to delete image:", error);
       // You might want to show an error message to the user
-      setUploadError(error instanceof Error ? error.message : 'Failed to delete image');
+      setUploadError(
+        error instanceof Error ? error.message : "Failed to delete image"
+      );
       throw error; // Let the tile component handle the error display
     }
   };
@@ -315,7 +353,8 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
           Product Images
         </h3>
         <p className="text-xs text-gray-600">
-          {sortedImages.length} {sortedImages.length === 1 ? 'image' : 'images'} • Drag to reorder
+          {sortedImages.length} {sortedImages.length === 1 ? "image" : "images"}{" "}
+          • Drag to reorder
         </p>
       </div>
 
@@ -327,7 +366,10 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
           >
-            <SortableContext items={sortedImages.map(img => img.id)} strategy={verticalListSortingStrategy}>
+            <SortableContext
+              items={sortedImages.map((img) => img.id)}
+              strategy={verticalListSortingStrategy}
+            >
               <div className="grid grid-cols-3 gap-2">
                 {sortedImages.map((image) => (
                   <SortableImageTile
@@ -344,8 +386,16 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
         ) : (
           <div className="flex items-center justify-center text-gray-500 h-32">
             <div className="text-center">
-              <svg className="w-8 h-8 mx-auto mb-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+              <svg
+                className="w-8 h-8 mx-auto mb-2 text-gray-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                  clipRule="evenodd"
+                />
               </svg>
               <p className="text-xs">No images</p>
             </div>
@@ -358,10 +408,10 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
         <div
           className={`border-2 border-dashed rounded-lg p-3 text-center transition-colors duration-200 ${
             dragActive
-              ? 'border-slate-700 bg-slate-50'
+              ? "border-slate-700 bg-slate-50"
               : isUploading
-              ? 'border-blue-400 bg-blue-50'
-              : 'border-gray-300 hover:border-gray-400'
+                ? "border-blue-400 bg-blue-50"
+                : "border-gray-300 hover:border-gray-400"
           }`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
@@ -371,11 +421,17 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
           {isUploading ? (
             <div className="flex items-center justify-center space-x-2">
               <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full"></div>
-              <span className="text-sm font-medium text-blue-600">Uploading...</span>
+              <span className="text-sm font-medium text-blue-600">
+                Uploading...
+              </span>
             </div>
           ) : (
             <>
-              <svg className="w-5 h-5 mx-auto mb-1 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+              <svg
+                className="w-5 h-5 mx-auto mb-1 text-gray-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
                 <path d="M8 12a1 1 0 001 1h2a1 1 0 001-1V9.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L8 9.414V12z" />
                 <path d="M3 7a1 1 0 011-1h1V5a3 3 0 016 0v1h1a1 1 0 011 1v8a3 3 0 01-3 3H6a3 3 0 01-3-3V7z" />
               </svg>
@@ -386,8 +442,8 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
                   disabled={isUploading}
                 >
                   Upload
-                </button>
-                {' '}or drag files (4MB max)
+                </button>{" "}
+                or drag files (4MB max)
               </p>
             </>
           )}

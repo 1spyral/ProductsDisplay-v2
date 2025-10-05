@@ -23,9 +23,9 @@ export const products = pgTable(
         description: text(),
         category: text()
             .notNull()
-            .references(() => categories.category, { 
+            .references(() => categories.category, {
                 onDelete: "restrict",
-                onUpdate: "cascade" 
+                onUpdate: "cascade",
             }),
     },
     (table) => ({
@@ -41,7 +41,7 @@ export const productImages = pgTable(
             .notNull()
             .references(() => products.id, {
                 onDelete: "cascade",
-                onUpdate: "cascade"
+                onUpdate: "cascade",
             }),
         createdAt: timestamp("created_at").notNull().defaultNow(),
         objectKey: text("object_key").notNull(),

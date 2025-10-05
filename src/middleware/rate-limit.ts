@@ -5,6 +5,7 @@ interface RateLimitEntry {
     resetTime: number;
 }
 
+// TODO: Update to Redis-based rate limiting (e.g., @upstash/ratelimit) for production
 // In-memory store (use Redis in production for multi-instance deployments)
 const rateLimitStore = new Map<string, RateLimitEntry>();
 

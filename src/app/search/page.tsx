@@ -2,6 +2,9 @@ import ProductList from "@/components/Product/ProductList";
 import Product from "@/types/Product";
 import search from "@/utils/search";
 
+// #temporary - Disable static generation to avoid CDN rate limits during build
+export const dynamic = "force-dynamic";
+
 interface SearchParams {
   [key: string]: string | string[] | undefined;
 }

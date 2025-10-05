@@ -1,16 +1,17 @@
 import ProductList from "@/components/Product/ProductList";
 import { getProductsByCategory } from "@/db/queries/productQueries";
 import {
-  getCategories,
+  // getCategories,
   getCategoryByCategory,
 } from "@/db/queries/categoryQueries";
 import { getCategoryName } from "@/types/Category";
 
 export const revalidate = 43200;
 
-export async function generateStaticParams() {
-  return await getCategories();
-}
+// #temporary - Commented out to prevent build-time generation
+// export async function generateStaticParams() {
+//   return await getCategories();
+// }
 
 export default async function CategoryPage({
   params,

@@ -2,6 +2,8 @@ import CategoryButton from "@/components/CategoryButton";
 import Searchbar from "@/components/Searchbar";
 import { getCategories } from "@/db/queries/categoryQueries";
 
+// #temporary - Disable static generation to avoid CDN rate limits during build
+export const dynamic = "force-dynamic";
 export const revalidate = 43200;
 
 export default async function HomePage() {

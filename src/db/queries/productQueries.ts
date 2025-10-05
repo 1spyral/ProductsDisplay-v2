@@ -117,3 +117,35 @@ export async function createProduct(data: {
     
     await db.insert(products).values(data);
 }
+
+export async function deleteProduct(id: string): Promise<void> {
+    // Check if product exists and get it with images
+    const product = await getProductById(id);
+    if (!product) {
+        throw new Error(`Product with ID "${id}" not found`);
+    }
+    
+    // If product has images, we'll need to clean them up from GCS
+    // Import the function here to avoid circular dependency
+    if (product.images && product.images.length > 0) {
+        try {
+            const { deleteProductImage } = await import("@/lib/imageService");
+            
+            // Delete all images (this handles both GCS and database cleanup)
+            const deletePromises = product.images.map(image => 
+                deleteProductImage(image.id).catch(error => {
+                    console.warn(`Failed to delete image ${image.id}:`, error);
+                    // Continue even if some images fail to delete
+                })
+            );
+            
+            await Promise.all(deletePromises);
+        } catch (error) {
+            console.warn("Failed to clean up some product images:", error);
+            // Continue with product deletion even if image cleanup fails
+        }
+    }
+    
+    // Delete product from database
+    await db.delete(products).where(eq(products.id, id));
+}

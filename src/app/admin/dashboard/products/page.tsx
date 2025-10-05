@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { getAdminProducts, getAdminCategories } from "@/actions/admin";
+import { getAdminProducts, getAdminCategories, deleteAdminProduct } from "@/actions/admin";
 import Product from "@/types/Product";
 import Category from "@/types/Category";
 import { buildImageUrl } from "@/utils/photo";
 import EditProductModal from "@/components/EditProductModal";
 import AddProductModal from "@/components/AddProductModal";
+import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 
 type SortField = "id" | "name" | "category";
 type SortOrder = "asc" | "desc";
@@ -40,6 +41,10 @@ export default function ProductsPage() {
 
   // Add modal  
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // Delete confirmation modal
+  const [deleteProduct, setDeleteProduct] = useState<Product | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -147,6 +152,29 @@ export default function ProductsPage() {
 
   const handleProductCreated = () => {
     fetchData(); // Refresh the products list
+  };
+
+  const handleDeleteProduct = (product: Product) => {
+    setDeleteProduct(product);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setDeleteProduct(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteProduct) return;
+
+    try {
+      await deleteAdminProduct(deleteProduct.id);
+      fetchData(); // Refresh the products list
+    } catch (error) {
+      console.error("Failed to delete product:", error);
+      // Error will be handled by the confirmation modal
+      throw error;
+    }
   };
 
   if (loading) {
@@ -344,7 +372,10 @@ export default function ProductsPage() {
                         >
                           Edit
                         </button>
-                        <button className="bg-red-700 hover:bg-red-900 text-white font-bold py-1 px-2 sm:px-4 text-xs sm:text-sm uppercase transition-colors duration-200 whitespace-nowrap">
+                        <button 
+                          onClick={() => handleDeleteProduct(product)}
+                          className="bg-red-700 hover:bg-red-900 text-white font-bold py-1 px-2 sm:px-4 text-xs sm:text-sm uppercase transition-colors duration-200 whitespace-nowrap"
+                        >
                           Delete
                         </button>
                       </div>
@@ -375,6 +406,18 @@ export default function ProductsPage() {
         onClose={handleCloseAddModal}
         onProductCreated={handleProductCreated}
       />
+
+      {/* Delete Confirmation Modal */}
+      {deleteProduct && (
+        <ConfirmDeleteModal
+          isOpen={isDeleteModalOpen}
+          title="Delete Product"
+          message={`Are you sure you want to delete "${deleteProduct.name || deleteProduct.id}"? This will also delete all associated images.`}
+          confirmText="Delete Product"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCloseDeleteModal}
+        />
+      )}
     </div>
   );
 }

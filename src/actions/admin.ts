@@ -2,7 +2,7 @@
 
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getProducts, updateProduct, checkProductIdExists, createProduct } from "@/db/queries/productQueries";
+import { getProducts, updateProduct, checkProductIdExists, createProduct, deleteProduct } from "@/db/queries/productQueries";
 import { getCategories } from "@/db/queries/categoryQueries";
 import { uploadProductImage, deleteProductImage, updateImagePosition, reorderProductImages } from "@/lib/imageService";
 
@@ -180,6 +180,24 @@ export async function createAdminProduct(data: {
             throw new Error(error.message);
         }
         throw new Error("Failed to create product");
+    }
+}
+
+export async function deleteAdminProduct(id: string) {
+    await requireAuth();
+    // Rate limit: 20 deletions per 15 minutes
+    await checkRateLimit("deleteAdminProduct", 20, 15 * 60 * 1000);
+
+    try {
+        await deleteProduct(id);
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete product:", error);
+        // Return specific error messages for validation failures
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
+        throw new Error("Failed to delete product");
     }
 }
 

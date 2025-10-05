@@ -1,18 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { logoutAdmin } from "@/actions/admin";
 
 export default function AdminDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
-
   const handleLogout = async () => {
-    await fetch("/api/admin/logout", { method: "POST" });
-    router.push("/admin/login");
-    router.refresh();
+    await logoutAdmin();
   };
 
   return (

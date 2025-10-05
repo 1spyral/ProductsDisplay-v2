@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { loginAdmin } from "@/actions/admin";
 
 export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
@@ -15,25 +16,20 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
-      });
+      const result = await loginAdmin(password);
 
-      if (response.ok) {
+      if (result.success) {
         router.push("/admin/dashboard");
         router.refresh();
-      } else if (response.status === 429) {
-        const data = await response.json();
-        setError(
-          data.error || "Too many login attempts. Please try again later."
-        );
       } else {
-        setError("Invalid password");
+        setError(result.error || "Invalid password");
       }
-    } catch {
-      setError("Login failed. Please try again.");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Login failed. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

@@ -2,18 +2,8 @@
 
 import { db } from "@/db/drizzle";
 import { productImages } from "@/db/schema";
-import { eq, and, asc } from "drizzle-orm";
-
-export interface ProductImage {
-    id: string;
-    productId: string;
-    createdAt: Date;
-    objectKey: string;
-    mimeType: string;
-    width: number;
-    height: number;
-    position: number;
-}
+import { eq, asc } from "drizzle-orm";
+import { ProductImage } from "@/types/Product";
 
 export async function getProductImages(
     productId: string

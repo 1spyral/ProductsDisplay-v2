@@ -1,69 +1,38 @@
 "use server";
 
-import Product from "@/types/Product";
+import Product, { ProductImage } from "@/types/Product";
 import Photo from "@/types/Photo";
 
-const EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif"];
-
-async function getPaths(id: string) {
-    try {
-        const paths: string[] = [];
-
-        const dir = process.env.IMAGE_PATH + id + "/";
-        let i = 1;
-        while (true) {
-            let found = false;
-            for (const ext of EXTENSIONS) {
-                const filePath = dir + i + ext;
-                try {
-                    const response = await fetch(filePath, {
-                        cache: "no-store",
-                        headers: {
-                            "Cache-Control": "no-cache",
-                        },
-                    });
-                    if (response.ok) {
-                        paths.push(filePath);
-                        found = true;
-                    }
-                } catch /* (error) */ {
-                    // console.error("Error fetching " + filePath);
-                }
-            }
-            if (!found) {
-                break;
-            }
-            i++;
-        }
-        paths.sort();
-        return paths;
-    } catch {
-        console.error("Error getting photos for " + id);
-        return [];
-    }
-}
-
-function buildPhoto(
-    id: string,
-    filePath: string,
-    name: string,
+function buildPhotoFromImage(
+    image: ProductImage,
+    productId: string,
+    productName: string,
     index: number
 ): Photo {
+    const cdnBase = process.env.IMAGE_PATH || "";
+    const fullPath = `${cdnBase}${productId}/${image.objectKey}`;
+
     return {
-        id: id,
-        path: filePath,
-        alt: `${name} ${index + 1}`,
+        id: image.id,
+        path: fullPath,
+        alt: `${productName} ${index + 1}`,
     };
 }
 
-export default async function getPhotos({ id, name }: Product) {
-    // console.log(`Getting photos for ${id}`)
-
+export default async function getPhotos(product: Product): Promise<Photo[]> {
     const photos: Photo[] = [];
 
-    const paths = await getPaths(id);
-    for (let i = 0; i < paths.length; i++) {
-        photos.push(buildPhoto(id, paths[i], name || "", i));
+    if (product.images && product.images.length > 0) {
+        for (let i = 0; i < product.images.length; i++) {
+            photos.push(
+                buildPhotoFromImage(
+                    product.images[i],
+                    product.id,
+                    product.name || "",
+                    i
+                )
+            );
+        }
     }
 
     return photos;

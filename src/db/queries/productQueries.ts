@@ -6,54 +6,50 @@ import Product from "@/types/Product";
 import { eq, inArray } from "drizzle-orm";
 
 export async function getProducts(): Promise<Product[]> {
-    return db
-        .select({
-            id: products.id,
-            name: products.name,
-            description: products.description,
-            category: products.category,
-        })
-        .from(products);
+    return db.query.products.findMany({
+        with: {
+            images: {
+                orderBy: (images, { asc }) => [asc(images.position)],
+            },
+        },
+    });
 }
 
 export async function getProductsByCategory(
     category: string
 ): Promise<Product[]> {
-    return db
-        .select({
-            id: products.id,
-            name: products.name,
-            description: products.description,
-            category: products.category,
-        })
-        .from(products)
-        .where(eq(products.category, category));
+    return db.query.products.findMany({
+        where: eq(products.category, category),
+        with: {
+            images: {
+                orderBy: (images, { asc }) => [asc(images.position)],
+            },
+        },
+    });
 }
 
 export async function getProductById(id: string): Promise<Product | null> {
-    return db
-        .select({
-            id: products.id,
-            name: products.name,
-            description: products.description,
-            category: products.category,
-        })
-        .from(products)
-        .where(eq(products.id, id))
-        .limit(1)
-        .then((rows) => rows[0] || null);
+    return (
+        (await db.query.products.findFirst({
+            where: eq(products.id, id),
+            with: {
+                images: {
+                    orderBy: (images, { asc }) => [asc(images.position)],
+                },
+            },
+        })) || null
+    );
 }
 
 export async function getProductsByIds(ids: string[]): Promise<Product[]> {
     if (ids.length === 0) return [];
 
-    return db
-        .select({
-            id: products.id,
-            name: products.name,
-            description: products.description,
-            category: products.category,
-        })
-        .from(products)
-        .where(inArray(products.id, ids));
+    return db.query.products.findMany({
+        where: inArray(products.id, ids),
+        with: {
+            images: {
+                orderBy: (images, { asc }) => [asc(images.position)],
+            },
+        },
+    });
 }

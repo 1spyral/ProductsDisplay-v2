@@ -1,4 +1,5 @@
+import LoadingSpinner from "@/components/LoadingSpinner";
+
 export default function Loading() {
-  // Define the Loading UI here
-  return <div />;
+  return <LoadingSpinner />;
 }

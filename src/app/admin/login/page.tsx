@@ -26,7 +26,9 @@ export default function AdminLoginPage() {
         router.refresh();
       } else if (response.status === 429) {
         const data = await response.json();
-        setError(data.error || "Too many login attempts. Please try again later.");
+        setError(
+          data.error || "Too many login attempts. Please try again later."
+        );
       } else {
         setError("Invalid password");
       }
@@ -83,4 +85,3 @@ export default function AdminLoginPage() {
     </div>
   );
 }
-

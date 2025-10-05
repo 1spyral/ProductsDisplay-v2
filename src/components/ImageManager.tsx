@@ -390,7 +390,7 @@ export default function ImageManager({ productId, images, onImagesUpdated }: Ima
                 >
                   Upload
                 </button>
-                {' '}or drag files
+                {' '}or drag files (4MB max)
               </p>
             </>
           )}

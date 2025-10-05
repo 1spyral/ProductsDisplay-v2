@@ -4,6 +4,11 @@ import path from "path";
 const nextConfig: NextConfig = {
     output: "standalone",
     allowedDevOrigins: ["http://localhost:3000"],
+    experimental: {
+        serverActions: {
+            bodySizeLimit: '4mb',
+        },
+    },
     webpack(config) {
         config.resolve.alias = {
             ...config.resolve.alias,

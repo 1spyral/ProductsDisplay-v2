@@ -102,3 +102,18 @@ export async function checkProductIdExists(id: string): Promise<boolean> {
     const product = await getProductById(id);
     return product !== null;
 }
+
+export async function createProduct(data: {
+    id: string;
+    name?: string | null;
+    description?: string | null;
+    category: string;
+}): Promise<void> {
+    // Check if ID already exists
+    const existingProduct = await getProductById(data.id);
+    if (existingProduct) {
+        throw new Error(`Product with ID "${data.id}" already exists`);
+    }
+    
+    await db.insert(products).values(data);
+}

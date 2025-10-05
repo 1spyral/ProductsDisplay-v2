@@ -7,6 +7,7 @@ import Product from "@/types/Product";
 import Category from "@/types/Category";
 import { buildImageUrl } from "@/utils/photo";
 import EditProductModal from "@/components/EditProductModal";
+import AddProductModal from "@/components/AddProductModal";
 
 type SortField = "id" | "name" | "category";
 type SortOrder = "asc" | "desc";
@@ -36,6 +37,9 @@ export default function ProductsPage() {
   // Edit modal
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  // Add modal  
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -114,6 +118,14 @@ export default function ProductsPage() {
     setEditingProduct(null);
   };
 
+  const handleAddProduct = () => {
+    setIsAddModalOpen(true);
+  };
+
+  const handleCloseAddModal = () => {
+    setIsAddModalOpen(false);
+  };
+
   const handleProductUpdated = () => {
     fetchData(); // Refresh the products list
     // Also refresh the editing product if modal is open
@@ -131,6 +143,10 @@ export default function ProductsPage() {
         }
       }, 100); // Small delay to ensure database is updated
     }
+  };
+
+  const handleProductCreated = () => {
+    fetchData(); // Refresh the products list
   };
 
   if (loading) {
@@ -158,7 +174,10 @@ export default function ProductsPage() {
               {filteredAndSortedProducts.length} products found
             </p>
           </div>
-          <button className="bg-slate-700 hover:bg-slate-900 text-white font-bold py-2 px-4 sm:px-6 uppercase tracking-wide transition-colors duration-200 whitespace-nowrap">
+          <button 
+            onClick={handleAddProduct}
+            className="bg-slate-700 hover:bg-slate-900 text-white font-bold py-2 px-4 sm:px-6 uppercase tracking-wide transition-colors duration-200 whitespace-nowrap"
+          >
             Add Product
           </button>
         </div>
@@ -348,6 +367,14 @@ export default function ProductsPage() {
           onProductUpdated={handleProductUpdated}
         />
       )}
+
+      {/* Add Product Modal */}
+      <AddProductModal
+        categories={categories}
+        isOpen={isAddModalOpen}
+        onClose={handleCloseAddModal}
+        onProductCreated={handleProductCreated}
+      />
     </div>
   );
 }

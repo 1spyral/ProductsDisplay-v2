@@ -2,7 +2,7 @@
 
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getProducts, updateProduct, checkProductIdExists } from "@/db/queries/productQueries";
+import { getProducts, updateProduct, checkProductIdExists, createProduct } from "@/db/queries/productQueries";
 import { getCategories } from "@/db/queries/categoryQueries";
 import { uploadProductImage, deleteProductImage, updateImagePosition, reorderProductImages } from "@/lib/imageService";
 
@@ -140,6 +140,46 @@ export async function getAdminCategories() {
     } catch (error) {
         console.error("Failed to fetch categories:", error);
         throw new Error("Failed to fetch categories");
+    }
+}
+
+export async function createAdminProduct(data: {
+    id: string;
+    name?: string | null;
+    description?: string | null;
+    category: string;
+}) {
+    await requireAuth();
+    // Rate limit: 30 creates per 15 minutes
+    await checkRateLimit("createAdminProduct", 30, 15 * 60 * 1000);
+
+    try {
+        // Validate ID format
+        if (!data.id.trim()) {
+            throw new Error("Product ID cannot be empty");
+        }
+        if (data.id.length > 255) {
+            throw new Error("Product ID too long (max 255 characters)");
+        }
+        if (!/^[a-zA-Z0-9-_]+$/.test(data.id)) {
+            throw new Error("Product ID can only contain letters, numbers, hyphens, and underscores");
+        }
+
+        await createProduct({
+            id: data.id.trim(),
+            name: data.name?.trim() || null,
+            description: data.description?.trim() || null,
+            category: data.category,
+        });
+        
+        return { success: true, productId: data.id };
+    } catch (error) {
+        console.error("Failed to create product:", error);
+        // Return specific error messages for validation failures
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
+        throw new Error("Failed to create product");
     }
 }
 

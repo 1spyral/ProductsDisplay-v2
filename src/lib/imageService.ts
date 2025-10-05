@@ -31,12 +31,12 @@ export async function uploadProductImage(data: ImageUploadData): Promise<Process
       };
     }
 
-    // Validate file size (e.g., 10MB limit)
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    // Validate file size (e.g., 4MB limit)
+    const maxSize = 4 * 1024 * 1024; // 4MB
     if (file.size > maxSize) {
       return {
         success: false,
-        error: 'File size must be less than 10MB',
+        error: 'File size must be less than 4MB',
       };
     }
 

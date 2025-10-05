@@ -116,6 +116,21 @@ export default function ProductsPage() {
 
   const handleProductUpdated = () => {
     fetchData(); // Refresh the products list
+    // Also refresh the editing product if modal is open
+    if (editingProduct) {
+      // Find the updated product in the new data
+      setTimeout(async () => {
+        try {
+          const updatedProducts = await getAdminProducts();
+          const updatedProduct = updatedProducts.find(p => p.id === editingProduct.id);
+          if (updatedProduct) {
+            setEditingProduct(updatedProduct);
+          }
+        } catch (error) {
+          console.error("Failed to refresh editing product:", error);
+        }
+      }, 100); // Small delay to ensure database is updated
+    }
   };
 
   if (loading) {

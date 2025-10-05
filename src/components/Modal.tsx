@@ -7,8 +7,10 @@ interface ModalProps {
   onClose: () => void;
   children: React.ReactNode;
   title?: string;
-  size?: "sm" | "md" | "lg" | "xl" | "full";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
   className?: string;
+  zIndex?: number; // Allow custom z-index for stacking
+  darkBackground?: boolean; // For image viewers with darker background
 }
 
 export default function Modal({
@@ -18,6 +20,8 @@ export default function Modal({
   title,
   size = "md",
   className = "",
+  zIndex = 50,
+  darkBackground = false,
 }: ModalProps) {
   if (!isOpen) return null;
 
@@ -26,8 +30,14 @@ export default function Modal({
     md: "max-w-md", 
     lg: "max-w-lg",
     xl: "max-w-2xl",
+    "2xl": "w-[80vw] max-w-4xl",
+    "3xl": "w-[85vw] max-w-6xl",
+    "4xl": "w-[90vw] max-w-7xl",
+    "5xl": "w-[95vw] max-w-screen-xl",
     full: "max-w-7xl w-full h-full",
   };
+
+  const backgroundClass = darkBackground ? "bg-black/90" : "bg-black/70";
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -37,12 +47,13 @@ export default function Modal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4"
+      className={`fixed inset-0 ${backgroundClass} flex justify-center items-center p-4`}
+      style={{ zIndex }}
       onClick={handleBackdropClick}
     >
       <div
         className={`relative bg-white border-4 border-slate-700 ${sizeClasses[size]} ${
-          size === "full" ? "" : "max-h-[90vh] overflow-y-auto"
+          size === "full" ? "" : "max-h-[85vh] overflow-y-auto"
         } ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -89,7 +100,7 @@ export default function Modal({
         )}
         
         {/* Content */}
-        <div className={size === "full" ? "h-full overflow-auto" : "p-4 sm:p-6"}>
+        <div className={size === "full" ? "h-full overflow-auto" : size === "4xl" || size === "5xl" ? "" : "p-4 sm:p-6"}>
           {children}
         </div>
       </div>

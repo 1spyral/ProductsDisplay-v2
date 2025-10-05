@@ -1,4 +1,4 @@
-import { uploadImage, deleteImage, ImageUploadResult } from '@/lib/gcs';
+import { uploadImage, deleteImage, copyImage, ImageUploadResult } from '@/lib/gcs';
 import { db } from '@/db/drizzle';
 import { productImages } from '@/db/schema';
 import { eq } from 'drizzle-orm';
@@ -44,14 +44,17 @@ export async function uploadProductImage(data: ImageUploadData): Promise<Process
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Generate a clean filename
+    // Generate a random unique filename to prevent conflicts
     const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-    const cleanFileName = `${productId}-${Date.now()}.${fileExtension}`;
+    const randomId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    const timestamp = Date.now();
+    const cleanFileName = `${timestamp}-${randomId}.${fileExtension}`;
 
-    // Upload to Google Cloud Storage
+    // Upload to Google Cloud Storage with product folder structure
+    const gcsPath = `${productId}/${cleanFileName}`;
     const uploadResult: ImageUploadResult = await uploadImage({
       buffer,
-      filename: cleanFileName,
+      filename: gcsPath,
       contentType: file.type,
       metadata: {
         productId,
@@ -90,15 +93,22 @@ export async function uploadProductImage(data: ImageUploadData): Promise<Process
       }
     }
 
-    // Save to database
+    // Save to database (store only the filename as objectKey, not the full path)
     const [newImage] = await db.insert(productImages).values({
       productId,
-      objectKey: uploadResult.filename,
+      objectKey: cleanFileName, // Just the filename, not the full GCS path
       mimeType: file.type,
       width,
       height,
       position,
     }).returning();
+
+    console.log('Image uploaded successfully:', {
+      imageId: newImage.id,
+      productId,
+      objectKey: cleanFileName,
+      publicUrl: uploadResult.publicUrl
+    });
 
     return {
       success: true,
@@ -132,7 +142,8 @@ export async function deleteProductImage(imageId: string): Promise<{ success: bo
     }
 
     // Delete from Google Cloud Storage
-    const deleteResult = await deleteImage(image.objectKey);
+    const gcsPath = `${image.productId}/${image.objectKey}`;
+    const deleteResult = await deleteImage(gcsPath);
     
     if (!deleteResult.success) {
       console.warn('Failed to delete from GCS:', deleteResult.error);
@@ -141,6 +152,13 @@ export async function deleteProductImage(imageId: string): Promise<{ success: bo
 
     // Delete from database
     await db.delete(productImages).where(eq(productImages.id, imageId));
+
+    console.log('Image deleted successfully:', {
+      imageId,
+      productId: image.productId,
+      objectKey: image.objectKey,
+      gcsPath
+    });
 
     return { success: true };
   } catch (error) {
@@ -218,6 +236,90 @@ export async function getProductImages(productId: string) {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error occurred',
       images: [],
+    };
+  }
+}
+
+/**
+ * Migrate product images when product ID changes
+ */
+export async function migrateProductImages(
+  oldProductId: string, 
+  newProductId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Get all images for the old product ID
+    const imagesResult = await getProductImages(oldProductId);
+    
+    if (!imagesResult.success || !imagesResult.images.length) {
+      // No images to migrate
+      return { success: true };
+    }
+
+    const images = imagesResult.images;
+    const migrationPromises = images.map(async (image) => {
+      try {
+        // objectKey is just the filename (e.g., "1640995200000-camera.jpg")
+        const filename = image.objectKey;
+        
+        // Build the old and new GCS paths
+        const oldGCSPath = `${oldProductId}/${filename}`;
+        const newGCSPath = `${newProductId}/${filename}`;
+        
+        // Copy image to new location in GCS
+        const copyResult = await copyImage(oldGCSPath, newGCSPath);
+        
+        if (!copyResult.success) {
+          console.error(`Failed to copy image from ${oldGCSPath} to ${newGCSPath}:`, copyResult.error);
+          return { success: false, imageId: image.id, error: copyResult.error };
+        }
+
+        // Update database record with new productId (objectKey stays the same)
+        await db.update(productImages)
+          .set({ 
+            productId: newProductId 
+          })
+          .where(eq(productImages.id, image.id));
+
+        // Delete old image from GCS
+        const deleteResult = await deleteImage(oldGCSPath);
+        if (!deleteResult.success) {
+          console.warn(`Failed to delete old image ${oldGCSPath}:`, deleteResult.error);
+          // Continue even if deletion fails - the image is copied and DB is updated
+        }
+
+        return { success: true, imageId: image.id };
+      } catch (error) {
+        console.error(`Error migrating image ${image.id}:`, error);
+        return { 
+          success: false, 
+          imageId: image.id, 
+          error: error instanceof Error ? error.message : 'Unknown error' 
+        };
+      }
+    });
+
+    // Wait for all migrations to complete
+    const results = await Promise.all(migrationPromises);
+    
+    // Check if any migrations failed
+    const failedMigrations = results.filter(result => !result.success);
+    
+    if (failedMigrations.length > 0) {
+      console.error(`Failed to migrate ${failedMigrations.length} images:`, failedMigrations);
+      return {
+        success: false,
+        error: `Failed to migrate ${failedMigrations.length} out of ${results.length} images`
+      };
+    }
+
+    console.log(`Successfully migrated ${results.length} images from ${oldProductId} to ${newProductId}`);
+    return { success: true };
+  } catch (error) {
+    console.error('Error during image migration:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
     };
   }
 }

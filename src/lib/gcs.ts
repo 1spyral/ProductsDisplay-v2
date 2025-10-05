@@ -54,16 +54,14 @@ export interface ImageUploadResult {
 
 /**
  * Upload an image to Google Cloud Storage
+ * @param options.filename - The full GCS path (e.g., "productId/filename.jpg")
  */
 export async function uploadImage(options: UploadImageOptions): Promise<ImageUploadResult> {
   try {
     const { buffer, filename, contentType, metadata = {} } = options;
 
-    // Create a unique filename to prevent conflicts
-    const timestamp = Date.now();
-    const uniqueFilename = `${timestamp}-${filename}`;
-
-    const file = bucket.file(uniqueFilename);
+    // Use the filename as provided (should include the full path)
+    const file = bucket.file(filename);
 
     // Upload the file
     await file.save(buffer, {
@@ -74,16 +72,15 @@ export async function uploadImage(options: UploadImageOptions): Promise<ImageUpl
           uploadedAt: new Date().toISOString(),
         },
       },
-      public: true, // Make the file publicly accessible
     });
 
     // Get the public URL
-    const publicUrl = `https://storage.googleapis.com/${bucketName}/${uniqueFilename}`;
+    const publicUrl = `https://storage.googleapis.com/${bucketName}/${filename}`;
 
     return {
       success: true,
       publicUrl,
-      filename: uniqueFilename,
+      filename: filename,
     };
   } catch (error) {
     console.error('Error uploading image:', error);
@@ -96,6 +93,7 @@ export async function uploadImage(options: UploadImageOptions): Promise<ImageUpl
 
 /**
  * Delete an image from Google Cloud Storage
+ * @param filename - The full GCS path (e.g., "productId/filename.jpg")
  */
 export async function deleteImage(filename: string): Promise<{ success: boolean; error?: string }> {
   try {
@@ -125,6 +123,7 @@ export async function deleteImage(filename: string): Promise<{ success: boolean;
 
 /**
  * Get a signed URL for temporary access to a private image
+ * @param filename - The full GCS path (e.g., "productId/filename.jpg")
  */
 export async function getSignedUrl(filename: string, expiresInMinutes: number = 60): Promise<string | null> {
   try {
@@ -162,6 +161,7 @@ export async function listImages(prefix?: string): Promise<string[]> {
 
 /**
  * Get image metadata
+ * @param filename - The full GCS path (e.g., "productId/filename.jpg")
  */
 export async function getImageMetadata(filename: string) {
   try {
@@ -190,6 +190,8 @@ export async function getImageMetadata(filename: string) {
 
 /**
  * Copy/move an image within the bucket
+ * @param sourceFilename - The source GCS path (e.g., "productId/filename.jpg")
+ * @param destinationFilename - The destination GCS path (e.g., "newProductId/filename.jpg")
  */
 export async function copyImage(
   sourceFilename: string, 

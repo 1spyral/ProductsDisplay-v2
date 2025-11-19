@@ -30,12 +30,14 @@ export default function ProductFormModal({
     >
       <div className="flex h-[70vh] min-h-[500px] max-h-[700px] p-4">
         {/* Left Panel - Image Management */}
-        <div className="w-1/2 pr-6 border-r border-gray-300 flex flex-col">
+        <div className="w-1/2 pr-6 border-r border-gray-300 flex flex-col overflow-y-auto">
           {leftPanel}
         </div>
 
         {/* Right Panel - Form Fields */}
-        <div className="w-1/2 pl-6 flex flex-col">{rightPanel}</div>
+        <div className="w-1/2 pl-6 flex flex-col overflow-y-auto">
+          {rightPanel}
+        </div>
       </div>
     </Modal>
   );

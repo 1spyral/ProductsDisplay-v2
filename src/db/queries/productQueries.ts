@@ -120,6 +120,7 @@ export async function createProduct(data: {
     name?: string | null;
     description?: string | null;
     category: string;
+    clearance?: boolean;
 }): Promise<void> {
     // Check if ID already exists
     const existingProduct = await getProductById(data.id);

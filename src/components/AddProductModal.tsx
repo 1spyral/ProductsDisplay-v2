@@ -4,18 +4,17 @@ import { useState } from "react";
 import Category from "@/types/Category";
 import { createAdminProduct, uploadAdminProductImage } from "@/actions/admin";
 import { useProductForm } from "@/hooks/useProductForm";
-import ProductFormModal from "./ProductForm/ProductFormModal";
-import ProductIdField from "./ProductForm/ProductIdField";
 import {
+  ProductFormModal,
+  ProductIdField,
   ProductNameField,
   ProductDescriptionField,
   ProductCategoryField,
-} from "./ProductForm/ProductTextFields";
-import {
+  ProductClearanceField,
   ProductFormError,
   ProductFormActions,
-} from "./ProductForm/ProductFormActions";
-import UnifiedImageManager from "./ProductForm/UnifiedImageManager";
+  UnifiedImageManager,
+} from "./ProductForm";
 
 interface AddProductModalProps {
   categories: Category[];
@@ -108,7 +107,10 @@ export default function AddProductModal({
 
   // Right panel: Form fields
   const rightPanel = (
-    <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex-1 flex flex-col space-y-4 pb-6"
+    >
       <ProductIdField
         value={formData.id}
         onChange={(value) => updateField("id", value)}
@@ -131,6 +133,11 @@ export default function AddProductModal({
         onChange={(value) => updateField("category", value)}
         categories={categories}
         required
+      />
+
+      <ProductClearanceField
+        value={formData.clearance}
+        onChange={(value) => updateField("clearance", value)}
       />
 
       <ProductFormError error={error} />

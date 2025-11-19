@@ -6,6 +6,7 @@ import {
   getAdminProducts,
   getAdminCategories,
   deleteAdminProduct,
+  toggleAdminProductClearance,
 } from "@/actions/admin";
 import Product from "@/types/Product";
 import Category from "@/types/Category";
@@ -13,6 +14,7 @@ import { buildImageUrl } from "@/utils/photo";
 import EditProductModal from "@/components/EditProductModal";
 import AddProductModal from "@/components/AddProductModal";
 import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
+import ToggleableCheckbox from "@/components/ToggleableCheckbox";
 
 type SortField = "id" | "name" | "category";
 type SortOrder = "asc" | "desc";
@@ -49,6 +51,11 @@ export default function ProductsPage() {
   // Delete confirmation modal
   const [deleteProduct, setDeleteProduct] = useState<Product | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // Clearance update state
+  const [updatingClearance, setUpdatingClearance] = useState<{
+    [id: string]: boolean;
+  }>({});
 
   useEffect(() => {
     fetchData();
@@ -180,6 +187,32 @@ export default function ProductsPage() {
       console.error("Failed to delete product:", error);
       // Error will be handled by the confirmation modal
       throw error;
+    }
+  };
+
+  const handleToggleClearance = async (productId: string, current: boolean) => {
+    // optimistic update
+    const previous = products;
+    setProducts((prev) =>
+      prev.map((p) => (p.id === productId ? { ...p, clearance: !current } : p))
+    );
+    setUpdatingClearance((s) => ({ ...s, [productId]: true }));
+
+    try {
+      await toggleAdminProductClearance(productId, !current);
+    } catch (error) {
+      console.error("Failed to toggle clearance:", error);
+      // revert
+      setProducts(previous);
+      alert(
+        `Failed to update clearance: ${error instanceof Error ? error.message : String(error)}`
+      );
+    } finally {
+      setUpdatingClearance((s) => {
+        const copy = { ...s };
+        delete copy[productId];
+        return copy;
+      });
     }
   };
 
@@ -319,6 +352,9 @@ export default function ProductsPage() {
                 Category{" "}
                 {sortField === "category" && (sortOrder === "asc" ? "↑" : "↓")}
               </th>
+              <th className="text-center p-2 sm:p-4 font-bold text-gray-900 uppercase tracking-wide text-xs sm:text-sm">
+                Clearance
+              </th>
               <th className="text-right p-2 sm:p-4 font-bold text-gray-900 uppercase tracking-wide text-xs sm:text-sm">
                 Actions
               </th>
@@ -328,7 +364,7 @@ export default function ProductsPage() {
             {filteredAndSortedProducts.length === 0 ? (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="text-center p-4 sm:p-8 text-sm sm:text-base text-gray-600"
                 >
                   No products found
@@ -369,6 +405,18 @@ export default function ProductsPage() {
                     </td>
                     <td className="p-2 sm:p-4 text-sm sm:text-base">
                       {product.category}
+                    </td>
+                    <td className="p-2 sm:p-4 text-center">
+                      <ToggleableCheckbox
+                        checked={!!product.clearance}
+                        onToggle={() =>
+                          handleToggleClearance(product.id, !!product.clearance)
+                        }
+                        disabled={!!updatingClearance[product.id]}
+                        title={
+                          product.clearance ? "Clearance: On" : "Clearance: Off"
+                        }
+                      />
                     </td>
                     <td className="p-2 sm:p-4 text-right">
                       <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 justify-end">

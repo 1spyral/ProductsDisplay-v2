@@ -8,6 +8,7 @@ interface ProductFormData {
     name: string;
     description: string;
     category: string;
+    clearance: boolean;
 }
 
 interface UseProductFormProps {
@@ -27,6 +28,7 @@ export function useProductForm({
         name: initialProduct?.name || "",
         description: initialProduct?.description || "",
         category: initialProduct?.category || categories[0]?.category || "",
+        clearance: initialProduct?.clearance || false,
     });
 
     // Track if ID field is locked (only relevant for edit mode)
@@ -46,14 +48,18 @@ export function useProductForm({
                 name: initialProduct.name || "",
                 description: initialProduct.description || "",
                 category: initialProduct.category,
+                clearance: initialProduct.clearance || false,
             });
             setIsIdLocked(true); // Reset lock when product changes
         }
     }, [initialProduct]);
 
     // Form field update handlers
-    const updateField = (field: keyof ProductFormData, value: string) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
+    const updateField = (
+        field: keyof ProductFormData,
+        value: string | boolean
+    ) => {
+        setFormData((prev) => ({ ...prev, [field]: value }) as ProductFormData);
     };
 
     // Check if form is valid for submission
@@ -87,8 +93,15 @@ export function useProductForm({
             initialProduct.description;
         const categoryChanged = formData.category !== initialProduct.category;
 
+        const clearanceChanged =
+            initialProduct?.clearance !== formData.clearance;
+
         return (
-            idChanged || nameChanged || descriptionChanged || categoryChanged
+            idChanged ||
+            nameChanged ||
+            descriptionChanged ||
+            categoryChanged ||
+            clearanceChanged
         );
     };
 
@@ -100,6 +113,7 @@ export function useProductForm({
                 name: initialProduct.name || "",
                 description: initialProduct.description || "",
                 category: initialProduct.category,
+                clearance: initialProduct.clearance || false,
             });
             setIsIdLocked(true);
         } else {
@@ -108,6 +122,7 @@ export function useProductForm({
                 name: "",
                 description: "",
                 category: categories[0]?.category || "",
+                clearance: false,
             });
         }
     };
@@ -118,6 +133,7 @@ export function useProductForm({
             name: formData.name.trim() || null,
             description: formData.description.trim() || null,
             category: formData.category,
+            clearance: formData.clearance,
         };
 
         if (mode === "add") {
@@ -143,6 +159,7 @@ export function useProductForm({
             name: formData.name.trim() || null,
             description: formData.description.trim() || null,
             category: formData.category,
+            clearance: formData.clearance,
         };
     };
 
@@ -151,6 +168,7 @@ export function useProductForm({
             name: formData.name.trim() || null,
             description: formData.description.trim() || null,
             category: formData.category,
+            clearance: formData.clearance,
             newId:
                 !isIdLocked && formData.id.trim() !== initialProduct?.id
                     ? formData.id.trim()

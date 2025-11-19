@@ -159,6 +159,7 @@ export async function createAdminProduct(data: {
     name?: string | null;
     description?: string | null;
     category: string;
+    clearance?: boolean;
 }) {
     await requireAuth();
     // Rate limit: 30 creates per 15 minutes
@@ -183,6 +184,7 @@ export async function createAdminProduct(data: {
             name: data.name?.trim() || null,
             description: data.description?.trim() || null,
             category: data.category,
+            clearance: data.clearance,
         });
 
         return { success: true, productId: data.id };
@@ -221,6 +223,7 @@ export async function updateAdminProduct(
         name?: string | null;
         description?: string | null;
         category?: string;
+        clearance?: boolean;
     }
 ) {
     await requireAuth();
@@ -267,6 +270,26 @@ export async function checkAdminProductIdExists(id: string) {
     } catch (error) {
         console.error("Failed to check product ID:", error);
         throw new Error("Failed to check product ID");
+    }
+}
+
+export async function toggleAdminProductClearance(
+    id: string,
+    clearance: boolean
+) {
+    await requireAuth();
+    // Rate limit: 100 toggles per 15 minutes
+    await checkRateLimit("toggleAdminProductClearance", 100, 15 * 60 * 1000);
+
+    try {
+        await updateProduct(id, { clearance });
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to toggle clearance:", error);
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
+        throw new Error("Failed to toggle clearance");
     }
 }
 

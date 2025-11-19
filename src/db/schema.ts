@@ -5,6 +5,7 @@ import {
     timestamp,
     integer,
     uuid,
+    boolean,
 } from "drizzle-orm/pg-core";
 
 // Create table creator for the public schema (default)
@@ -27,10 +28,15 @@ export const products = pgTable(
                 onDelete: "restrict",
                 onUpdate: "cascade",
             }),
+        clearance: boolean().notNull().default(false),
     },
-    (table) => ({
-        categoryIdx: index("products_category_idx").on(table.category),
-    })
+    (table) => [
+        index("products_category_clearance_idx").on(
+            table.category,
+            table.clearance
+        ),
+        index("products_clearance_idx").on(table.clearance),
+    ]
 );
 
 export const productImages = pgTable(
@@ -50,9 +56,10 @@ export const productImages = pgTable(
         height: integer().notNull(),
         position: integer().notNull().default(0),
     },
-    (table) => ({
-        productIdPositionIdx: index(
-            "product_images_product_id_position_idx"
-        ).on(table.productId, table.position),
-    })
+    (table) => [
+        index("product_images_product_id_position_idx").on(
+            table.productId,
+            table.position
+        ),
+    ]
 );

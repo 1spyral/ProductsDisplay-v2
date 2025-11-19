@@ -7,6 +7,8 @@ import { eq, inArray } from "drizzle-orm";
 
 export async function getProducts(): Promise<Product[]> {
     return db.query.products.findMany({
+        // Order clearance products first, then fall back to ID
+        orderBy: (p, { desc, asc }) => [desc(p.clearance), asc(p.id)],
         with: {
             images: {
                 orderBy: (images, { asc }) => [asc(images.position)],
@@ -20,6 +22,8 @@ export async function getProductsByCategory(
 ): Promise<Product[]> {
     return db.query.products.findMany({
         where: eq(products.category, category),
+        // Order clearance products first, then fall back to ID
+        orderBy: (p, { desc, asc }) => [desc(p.clearance), asc(p.id)],
         with: {
             images: {
                 orderBy: (images, { asc }) => [asc(images.position)],

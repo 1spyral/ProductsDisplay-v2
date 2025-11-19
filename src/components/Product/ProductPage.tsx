@@ -39,9 +39,16 @@ export default async function ProductPage({ id }: { id: string }) {
         <div className="px-6 pb-6 sm:px-8 sm:pb-8">
           {/* Category Badge */}
           <div className="mt-6 mb-6 pb-4 sm:mt-8 border-b-3 border-gray-400">
-            <span className="inline-block bg-slate-700 text-white px-4 py-2 font-bold uppercase tracking-wider text-sm">
-              {categoryName}
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="inline-block bg-slate-700 text-white px-4 py-2 font-bold uppercase tracking-wider text-sm">
+                {categoryName}
+              </span>
+              {product.clearance && (
+                <span className="inline-block bg-red-600 text-white px-4 py-2 font-bold uppercase tracking-wider text-sm">
+                  Clearance
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Product Name */}

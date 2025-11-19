@@ -33,6 +33,11 @@ export default async function ProductBox({
       <div className="flex flex-col bg-white border-3 border-gray-400 hover:border-slate-700 transition-colors duration-200">
         <div className="relative w-full h-64 border-b-3 border-gray-400">
           <ImageCarousel photos={photos} />
+          {product.clearance && (
+            <span className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase tracking-wider">
+              Clearance
+            </span>
+          )}
         </div>
         <div className="flex flex-col p-4">
           {hasName && (
@@ -50,6 +55,7 @@ export default async function ProductBox({
           >
             {categoryName}
           </p>
+          {/* clearance badge for ProductBox is overlaid on the image */}
         </div>
       </div>
     </Link>

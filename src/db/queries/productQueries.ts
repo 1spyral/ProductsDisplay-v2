@@ -61,6 +61,7 @@ export async function updateProduct(
         name?: string | null;
         description?: string | null;
         category?: string;
+        clearance?: boolean;
     }
 ): Promise<void> {
     // If ID is being changed, we need to handle it specially
@@ -99,6 +100,7 @@ export async function updateProduct(
         if (data.description !== undefined)
             updateData.description = data.description;
         if (data.category !== undefined) updateData.category = data.category;
+        if (data.clearance !== undefined) updateData.clearance = data.clearance;
 
         await db.update(products).set(updateData).where(eq(products.id, id));
     }

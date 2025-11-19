@@ -53,3 +53,27 @@ body {
 .animate-fade-in {
     animation: fade-in 0.8s ease-out;
 }
+
+/* Custom Scrollbar Styling */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(148 163 184) transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: rgb(148 163 184);
+    border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: rgb(100 116 139);
+}

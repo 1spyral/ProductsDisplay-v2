@@ -10,8 +10,8 @@ export default async function ProductPage({ id }: { id: string }) {
 
   if (product === null) {
     return (
-      <div className="flex items-center justify-center h-full p-8">
-        <div className="bg-white border-3 border-gray-400 p-8 text-center">
+      <div className="flex h-full items-center justify-center p-8">
+        <div className="border-3 border-gray-400 bg-white p-8 text-center">
           <h1 className="text-2xl font-bold text-gray-900 uppercase">
             Product not found
           </h1>
@@ -28,23 +28,23 @@ export default async function ProductPage({ id }: { id: string }) {
     product.description && product.description.trim().length > 0;
 
   return (
-    <div className="flex flex-col md:flex-row w-full h-full">
+    <div className="flex h-full w-full flex-col md:flex-row">
       {/* Image Section */}
-      <div className="w-full md:w-1/2 h-[50vh] md:h-full border-b-4 md:border-b-0 md:border-r-4 border-slate-700 bg-white">
+      <div className="h-[50vh] w-full border-b-4 border-slate-700 bg-white md:h-full md:w-1/2 md:border-r-4 md:border-b-0">
         <ImageCarousel photos={await getPhotos(product)} zoom={true} />
       </div>
 
       {/* Details Section */}
-      <div className="w-full md:w-1/2 h-[50vh] md:h-full bg-gray-50 overflow-y-auto">
+      <div className="h-[50vh] w-full overflow-y-auto bg-gray-50 md:h-full md:w-1/2">
         <div className="px-6 pb-6 sm:px-8 sm:pb-8">
           {/* Category Badge */}
-          <div className="mt-6 mb-6 pb-4 sm:mt-8 border-b-3 border-gray-400">
+          <div className="mt-6 mb-6 border-b-3 border-gray-400 pb-4 sm:mt-8">
             <div className="flex items-center gap-3">
-              <span className="inline-block bg-slate-700 text-white px-4 py-2 font-bold uppercase tracking-wider text-sm">
+              <span className="inline-block bg-slate-700 px-4 py-2 text-sm font-bold tracking-wider text-white uppercase">
                 {categoryName}
               </span>
               {product.clearance && (
-                <span className="inline-block bg-red-600 text-white px-4 py-2 font-bold uppercase tracking-wider text-sm">
+                <span className="inline-block bg-red-600 px-4 py-2 text-sm font-bold tracking-wider text-white uppercase">
                   Clearance
                 </span>
               )}
@@ -54,7 +54,7 @@ export default async function ProductPage({ id }: { id: string }) {
           {/* Product Name */}
           {hasName && (
             <div className="mb-6">
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 uppercase leading-tight">
+              <h1 className="text-3xl leading-tight font-bold text-gray-900 uppercase sm:text-4xl">
                 {product.name}
               </h1>
             </div>
@@ -63,10 +63,10 @@ export default async function ProductPage({ id }: { id: string }) {
           {/* Product Description */}
           {hasDescription && (
             <div>
-              <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-3">
+              <h2 className="mb-3 text-sm font-bold tracking-wide text-gray-700 uppercase">
                 Description
               </h2>
-              <p className="text-base text-gray-800 leading-relaxed whitespace-pre-wrap">
+              <p className="text-base leading-relaxed whitespace-pre-wrap text-gray-800">
                 {product.description}
               </p>
             </div>

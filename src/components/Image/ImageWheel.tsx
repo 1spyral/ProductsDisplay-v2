@@ -9,11 +9,11 @@ export default function ImageWheel({
   index: number;
 }) {
   return (
-    <div className="relative w-full h-full overflow-hidden">
+    <div className="relative h-full w-full overflow-hidden">
       {photos.map((photo, i) => (
         <Image
           key={photo.alt}
-          className={`absolute top-0 left-0 w-full h-full object-contain transition-opacity duration-500 ease-in-out ${i === index ? "opacity-100" : "opacity-0"}`}
+          className={`absolute top-0 left-0 h-full w-full object-contain transition-opacity duration-500 ease-in-out ${i === index ? "opacity-100" : "opacity-0"}`}
           src={photo.path}
           alt={photo.alt}
           fill={true}

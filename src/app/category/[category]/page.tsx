@@ -27,9 +27,9 @@ export default async function CategoryPage({
 
   if (!filteredData.length) {
     return (
-      <div className="bg-gray-50 min-h-full p-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-white border-3 border-gray-400 p-8 text-center">
+      <div className="min-h-full bg-gray-50 p-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="border-3 border-gray-400 bg-white p-8 text-center">
             <h1 className="text-2xl font-bold text-gray-900 uppercase">
               No products found in category {displayName}
             </h1>
@@ -40,9 +40,9 @@ export default async function CategoryPage({
   }
 
   return (
-    <div className="bg-gray-50 min-h-full">
-      <div className="bg-white border-b-4 border-slate-700 py-6 px-4 mb-2">
-        <h1 className="text-3xl font-bold text-gray-900 uppercase tracking-wide mb-2">
+    <div className="min-h-full bg-gray-50">
+      <div className="mb-2 border-b-4 border-slate-700 bg-white px-4 py-6">
+        <h1 className="mb-2 text-3xl font-bold tracking-wide text-gray-900 uppercase">
           {displayName}
         </h1>
         <p className="text-gray-700">
@@ -50,7 +50,7 @@ export default async function CategoryPage({
           {filteredData.length === 1 ? "product" : "products"} available
         </p>
       </div>
-      <div className="py-2 px-4 sm:px-8">
+      <div className="px-4 py-2 sm:px-8">
         <ProductList products={filteredData} />
       </div>
     </div>

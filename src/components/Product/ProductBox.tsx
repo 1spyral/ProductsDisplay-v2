@@ -30,28 +30,28 @@ export default async function ProductBox({
 
   return (
     <Link href={`/product/${product.id}`} scroll={false}>
-      <div className="flex flex-col bg-white border-3 border-gray-400 hover:border-slate-700 transition-colors duration-200">
-        <div className="relative w-full h-64 border-b-3 border-gray-400">
+      <div className="flex flex-col border-3 border-gray-400 bg-white transition-colors duration-200 hover:border-slate-700">
+        <div className="relative h-64 w-full border-b-3 border-gray-400">
           <ImageCarousel photos={photos} />
           {product.clearance && (
-            <span className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase tracking-wider">
+            <span className="absolute top-2 right-2 bg-red-600 px-3 py-1 text-xs font-bold tracking-wider text-white uppercase">
               Clearance
             </span>
           )}
         </div>
         <div className="flex flex-col p-4">
           {hasName && (
-            <h2 className="text-lg font-bold text-gray-900 text-center uppercase mb-3">
+            <h2 className="mb-3 text-center text-lg font-bold text-gray-900 uppercase">
               {product.name}
             </h2>
           )}
           {hasDescription && (
-            <p className="text-sm text-gray-700 text-center leading-relaxed mb-3">
+            <p className="mb-3 text-center text-sm leading-relaxed text-gray-700">
               {shortenDescription(product.description || "")}
             </p>
           )}
           <p
-            className={`text-xs text-gray-600 text-center uppercase tracking-wider ${hasContent ? "pt-2 border-t-2 border-gray-300" : ""}`}
+            className={`text-center text-xs tracking-wider text-gray-600 uppercase ${hasContent ? "border-t-2 border-gray-300 pt-2" : ""}`}
           >
             {categoryName}
           </p>

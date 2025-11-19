@@ -22,10 +22,10 @@ export default async function SearchResultsPage({
 
   if (!products.length) {
     return (
-      <div className="bg-gray-50 min-h-full p-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-white border-3 border-gray-400 p-8 text-center">
-            <h1 className="text-2xl font-bold text-gray-900 uppercase mb-2">
+      <div className="min-h-full bg-gray-50 p-8">
+        <div className="mx-auto max-w-6xl">
+          <div className="border-3 border-gray-400 bg-white p-8 text-center">
+            <h1 className="mb-2 text-2xl font-bold text-gray-900 uppercase">
               No Results Found
             </h1>
             <p className="text-gray-700">
@@ -38,18 +38,18 @@ export default async function SearchResultsPage({
   }
 
   return (
-    <div className="bg-gray-50 min-h-full">
-      <div className="bg-white border-b-4 border-slate-700 py-6 px-4 mb-2">
-        <h1 className="text-3xl font-bold text-gray-900 uppercase tracking-wide">
+    <div className="min-h-full bg-gray-50">
+      <div className="mb-2 border-b-4 border-slate-700 bg-white px-4 py-6">
+        <h1 className="text-3xl font-bold tracking-wide text-gray-900 uppercase">
           Search Results
         </h1>
-        <p className="text-gray-700 mt-2">
+        <p className="mt-2 text-gray-700">
           Found {products.length}{" "}
           {products.length === 1 ? "product" : "products"} for &quot;{query}
           &quot;
         </p>
       </div>
-      <div className="py-2 px-4 sm:px-8">
+      <div className="px-4 py-2 sm:px-8">
         <ProductList products={products} />
       </div>
     </div>

@@ -28,14 +28,14 @@ export default function ProductFormModal({
       size="4xl"
       className={className}
     >
-      <div className="flex h-[70vh] min-h-[500px] max-h-[700px] p-4">
+      <div className="flex h-[70vh] max-h-[700px] min-h-[500px] p-4">
         {/* Left Panel - Image Management */}
-        <div className="w-1/2 pr-6 border-r border-gray-300 flex flex-col overflow-y-auto">
+        <div className="flex w-1/2 flex-col overflow-y-auto border-r border-gray-300 pr-6">
           {leftPanel}
         </div>
 
         {/* Right Panel - Form Fields */}
-        <div className="w-1/2 pl-6 flex flex-col overflow-y-auto">
+        <div className="flex w-1/2 flex-col overflow-y-auto pl-6">
           {rightPanel}
         </div>
       </div>

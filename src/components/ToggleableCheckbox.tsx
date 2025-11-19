@@ -29,7 +29,7 @@ export default function ToggleableCheckbox({
       }}
       disabled={disabled}
       className={`inline-flex items-center justify-center ${buttonSizeClass} rounded-full text-xs font-bold transition-transform focus:outline-none ${
-        disabled ? "opacity-50 cursor-wait" : "hover:scale-105"
+        disabled ? "cursor-wait opacity-50" : "hover:scale-105"
       }`}
       title={title}
       aria-pressed={checked}

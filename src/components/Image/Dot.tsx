@@ -11,18 +11,7 @@ export default function Dot({
 }) {
   return (
     <div
-      className={`
-                inline-block 
-                w-2.5 
-                h-2.5 
-                m-1 
-                rounded-full 
-                cursor-pointer 
-                ${dotIndex === index ? "bg-black opacity-100" : "bg-slate-500 opacity-30"} 
-                transition-opacity 
-                ease-in-out 
-                duration-300
-            `}
+      className={`m-1 inline-block h-2.5 w-2.5 cursor-pointer rounded-full ${dotIndex === index ? "bg-black opacity-100" : "bg-slate-500 opacity-30"} transition-opacity duration-300 ease-in-out`}
       onClick={(e: React.MouseEvent) => {
         setIndex(dotIndex);
         e.preventDefault();

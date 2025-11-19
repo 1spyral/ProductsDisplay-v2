@@ -47,12 +47,12 @@ export default function Modal({
 
   return (
     <div
-      className={`fixed inset-0 ${backgroundClass} flex justify-center items-center p-4`}
+      className={`fixed inset-0 ${backgroundClass} flex items-center justify-center p-4`}
       style={{ zIndex }}
       onClick={handleBackdropClick}
     >
       <div
-        className={`relative bg-white border-4 border-slate-700 ${sizeClasses[size]} ${
+        className={`relative border-4 border-slate-700 bg-white ${sizeClasses[size]} ${
           size === "full" ? "" : "max-h-[85vh] overflow-y-auto"
         } ${className}`}
         onClick={(e) => e.stopPropagation()}
@@ -61,7 +61,7 @@ export default function Modal({
         {size === "full" && (
           <button
             onClick={onClose}
-            className="absolute top-0 right-0 bg-slate-800 hover:bg-red-700 text-white font-bold px-6 py-4 transition-colors duration-200 z-50 border-l-4 border-b-4 border-slate-900"
+            className="absolute top-0 right-0 z-50 border-b-4 border-l-4 border-slate-900 bg-slate-800 px-6 py-4 font-bold text-white transition-colors duration-200 hover:bg-red-700"
             aria-label="Close Modal"
           >
             <svg
@@ -83,15 +83,15 @@ export default function Modal({
 
         {/* Header with title and close button for smaller modals */}
         {(title || size !== "full") && size !== "full" && (
-          <div className="flex items-center justify-between p-4 sm:p-6 border-b-2 border-gray-300">
+          <div className="flex items-center justify-between border-b-2 border-gray-300 p-4 sm:p-6">
             {title && (
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 uppercase tracking-wide">
+              <h2 className="text-xl font-bold tracking-wide text-gray-900 uppercase sm:text-2xl">
                 {title}
               </h2>
             )}
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-2xl font-bold ml-4"
+              className="ml-4 text-2xl font-bold text-gray-500 hover:text-gray-700"
               aria-label="Close Modal"
             >
               ×

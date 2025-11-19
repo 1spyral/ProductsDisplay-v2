@@ -13,7 +13,7 @@ export default function Arrows({
     <>
       {/* Left Arrow */}
       <button
-        className="absolute inset-y-1/2 -translate-y-1/2 left-2 w-12 h-12 bg-slate-700 border-3 border-gray-900 text-white flex items-center justify-center transition-opacity duration-200 cursor-pointer opacity-30 hover:opacity-100"
+        className="absolute inset-y-1/2 left-2 flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center border-3 border-gray-900 bg-slate-700 text-white opacity-30 transition-opacity duration-200 hover:opacity-100"
         onClick={(e: React.MouseEvent) => {
           setIndex((index - 1 + length) % length);
           e.preventDefault();
@@ -25,7 +25,7 @@ export default function Arrows({
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          className="w-7 h-7"
+          className="h-7 w-7"
         >
           <path
             strokeLinecap="square"
@@ -38,7 +38,7 @@ export default function Arrows({
 
       {/* Right Arrow */}
       <button
-        className="absolute inset-y-1/2 -translate-y-1/2 right-2 w-12 h-12 bg-slate-700 border-3 border-gray-900 text-white flex items-center justify-center transition-opacity duration-200 cursor-pointer opacity-30 hover:opacity-100"
+        className="absolute inset-y-1/2 right-2 flex h-12 w-12 -translate-y-1/2 cursor-pointer items-center justify-center border-3 border-gray-900 bg-slate-700 text-white opacity-30 transition-opacity duration-200 hover:opacity-100"
         onClick={(e: React.MouseEvent) => {
           setIndex((index + 1) % length);
           e.preventDefault();
@@ -50,7 +50,7 @@ export default function Arrows({
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          className="w-7 h-7"
+          className="h-7 w-7"
         >
           <path
             strokeLinecap="square"

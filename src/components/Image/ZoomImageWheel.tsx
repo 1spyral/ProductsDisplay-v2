@@ -81,7 +81,7 @@ export default function ZoomImageWheel({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full overflow-hidden cursor-zoom-in"
+      className="relative h-full w-full cursor-zoom-in overflow-hidden"
       onMouseEnter={() => !isTouchDevice && setZoom(true)}
       onMouseLeave={() => !isTouchDevice && setZoom(false)}
       onMouseMove={handleMouseMove}
@@ -91,12 +91,12 @@ export default function ZoomImageWheel({
     >
       {/* Zoom indicator for mobile */}
       {isTouchDevice && !zoom && (
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/60 text-white px-3 py-1 rounded-full text-xs font-medium pointer-events-none z-10">
+        <div className="pointer-events-none absolute top-4 left-1/2 z-10 -translate-x-1/2 transform rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white">
           Tap to zoom
         </div>
       )}
       {isTouchDevice && zoom && (
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/60 text-white px-3 py-1 rounded-full text-xs font-medium pointer-events-none z-10">
+        <div className="pointer-events-none absolute top-4 left-1/2 z-10 -translate-x-1/2 transform rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white">
           Drag to pan • Tap to exit
         </div>
       )}
@@ -104,19 +104,7 @@ export default function ZoomImageWheel({
       {photos.map((photo, i) => (
         <Image
           key={photo.alt}
-          className={`
-                        ${zoom ? "scale-200" : "scale-100"}
-                        absolute
-                        top-0
-                        left-0
-                        w-full
-                        h-full
-                        object-contain
-                        transition-opacity
-                        duration-500
-                        ease-in-out
-                        ${i === index ? "opacity-100" : "opacity-0"}
-                    `}
+          className={` ${zoom ? "scale-200" : "scale-100"} absolute top-0 left-0 h-full w-full object-contain transition-opacity duration-500 ease-in-out ${i === index ? "opacity-100" : "opacity-0"} `}
           style={{ transformOrigin: `${position.x} ${position.y}` }}
           src={photo.path}
           alt={photo.alt}

@@ -15,14 +15,14 @@ export function ProductNameField({
 }: ProductNameFieldProps) {
   return (
     <div>
-      <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-2">
+      <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
         Name
       </label>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-3 border-2 border-gray-400 focus:outline-none focus:border-slate-700 transition-colors"
+        className="w-full border-2 border-gray-400 px-4 py-3 transition-colors focus:border-slate-700 focus:outline-none"
         placeholder={placeholder}
       />
     </div>
@@ -44,14 +44,14 @@ export function ProductDescriptionField({
 }: ProductDescriptionFieldProps) {
   return (
     <div>
-      <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-2">
+      <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
         Description
       </label>
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
-        className="w-full px-4 py-3 border-2 border-gray-400 focus:outline-none focus:border-slate-700 transition-colors resize-none"
+        className="w-full resize-none border-2 border-gray-400 px-4 py-3 transition-colors focus:border-slate-700 focus:outline-none"
         placeholder={placeholder}
       />
     </div>
@@ -73,15 +73,15 @@ export function ProductCategoryField({
 }: ProductCategoryFieldProps) {
   return (
     <div>
-      <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-2">
+      <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
         Category
-        {required && <span className="text-red-600 ml-1">*</span>}
+        {required && <span className="ml-1 text-red-600">*</span>}
       </label>
       <div className="relative">
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full px-4 py-3 border-2 border-gray-400 focus:outline-none focus:border-slate-700 transition-colors appearance-none"
+          className="w-full appearance-none border-2 border-gray-400 px-4 py-3 transition-colors focus:border-slate-700 focus:outline-none"
           required={required}
         >
           {categories.map((cat) => (
@@ -90,7 +90,7 @@ export function ProductCategoryField({
             </option>
           ))}
         </select>
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-600 font-bold">
+        <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 font-bold text-gray-600">
           ▼
         </div>
       </div>

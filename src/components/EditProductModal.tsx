@@ -94,7 +94,7 @@ export default function EditProductModal({
   const rightPanel = (
     <form
       onSubmit={handleSubmit}
-      className="flex-1 flex flex-col space-y-4 pb-6"
+      className="flex flex-1 flex-col space-y-4 pb-6"
     >
       <ProductIdField
         value={formData.id}

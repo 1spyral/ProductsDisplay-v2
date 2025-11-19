@@ -1,9 +1,9 @@
 export default function Footer() {
   return (
-    <footer className="mt-auto bg-slate-800 border-t-4 border-slate-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-6">
+    <footer className="mt-auto border-t-4 border-slate-900 bg-slate-800 text-white">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-8">
         <div className="text-center">
-          <p className="text-gray-200 text-base">
+          <p className="text-base text-gray-200">
             &copy; {process.env.COPYRIGHT}
           </p>
         </div>

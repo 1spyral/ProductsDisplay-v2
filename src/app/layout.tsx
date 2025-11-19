@@ -17,10 +17,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
-      <body className="bg-white antialiased h-full flex flex-col overflow-hidden">
+      <body className="flex h-full flex-col overflow-hidden bg-white antialiased">
         <Navbar />
-        <div className="grow overflow-y-auto overflow-x-hidden flex flex-col">
-          <div className="grow flex flex-col">{children}</div>
+        <div className="flex grow flex-col overflow-x-hidden overflow-y-auto">
+          <div className="flex grow flex-col">{children}</div>
           <Footer />
         </div>
       </body>

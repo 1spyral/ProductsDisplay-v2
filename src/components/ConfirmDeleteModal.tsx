@@ -40,9 +40,9 @@ export default function ConfirmDeleteModal({
       <div className="space-y-6">
         {/* Warning Icon */}
         <div className="flex items-center justify-center">
-          <div className="bg-red-100 border-2 border-red-300 rounded-full p-4">
+          <div className="rounded-full border-2 border-red-300 bg-red-100 p-4">
             <svg
-              className="w-8 h-8 text-red-600"
+              className="h-8 w-8 text-red-600"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -57,8 +57,8 @@ export default function ConfirmDeleteModal({
 
         {/* Message */}
         <div className="text-center">
-          <p className="text-gray-900 text-base leading-relaxed">{message}</p>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-base leading-relaxed text-gray-900">{message}</p>
+          <p className="mt-2 text-sm text-gray-600">
             This action cannot be undone.
           </p>
         </div>
@@ -69,7 +69,7 @@ export default function ConfirmDeleteModal({
             type="button"
             onClick={onCancel}
             disabled={isDeleting}
-            className="flex-1 bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 uppercase tracking-wide transition-colors duration-200 disabled:opacity-50"
+            className="flex-1 bg-gray-500 py-3 font-bold tracking-wide text-white uppercase transition-colors duration-200 hover:bg-gray-700 disabled:opacity-50"
           >
             Cancel
           </button>
@@ -77,7 +77,7 @@ export default function ConfirmDeleteModal({
             type="button"
             onClick={handleConfirm}
             disabled={isDeleting}
-            className="flex-1 bg-red-600 hover:bg-red-800 text-white font-bold py-3 uppercase tracking-wide transition-colors duration-200 disabled:opacity-50"
+            className="flex-1 bg-red-600 py-3 font-bold tracking-wide text-white uppercase transition-colors duration-200 hover:bg-red-800 disabled:opacity-50"
           >
             {isDeleting ? "Deleting..." : confirmText}
           </button>

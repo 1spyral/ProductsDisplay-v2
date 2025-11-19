@@ -219,8 +219,8 @@ export default function ProductsPage() {
   if (loading) {
     return (
       <div className="p-4 sm:p-6 md:p-8">
-        <div className="bg-white border-3 border-gray-400 p-6 sm:p-8 text-center">
-          <p className="text-lg sm:text-xl font-bold text-gray-900 uppercase">
+        <div className="border-3 border-gray-400 bg-white p-6 text-center sm:p-8">
+          <p className="text-lg font-bold text-gray-900 uppercase sm:text-xl">
             Loading...
           </p>
         </div>
@@ -231,19 +231,19 @@ export default function ProductsPage() {
   return (
     <div className="p-4 sm:p-6 md:p-8">
       {/* Header */}
-      <div className="bg-white border-4 border-slate-700 p-4 sm:p-6 mb-4 sm:mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="mb-4 border-4 border-slate-700 bg-white p-4 sm:mb-6 sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-3">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 uppercase tracking-wide">
+            <h1 className="text-2xl font-bold tracking-wide text-gray-900 uppercase sm:text-3xl">
               Products
             </h1>
-            <p className="text-sm sm:text-base text-gray-700">
+            <p className="text-sm text-gray-700 sm:text-base">
               {filteredAndSortedProducts.length} products found
             </p>
           </div>
           <button
             onClick={handleAddProduct}
-            className="bg-slate-700 hover:bg-slate-900 text-white font-bold py-2 px-4 sm:px-6 uppercase tracking-wide transition-colors duration-200 whitespace-nowrap"
+            className="bg-slate-700 px-4 py-2 font-bold tracking-wide whitespace-nowrap text-white uppercase transition-colors duration-200 hover:bg-slate-900 sm:px-6"
           >
             Add Product
           </button>
@@ -251,11 +251,11 @@ export default function ProductsPage() {
       </div>
 
       {/* Filters & Sort */}
-      <div className="bg-white border-3 border-gray-400 p-4 sm:p-6 mb-4 sm:mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="mb-4 border-3 border-gray-400 bg-white p-4 sm:mb-6 sm:p-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {/* Search */}
           <div>
-            <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-2">
+            <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
               Search
             </label>
             <input
@@ -263,20 +263,20 @@ export default function ProductsPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by ID, name, or category..."
-              className="w-full h-[42px] px-4 border-2 border-gray-400 focus:outline-none focus:border-slate-700 transition-colors"
+              className="h-[42px] w-full border-2 border-gray-400 px-4 transition-colors focus:border-slate-700 focus:outline-none"
             />
           </div>
 
           {/* Category Filter */}
           <div>
-            <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-2">
+            <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
               Category
             </label>
             <div className="relative">
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full h-[42px] pl-4 pr-10 border-2 border-gray-400 focus:outline-none focus:border-slate-700 transition-colors appearance-none"
+                className="h-[42px] w-full appearance-none border-2 border-gray-400 pr-10 pl-4 transition-colors focus:border-slate-700 focus:outline-none"
               >
                 <option value="all">All Categories</option>
                 {categories.map((cat) => (
@@ -285,7 +285,7 @@ export default function ProductsPage() {
                   </option>
                 ))}
               </select>
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-600 font-bold">
+              <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 font-bold text-gray-600">
                 ▼
               </div>
             </div>
@@ -293,21 +293,21 @@ export default function ProductsPage() {
 
           {/* Sort */}
           <div>
-            <label className="block text-sm font-bold text-gray-900 uppercase tracking-wide mb-2">
+            <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
               Sort By
             </label>
-            <div className="flex gap-2 h-[42px]">
+            <div className="flex h-[42px] gap-2">
               <div className="relative flex-1">
                 <select
                   value={sortField}
                   onChange={(e) => setSortField(e.target.value as SortField)}
-                  className="w-full h-full pl-4 pr-10 border-2 border-gray-400 focus:outline-none focus:border-slate-700 transition-colors appearance-none"
+                  className="h-full w-full appearance-none border-2 border-gray-400 pr-10 pl-4 transition-colors focus:border-slate-700 focus:outline-none"
                 >
                   <option value="id">ID</option>
                   <option value="name">Name</option>
                   <option value="category">Category</option>
                 </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-600 font-bold">
+                <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 font-bold text-gray-600">
                   ▼
                 </div>
               </div>
@@ -315,7 +315,7 @@ export default function ProductsPage() {
                 onClick={() =>
                   setSortOrder(sortOrder === "asc" ? "desc" : "asc")
                 }
-                className="w-[42px] border-2 border-gray-400 hover:border-slate-700 font-bold transition-colors flex items-center justify-center"
+                className="flex w-[42px] items-center justify-center border-2 border-gray-400 font-bold transition-colors hover:border-slate-700"
                 title={sortOrder === "asc" ? "Ascending" : "Descending"}
               >
                 {sortOrder === "asc" ? "↑" : "↓"}
@@ -326,36 +326,36 @@ export default function ProductsPage() {
       </div>
 
       {/* Products Table */}
-      <div className="bg-white border-3 border-gray-400 overflow-x-auto">
+      <div className="overflow-x-auto border-3 border-gray-400 bg-white">
         <table className="w-full min-w-[640px]">
           <thead>
             <tr className="border-b-3 border-gray-400">
-              <th className="text-left p-2 sm:p-4 font-bold text-gray-900 uppercase tracking-wide w-16 sm:w-24 text-xs sm:text-sm">
+              <th className="w-16 p-2 text-left text-xs font-bold tracking-wide text-gray-900 uppercase sm:w-24 sm:p-4 sm:text-sm">
                 Image
               </th>
               <th
                 onClick={() => handleSort("id")}
-                className="text-left p-2 sm:p-4 font-bold text-gray-900 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors text-xs sm:text-sm"
+                className="cursor-pointer p-2 text-left text-xs font-bold tracking-wide text-gray-900 uppercase transition-colors hover:bg-gray-100 sm:p-4 sm:text-sm"
               >
                 ID {sortField === "id" && (sortOrder === "asc" ? "↑" : "↓")}
               </th>
               <th
                 onClick={() => handleSort("name")}
-                className="text-left p-2 sm:p-4 font-bold text-gray-900 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors text-xs sm:text-sm"
+                className="cursor-pointer p-2 text-left text-xs font-bold tracking-wide text-gray-900 uppercase transition-colors hover:bg-gray-100 sm:p-4 sm:text-sm"
               >
                 Name {sortField === "name" && (sortOrder === "asc" ? "↑" : "↓")}
               </th>
               <th
                 onClick={() => handleSort("category")}
-                className="text-left p-2 sm:p-4 font-bold text-gray-900 uppercase tracking-wide cursor-pointer hover:bg-gray-100 transition-colors text-xs sm:text-sm"
+                className="cursor-pointer p-2 text-left text-xs font-bold tracking-wide text-gray-900 uppercase transition-colors hover:bg-gray-100 sm:p-4 sm:text-sm"
               >
                 Category{" "}
                 {sortField === "category" && (sortOrder === "asc" ? "↑" : "↓")}
               </th>
-              <th className="text-center p-2 sm:p-4 font-bold text-gray-900 uppercase tracking-wide text-xs sm:text-sm">
+              <th className="p-2 text-center text-xs font-bold tracking-wide text-gray-900 uppercase sm:p-4 sm:text-sm">
                 Clearance
               </th>
-              <th className="text-right p-2 sm:p-4 font-bold text-gray-900 uppercase tracking-wide text-xs sm:text-sm">
+              <th className="p-2 text-right text-xs font-bold tracking-wide text-gray-900 uppercase sm:p-4 sm:text-sm">
                 Actions
               </th>
             </tr>
@@ -365,7 +365,7 @@ export default function ProductsPage() {
               <tr>
                 <td
                   colSpan={6}
-                  className="text-center p-4 sm:p-8 text-sm sm:text-base text-gray-600"
+                  className="p-4 text-center text-sm text-gray-600 sm:p-8 sm:text-base"
                 >
                   No products found
                 </td>
@@ -376,10 +376,10 @@ export default function ProductsPage() {
                 return (
                   <tr
                     key={product.id}
-                    className="border-b-2 border-gray-300 hover:bg-gray-50 transition-colors"
+                    className="border-b-2 border-gray-300 transition-colors hover:bg-gray-50"
                   >
                     <td className="p-2 sm:p-4">
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 relative bg-gray-100 border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
+                      <div className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center border-2 border-gray-300 bg-gray-100 sm:h-16 sm:w-16">
                         {imageUrl ? (
                           <Image
                             src={imageUrl}
@@ -389,24 +389,24 @@ export default function ProductsPage() {
                             unoptimized
                           />
                         ) : (
-                          <span className="text-gray-400 text-[10px] sm:text-xs text-center px-1">
+                          <span className="px-1 text-center text-[10px] text-gray-400 sm:text-xs">
                             No Image
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="p-2 sm:p-4 font-mono text-xs sm:text-sm">
+                    <td className="p-2 font-mono text-xs sm:p-4 sm:text-sm">
                       {product.id}
                     </td>
-                    <td className="p-2 sm:p-4 text-sm sm:text-base">
+                    <td className="p-2 text-sm sm:p-4 sm:text-base">
                       {product.name || (
                         <span className="text-gray-500 italic">No name</span>
                       )}
                     </td>
-                    <td className="p-2 sm:p-4 text-sm sm:text-base">
+                    <td className="p-2 text-sm sm:p-4 sm:text-base">
                       {product.category}
                     </td>
-                    <td className="p-2 sm:p-4 text-center">
+                    <td className="p-2 text-center sm:p-4">
                       <ToggleableCheckbox
                         checked={!!product.clearance}
                         onToggle={() =>
@@ -418,17 +418,17 @@ export default function ProductsPage() {
                         }
                       />
                     </td>
-                    <td className="p-2 sm:p-4 text-right">
-                      <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 justify-end">
+                    <td className="p-2 text-right sm:p-4">
+                      <div className="flex flex-col justify-end gap-1 sm:flex-row sm:gap-2">
                         <button
                           onClick={() => handleEditProduct(product)}
-                          className="bg-slate-700 hover:bg-slate-900 text-white font-bold py-1 px-2 sm:px-4 text-xs sm:text-sm uppercase transition-colors duration-200 whitespace-nowrap"
+                          className="bg-slate-700 px-2 py-1 text-xs font-bold whitespace-nowrap text-white uppercase transition-colors duration-200 hover:bg-slate-900 sm:px-4 sm:text-sm"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteProduct(product)}
-                          className="bg-red-700 hover:bg-red-900 text-white font-bold py-1 px-2 sm:px-4 text-xs sm:text-sm uppercase transition-colors duration-200 whitespace-nowrap"
+                          className="bg-red-700 px-2 py-1 text-xs font-bold whitespace-nowrap text-white uppercase transition-colors duration-200 hover:bg-red-900 sm:px-4 sm:text-sm"
                         >
                           Delete
                         </button>

@@ -10,7 +10,7 @@ export default function Dots({
   setIndex: (index: number) => void;
 }) {
   return (
-    <div className="w-full flex justify-center items-center text-center p-2.5">
+    <div className="flex w-full items-center justify-center p-2.5 text-center">
       {Array.from({ length }).map((_, i) => (
         <Dot key={i} dotIndex={i} index={index} setIndex={setIndex} />
       ))}

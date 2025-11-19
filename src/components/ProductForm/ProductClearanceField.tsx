@@ -13,7 +13,7 @@ export function ProductClearanceField({
 }: ProductClearanceFieldProps) {
   return (
     <div className="flex items-center gap-3">
-      <label className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+      <label className="text-sm font-bold tracking-wide text-gray-900 uppercase">
         Clearance
       </label>
       <ToggleableCheckbox

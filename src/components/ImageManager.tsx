@@ -91,18 +91,18 @@ function SortableImageTile({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="relative group bg-white border-2 border-gray-300 rounded-lg overflow-hidden hover:border-slate-700 transition-colors duration-200"
+      className="group relative overflow-hidden rounded-lg border-2 border-gray-300 bg-white transition-colors duration-200 hover:border-slate-700"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Drag handle */}
       <div
         {...listeners}
-        className="absolute top-1 left-1 bg-black bg-opacity-50 hover:bg-opacity-70 text-white rounded p-1 cursor-move z-10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+        className="bg-opacity-50 hover:bg-opacity-70 absolute top-1 left-1 z-10 flex cursor-move items-center justify-center rounded bg-black p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
         title="Drag to reorder"
       >
         <svg
-          className="w-3 h-3"
+          className="h-3 w-3"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -122,7 +122,7 @@ function SortableImageTile({
       </div>
 
       <div
-        className="aspect-square relative cursor-pointer"
+        className="relative aspect-square cursor-pointer"
         onClick={handleView}
       >
         <Image
@@ -138,13 +138,13 @@ function SortableImageTile({
           <button
             onClick={handleDelete}
             disabled={isDeleting}
-            className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 shadow-lg transition-colors duration-200 disabled:opacity-50 z-10"
+            className="absolute top-1 right-1 z-10 rounded-full bg-red-600 p-1 text-white shadow-lg transition-colors duration-200 hover:bg-red-700 disabled:opacity-50"
             title="Delete image"
           >
             {isDeleting ? (
-              <div className="animate-spin h-3 w-3 border-2 border-white border-t-transparent rounded-full"></div>
+              <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
             ) : (
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
                   d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
@@ -156,7 +156,7 @@ function SortableImageTile({
         )}
 
         {/* Position indicator */}
-        <div className="absolute bottom-1 left-1 bg-black bg-opacity-60 text-white text-xs px-1.5 py-0.5 rounded">
+        <div className="bg-opacity-60 absolute bottom-1 left-1 rounded bg-black px-1.5 py-0.5 text-xs text-white">
           {image.position + 1}
         </div>
       </div>
@@ -183,17 +183,17 @@ function ImageViewerModal({
       isOpen={isOpen}
       onClose={onClose}
       size="full"
-      className="bg-transparent border-0"
+      className="border-0 bg-transparent"
       zIndex={60}
       darkBackground={true}
     >
-      <div className="relative w-full h-full flex items-center justify-center">
+      <div className="relative flex h-full w-full items-center justify-center">
         <Image
           src={imageUrl}
           alt={alt}
           width={1200}
           height={800}
-          className="object-contain max-w-full max-h-full"
+          className="max-h-full max-w-full object-contain"
           unoptimized
         />
       </div>
@@ -346,10 +346,10 @@ export default function ImageManager({
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex-shrink-0 pb-3 border-b border-gray-300">
-        <h3 className="text-base font-bold text-gray-900 uppercase tracking-wide mb-1">
+      <div className="flex-shrink-0 border-b border-gray-300 pb-3">
+        <h3 className="mb-1 text-base font-bold tracking-wide text-gray-900 uppercase">
           Product Images
         </h3>
         <p className="text-xs text-gray-600">
@@ -359,7 +359,7 @@ export default function ImageManager({
       </div>
 
       {/* Images Grid - constrained to available space */}
-      <div className="flex-1 overflow-y-auto py-3 min-h-0">
+      <div className="min-h-0 flex-1 overflow-y-auto py-3">
         {sortedImages.length > 0 ? (
           <DndContext
             sensors={sensors}
@@ -384,10 +384,10 @@ export default function ImageManager({
             </SortableContext>
           </DndContext>
         ) : (
-          <div className="flex items-center justify-center text-gray-500 h-32">
+          <div className="flex h-32 items-center justify-center text-gray-500">
             <div className="text-center">
               <svg
-                className="w-8 h-8 mx-auto mb-2 text-gray-400"
+                className="mx-auto mb-2 h-8 w-8 text-gray-400"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -404,9 +404,9 @@ export default function ImageManager({
       </div>
 
       {/* Compact Upload Section */}
-      <div className="flex-shrink-0 pt-3 border-t border-gray-300">
+      <div className="flex-shrink-0 border-t border-gray-300 pt-3">
         <div
-          className={`border-2 border-dashed rounded-lg p-3 text-center transition-colors duration-200 ${
+          className={`rounded-lg border-2 border-dashed p-3 text-center transition-colors duration-200 ${
             dragActive
               ? "border-slate-700 bg-slate-50"
               : isUploading
@@ -420,7 +420,7 @@ export default function ImageManager({
         >
           {isUploading ? (
             <div className="flex items-center justify-center space-x-2">
-              <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
               <span className="text-sm font-medium text-blue-600">
                 Uploading...
               </span>
@@ -428,7 +428,7 @@ export default function ImageManager({
           ) : (
             <>
               <svg
-                className="w-5 h-5 mx-auto mb-1 text-gray-400"
+                className="mx-auto mb-1 h-5 w-5 text-gray-400"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -438,7 +438,7 @@ export default function ImageManager({
               <p className="text-xs text-gray-600">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-slate-700 font-medium hover:text-slate-900 underline"
+                  className="font-medium text-slate-700 underline hover:text-slate-900"
                   disabled={isUploading}
                 >
                   Upload
@@ -450,7 +450,7 @@ export default function ImageManager({
         </div>
 
         {uploadError && (
-          <div className="mt-2 p-2 bg-red-100 border border-red-300 rounded text-sm text-red-700">
+          <div className="mt-2 rounded border border-red-300 bg-red-100 p-2 text-sm text-red-700">
             {uploadError}
           </div>
         )}

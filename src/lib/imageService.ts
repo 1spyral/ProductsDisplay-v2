@@ -61,7 +61,7 @@ export async function uploadProductImage(
         const cleanFileName = `${timestamp}-${randomId}.${fileExtension}`;
 
         // Upload to Google Cloud Storage with product folder structure
-        const gcsPath = `${productId}/${cleanFileName}`;
+        const gcsPath = `images/${productId}/${cleanFileName}`;
         const uploadResult: ImageUploadResult = await uploadImage({
             buffer,
             filename: gcsPath,
@@ -164,7 +164,7 @@ export async function deleteProductImage(
         }
 
         // Delete from Google Cloud Storage
-        const gcsPath = `${image.productId}/${image.objectKey}`;
+        const gcsPath = `images/${image.productId}/${image.objectKey}`;
         const deleteResult = await deleteImage(gcsPath);
 
         if (!deleteResult.success) {
@@ -302,8 +302,8 @@ export async function migrateProductImages(
                 const filename = image.objectKey;
 
                 // Build the old and new GCS paths
-                const oldGCSPath = `${oldProductId}/${filename}`;
-                const newGCSPath = `${newProductId}/${filename}`;
+                const oldGCSPath = `images/${oldProductId}/${filename}`;
+                const newGCSPath = `images/${newProductId}/${filename}`;
 
                 // Copy image to new location in GCS
                 const copyResult = await copyImage(oldGCSPath, newGCSPath);

@@ -38,6 +38,7 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <CategoryButton category={null} isClearance={true} />
             {categories.map((category) => (
               <CategoryButton key={category.category} category={category} />
             ))}

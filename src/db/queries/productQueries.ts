@@ -32,6 +32,18 @@ export async function getProductsByCategory(
     });
 }
 
+export async function getClearanceProducts(): Promise<Product[]> {
+    return db.query.products.findMany({
+        where: eq(products.clearance, true),
+        orderBy: (p, { asc }) => [asc(p.id)],
+        with: {
+            images: {
+                orderBy: (images, { asc }) => [asc(images.position)],
+            },
+        },
+    });
+}
+
 export async function getProductById(id: string): Promise<Product | null> {
     return (
         (await db.query.products.findFirst({

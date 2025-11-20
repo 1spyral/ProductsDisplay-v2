@@ -1,6 +1,7 @@
 import CategoryButton from "@/components/CategoryButton";
 import Searchbar from "@/components/Searchbar";
 import { getCategories } from "@/db/queries/categoryQueries";
+import { hasClearanceProducts } from "@/db/queries/productQueries";
 
 // #temporary - Disable static generation to avoid CDN rate limits during build
 export const dynamic = "force-dynamic";
@@ -8,6 +9,7 @@ export const revalidate = 43200;
 
 export default async function HomePage() {
   const categories = await getCategories();
+  const showClearance = await hasClearanceProducts();
 
   return (
     <div className="min-h-full bg-gray-50">
@@ -38,7 +40,9 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            <CategoryButton category={null} isClearance={true} />
+            {showClearance && (
+              <CategoryButton category={null} isClearance={true} />
+            )}
             {categories.map((category) => (
               <CategoryButton key={category.category} category={category} />
             ))}

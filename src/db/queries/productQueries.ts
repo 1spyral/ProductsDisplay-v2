@@ -44,6 +44,14 @@ export async function getClearanceProducts(): Promise<Product[]> {
     });
 }
 
+export async function hasClearanceProducts(): Promise<boolean> {
+    const result = await db.query.products.findFirst({
+        where: eq(products.clearance, true),
+        columns: { id: true },
+    });
+    return result !== undefined;
+}
+
 export async function getProductById(id: string): Promise<Product | null> {
     return (
         (await db.query.products.findFirst({

@@ -1,8 +1,6 @@
 import ProductList from "@/components/Product/ProductList";
 import { getProductsByCategory } from "@/db/queries/productQueries";
-import {
-  getCategoryByCategory,
-} from "@/db/queries/categoryQueries";
+import { getCategoryByCategory } from "@/db/queries/categoryQueries";
 import { getCategoryName } from "@/types/Category";
 
 export const revalidate = 60;

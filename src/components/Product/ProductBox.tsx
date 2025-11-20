@@ -55,7 +55,6 @@ export default async function ProductBox({
           >
             {categoryName}
           </p>
-          {/* clearance badge for ProductBox is overlaid on the image */}
         </div>
       </div>
     </Link>

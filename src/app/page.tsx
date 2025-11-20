@@ -3,9 +3,7 @@ import Searchbar from "@/components/Searchbar";
 import { getCategories } from "@/db/queries/categoryQueries";
 import { hasClearanceProducts } from "@/db/queries/productQueries";
 
-// #temporary - Disable static generation to avoid CDN rate limits during build
-export const dynamic = "force-dynamic";
-export const revalidate = 43200;
+export const revalidate = 60;
 
 export default async function HomePage() {
   const categories = await getCategories();

@@ -1,7 +1,7 @@
 import ProductList from "@/components/Product/ProductList";
 import { getClearanceProducts } from "@/db/queries/productQueries";
 
-export const revalidate = 43200;
+export const dynamic = "force-dynamic";
 
 export default async function ClearancePage() {
   const products = await getClearanceProducts();

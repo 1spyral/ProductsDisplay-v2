@@ -14,14 +14,25 @@ export default function ZoomImageWheel({
   const [zoom, setZoom] = useState(false);
   const [position, setPosition] = useState({ x: "50%", y: "50%" });
   const [isTouchDevice, setIsTouchDevice] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
+  const [showFullscreen, setShowFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const touchStartPos = useRef({ x: 0, y: 0 });
 
   // Detect if device supports touch
   useEffect(() => {
     setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
   }, []);
+
+  // Prevent body scroll when fullscreen is open
+  useEffect(() => {
+    if (showFullscreen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showFullscreen]);
 
   // Desktop: hover to zoom, mouse move to pan
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -33,86 +44,94 @@ export default function ZoomImageWheel({
     setPosition({ x: `${x}%`, y: `${y}%` });
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
+  // Mobile: tap to open fullscreen
+  const handleTouchEnd = (e: React.TouchEvent) => {
     if (!isTouchDevice) return;
-
-    const touch = e.touches[0];
-    touchStartPos.current = { x: touch.clientX, y: touch.clientY };
-    setIsDragging(false);
-
-    if (!zoom) {
-      setZoom(true);
-      const { left, top, width, height } =
-        e.currentTarget.getBoundingClientRect();
-      const x = ((touch.clientX - left) / width) * 100;
-      const y = ((touch.clientY - top) / height) * 100;
-      setPosition({ x: `${x}%`, y: `${y}%` });
-    }
+    e.preventDefault();
+    setShowFullscreen(true);
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isTouchDevice || !zoom) return;
-
-    const touch = e.touches[0];
-    const deltaX = Math.abs(touch.clientX - touchStartPos.current.x);
-    const deltaY = Math.abs(touch.clientY - touchStartPos.current.y);
-
-    if (deltaX > 5 || deltaY > 5) {
-      setIsDragging(true);
-    }
-
-    const { left, top, width, height } =
-      e.currentTarget.getBoundingClientRect();
-    const x = ((touch.clientX - left) / width) * 100;
-    const y = ((touch.clientY - top) / height) * 100;
-    setPosition({ x: `${x}%`, y: `${y}%` });
-  };
-
-  const handleTouchEnd = () => {
-    if (!isTouchDevice) return;
-
-    if (zoom && !isDragging) {
-      setZoom(false);
-    }
-
-    setIsDragging(false);
+  const handleCloseFullscreen = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowFullscreen(false);
   };
 
   return (
-    <div
-      ref={containerRef}
-      className="relative h-full w-full cursor-zoom-in overflow-hidden"
-      onMouseEnter={() => !isTouchDevice && setZoom(true)}
-      onMouseLeave={() => !isTouchDevice && setZoom(false)}
-      onMouseMove={handleMouseMove}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      {/* Zoom indicator for mobile */}
-      {isTouchDevice && !zoom && (
-        <div className="pointer-events-none absolute top-4 left-1/2 z-10 -translate-x-1/2 transform rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white">
-          Tap to zoom
-        </div>
-      )}
-      {isTouchDevice && zoom && (
-        <div className="pointer-events-none absolute top-4 left-1/2 z-10 -translate-x-1/2 transform rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white">
-          Drag to pan • Tap to exit
-        </div>
-      )}
+    <>
+      <div
+        ref={containerRef}
+        className="relative h-full w-full cursor-zoom-in overflow-hidden"
+        onMouseEnter={() => !isTouchDevice && setZoom(true)}
+        onMouseLeave={() => !isTouchDevice && setZoom(false)}
+        onMouseMove={handleMouseMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Zoom indicator for mobile */}
+        {isTouchDevice && (
+          <div className="pointer-events-none absolute top-4 left-1/2 z-10 -translate-x-1/2 transform rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white">
+            Tap to view full screen
+          </div>
+        )}
 
-      {photos.map((photo, i) => (
-        <Image
-          key={photo.alt}
-          className={` ${zoom ? "scale-200" : "scale-100"} absolute top-0 left-0 h-full w-full object-contain transition-opacity duration-500 ease-in-out ${i === index ? "opacity-100" : "opacity-0"} `}
-          style={{ transformOrigin: `${position.x} ${position.y}` }}
-          src={photo.path}
-          alt={photo.alt}
-          fill={true}
-          quality={100}
-          unoptimized
-        />
-      ))}
-    </div>
+        {photos.map((photo, i) => (
+          <Image
+            key={photo.alt}
+            className={`${!isTouchDevice && zoom ? "scale-200" : "scale-100"} absolute top-0 left-0 h-full w-full object-contain transition-opacity duration-500 ease-in-out ${i === index ? "opacity-100" : "opacity-0"} `}
+            style={
+              !isTouchDevice
+                ? { transformOrigin: `${position.x} ${position.y}` }
+                : undefined
+            }
+            src={photo.path}
+            alt={photo.alt}
+            fill={true}
+            quality={100}
+            unoptimized
+          />
+        ))}
+      </div>
+
+      {/* Fullscreen overlay for mobile */}
+      {showFullscreen && isTouchDevice && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+          {/* Close button */}
+          <button
+            onClick={handleCloseFullscreen}
+            className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-black shadow-lg transition-all hover:bg-white active:scale-95"
+            aria-label="Close fullscreen"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+
+          {/* Fullscreen image */}
+          <div className="relative h-full w-full p-4">
+            {photos.map((photo, i) => (
+              <Image
+                key={photo.alt}
+                className={`absolute top-0 left-0 h-full w-full object-contain transition-opacity duration-300 ${i === index ? "opacity-100" : "opacity-0"}`}
+                src={photo.path}
+                alt={photo.alt}
+                fill={true}
+                quality={100}
+                unoptimized
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

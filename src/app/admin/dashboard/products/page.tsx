@@ -7,6 +7,7 @@ import {
   getAdminCategories,
   deleteAdminProduct,
   toggleAdminProductClearance,
+  toggleAdminProductHidden,
 } from "@/actions/admin";
 import Product from "@/types/Product";
 import Category from "@/types/Category";
@@ -36,6 +37,8 @@ export default function ProductsPage() {
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [clearanceFilter, setClearanceFilter] = useState<string>("all");
+  const [hiddenFilter, setHiddenFilter] = useState<string>("all");
 
   // Sorting
   const [sortField, setSortField] = useState<SortField>("id");
@@ -54,6 +57,11 @@ export default function ProductsPage() {
 
   // Clearance update state
   const [updatingClearance, setUpdatingClearance] = useState<{
+    [id: string]: boolean;
+  }>({});
+
+  // Hidden update state
+  const [updatingHidden, setUpdatingHidden] = useState<{
     [id: string]: boolean;
   }>({});
 
@@ -83,6 +91,28 @@ export default function ProductsPage() {
       // Category filter
       if (categoryFilter !== "all" && product.category !== categoryFilter) {
         return false;
+      }
+
+      // Clearance filter
+      if (clearanceFilter !== "all") {
+        const isClearance = product.clearance === true;
+        if (clearanceFilter === "clearance" && !isClearance) {
+          return false;
+        }
+        if (clearanceFilter === "regular" && isClearance) {
+          return false;
+        }
+      }
+
+      // Hidden filter
+      if (hiddenFilter !== "all") {
+        const isHidden = product.hidden === true;
+        if (hiddenFilter === "hidden" && !isHidden) {
+          return false;
+        }
+        if (hiddenFilter === "visible" && isHidden) {
+          return false;
+        }
       }
 
       // Search filter
@@ -216,6 +246,32 @@ export default function ProductsPage() {
     }
   };
 
+  const handleToggleHidden = async (productId: string, current: boolean) => {
+    // optimistic update
+    const previous = products;
+    setProducts((prev) =>
+      prev.map((p) => (p.id === productId ? { ...p, hidden: !current } : p))
+    );
+    setUpdatingHidden((s) => ({ ...s, [productId]: true }));
+
+    try {
+      await toggleAdminProductHidden(productId, !current);
+    } catch (error) {
+      console.error("Failed to toggle hidden:", error);
+      // revert
+      setProducts(previous);
+      alert(
+        `Failed to update hidden: ${error instanceof Error ? error.message : String(error)}`
+      );
+    } finally {
+      setUpdatingHidden((s) => {
+        const copy = { ...s };
+        delete copy[productId];
+        return copy;
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="p-4 sm:p-6 md:p-8">
@@ -323,6 +379,51 @@ export default function ProductsPage() {
             </div>
           </div>
         </div>
+
+        {/* Additional Filters Row */}
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          {/* Clearance Filter */}
+          <div>
+            <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
+              Clearance Status
+            </label>
+            <div className="relative">
+              <select
+                value={clearanceFilter}
+                onChange={(e) => setClearanceFilter(e.target.value)}
+                className="h-[42px] w-full appearance-none border-2 border-gray-400 pr-10 pl-4 transition-colors focus:border-slate-700 focus:outline-none"
+              >
+                <option value="all">All Products</option>
+                <option value="clearance">Clearance Only</option>
+                <option value="regular">Regular Only</option>
+              </select>
+              <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 font-bold text-gray-600">
+                ▼
+              </div>
+            </div>
+          </div>
+
+          {/* Hidden Filter */}
+          <div>
+            <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
+              Visibility Status
+            </label>
+            <div className="relative">
+              <select
+                value={hiddenFilter}
+                onChange={(e) => setHiddenFilter(e.target.value)}
+                className="h-[42px] w-full appearance-none border-2 border-gray-400 pr-10 pl-4 transition-colors focus:border-slate-700 focus:outline-none"
+              >
+                <option value="all">All Products</option>
+                <option value="visible">Visible Only</option>
+                <option value="hidden">Hidden Only</option>
+              </select>
+              <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 font-bold text-gray-600">
+                ▼
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Products Table */}
@@ -355,6 +456,9 @@ export default function ProductsPage() {
               <th className="p-2 text-center text-xs font-bold tracking-wide text-gray-900 uppercase sm:p-4 sm:text-sm">
                 Clearance
               </th>
+              <th className="p-2 text-center text-xs font-bold tracking-wide text-gray-900 uppercase sm:p-4 sm:text-sm">
+                Hidden
+              </th>
               <th className="p-2 text-right text-xs font-bold tracking-wide text-gray-900 uppercase sm:p-4 sm:text-sm">
                 Actions
               </th>
@@ -364,7 +468,7 @@ export default function ProductsPage() {
             {filteredAndSortedProducts.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="p-4 text-center text-sm text-gray-600 sm:p-8 sm:text-base"
                 >
                   No products found
@@ -416,6 +520,16 @@ export default function ProductsPage() {
                         title={
                           product.clearance ? "Clearance: On" : "Clearance: Off"
                         }
+                      />
+                    </td>
+                    <td className="p-2 text-center sm:p-4">
+                      <ToggleableCheckbox
+                        checked={!!product.hidden}
+                        onToggle={() =>
+                          handleToggleHidden(product.id, !!product.hidden)
+                        }
+                        disabled={!!updatingHidden[product.id]}
+                        title={product.hidden ? "Hidden: On" : "Hidden: Off"}
                       />
                     </td>
                     <td className="p-2 text-right sm:p-4">

@@ -134,7 +134,7 @@ export async function getAdminProducts() {
     await checkRateLimit("getAdminProducts", 100, 15 * 60 * 1000);
 
     try {
-        return await getProducts();
+        return await getProducts(true);
     } catch (error) {
         console.error("Failed to fetch products:", error);
         throw new Error("Failed to fetch products");
@@ -160,6 +160,7 @@ export async function createAdminProduct(data: {
     description?: string | null;
     category: string;
     clearance?: boolean;
+    hidden?: boolean;
 }) {
     await requireAuth();
     // Rate limit: 30 creates per 15 minutes
@@ -185,6 +186,7 @@ export async function createAdminProduct(data: {
             description: data.description?.trim() || null,
             category: data.category,
             clearance: data.clearance,
+            hidden: data.hidden,
         });
 
         return { success: true, productId: data.id };
@@ -224,6 +226,7 @@ export async function updateAdminProduct(
         description?: string | null;
         category?: string;
         clearance?: boolean;
+        hidden?: boolean;
     }
 ) {
     await requireAuth();
@@ -290,6 +293,23 @@ export async function toggleAdminProductClearance(
             throw new Error(error.message);
         }
         throw new Error("Failed to toggle clearance");
+    }
+}
+
+export async function toggleAdminProductHidden(id: string, hidden: boolean) {
+    await requireAuth();
+    // Rate limit: 100 toggles per 15 minutes
+    await checkRateLimit("toggleAdminProductHidden", 100, 15 * 60 * 1000);
+
+    try {
+        await updateProduct(id, { hidden });
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to toggle hidden:", error);
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
+        throw new Error("Failed to toggle hidden");
     }
 }
 

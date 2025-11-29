@@ -15,5 +15,6 @@ export default interface Product {
     description: string | null;
     category: string;
     clearance: boolean;
+    hidden: boolean;
     images?: ProductImage[];
 }

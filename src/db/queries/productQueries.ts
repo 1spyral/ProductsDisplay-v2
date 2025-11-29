@@ -3,10 +3,13 @@
 import { db } from "@/db/drizzle";
 import { products } from "@/db/schema";
 import Product from "@/types/Product";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, and } from "drizzle-orm";
 
-export async function getProducts(): Promise<Product[]> {
+export async function getProducts(
+    includeHidden: boolean = false
+): Promise<Product[]> {
     return db.query.products.findMany({
+        where: includeHidden ? undefined : eq(products.hidden, false),
         // Order clearance products first, then fall back to ID
         orderBy: (p, { desc, asc }) => [desc(p.clearance), asc(p.id)],
         with: {
@@ -18,10 +21,13 @@ export async function getProducts(): Promise<Product[]> {
 }
 
 export async function getProductsByCategory(
-    category: string
+    category: string,
+    includeHidden: boolean = false
 ): Promise<Product[]> {
     return db.query.products.findMany({
-        where: eq(products.category, category),
+        where: includeHidden
+            ? eq(products.category, category)
+            : and(eq(products.category, category), eq(products.hidden, false)),
         // Order clearance products first, then fall back to ID
         orderBy: (p, { desc, asc }) => [desc(p.clearance), asc(p.id)],
         with: {
@@ -32,9 +38,13 @@ export async function getProductsByCategory(
     });
 }
 
-export async function getClearanceProducts(): Promise<Product[]> {
+export async function getClearanceProducts(
+    includeHidden: boolean = false
+): Promise<Product[]> {
     return db.query.products.findMany({
-        where: eq(products.clearance, true),
+        where: includeHidden
+            ? eq(products.clearance, true)
+            : and(eq(products.clearance, true), eq(products.hidden, false)),
         orderBy: (p, { asc }) => [asc(p.id)],
         with: {
             images: {
@@ -44,9 +54,13 @@ export async function getClearanceProducts(): Promise<Product[]> {
     });
 }
 
-export async function hasClearanceProducts(): Promise<boolean> {
+export async function hasClearanceProducts(
+    includeHidden: boolean = false
+): Promise<boolean> {
     const result = await db.query.products.findFirst({
-        where: eq(products.clearance, true),
+        where: includeHidden
+            ? eq(products.clearance, true)
+            : and(eq(products.clearance, true), eq(products.hidden, false)),
         columns: { id: true },
     });
     return result !== undefined;
@@ -65,11 +79,16 @@ export async function getProductById(id: string): Promise<Product | null> {
     );
 }
 
-export async function getProductsByIds(ids: string[]): Promise<Product[]> {
+export async function getProductsByIds(
+    ids: string[],
+    includeHidden: boolean = false
+): Promise<Product[]> {
     if (ids.length === 0) return [];
 
     return db.query.products.findMany({
-        where: inArray(products.id, ids),
+        where: includeHidden
+            ? inArray(products.id, ids)
+            : and(inArray(products.id, ids), eq(products.hidden, false)),
         with: {
             images: {
                 orderBy: (images, { asc }) => [asc(images.position)],
@@ -86,6 +105,7 @@ export async function updateProduct(
         description?: string | null;
         category?: string;
         clearance?: boolean;
+        hidden?: boolean;
     }
 ): Promise<void> {
     // If ID is being changed, we need to handle it specially
@@ -125,6 +145,7 @@ export async function updateProduct(
             updateData.description = data.description;
         if (data.category !== undefined) updateData.category = data.category;
         if (data.clearance !== undefined) updateData.clearance = data.clearance;
+        if (data.hidden !== undefined) updateData.hidden = data.hidden;
 
         await db.update(products).set(updateData).where(eq(products.id, id));
     }
@@ -141,6 +162,7 @@ export async function createProduct(data: {
     description?: string | null;
     category: string;
     clearance?: boolean;
+    hidden?: boolean;
 }): Promise<void> {
     // Check if ID already exists
     const existingProduct = await getProductById(data.id);

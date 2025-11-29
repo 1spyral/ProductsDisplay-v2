@@ -19,7 +19,7 @@ export default function ImageCarousel({ photos, zoom }: ImageCarouselProps) {
     <div className="relative flex h-full w-full flex-col">
       <div className="relative flex h-full w-full items-center justify-center">
         {zoom ? (
-          <ZoomImageWheel photos={photos} index={index} />
+          <ZoomImageWheel photos={photos} index={index} setIndex={setIndex} />
         ) : (
           <ImageWheel photos={photos} index={index} />
         )}

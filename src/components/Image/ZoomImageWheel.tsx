@@ -7,15 +7,20 @@ import React, { useState, useRef, useEffect } from "react";
 export default function ZoomImageWheel({
   photos,
   index,
+  setIndex,
 }: {
   photos: Photo[];
   index: number;
+  setIndex?: (index: number) => void;
 }) {
   const [zoom, setZoom] = useState(false);
   const [position, setPosition] = useState({ x: "50%", y: "50%" });
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [showFullscreen, setShowFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number>(0);
+  const touchStartY = useRef<number>(0);
+  const fullscreenRef = useRef<HTMLDivElement>(null);
 
   // Detect if device supports touch
   useEffect(() => {
@@ -54,6 +59,32 @@ export default function ZoomImageWheel({
   const handleCloseFullscreen = (e: React.MouseEvent) => {
     e.stopPropagation();
     setShowFullscreen(false);
+  };
+
+  // Swipe handlers for fullscreen
+  const handleFullscreenTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleFullscreenTouchEnd = (e: React.TouchEvent) => {
+    if (!setIndex) return;
+
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaX = touchEndX - touchStartX.current;
+    const deltaY = touchEndY - touchStartY.current;
+
+    // Only trigger swipe if horizontal movement is greater than vertical
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+      if (deltaX > 0) {
+        // Swipe right - go to previous
+        setIndex(index > 0 ? index - 1 : photos.length - 1);
+      } else {
+        // Swipe left - go to next
+        setIndex(index < photos.length - 1 ? index + 1 : 0);
+      }
+    }
   };
 
   return (
@@ -116,8 +147,20 @@ export default function ZoomImageWheel({
             </svg>
           </button>
 
-          {/* Fullscreen image */}
-          <div className="relative h-full w-full p-4">
+          {/* Image counter indicator */}
+          {photos.length > 1 && (
+            <div className="pointer-events-none absolute top-4 left-1/2 z-10 -translate-x-1/2 transform rounded-full bg-white/90 px-3 py-1 text-sm font-medium text-black">
+              {index + 1} / {photos.length}
+            </div>
+          )}
+
+          {/* Fullscreen image with swipe */}
+          <div
+            ref={fullscreenRef}
+            className="relative h-full w-full p-4"
+            onTouchStart={handleFullscreenTouchStart}
+            onTouchEnd={handleFullscreenTouchEnd}
+          >
             {photos.map((photo, i) => (
               <Image
                 key={photo.alt}
@@ -130,6 +173,13 @@ export default function ZoomImageWheel({
               />
             ))}
           </div>
+
+          {/* Swipe hint indicator - only show if multiple photos */}
+          {photos.length > 1 && (
+            <div className="pointer-events-none absolute bottom-4 left-1/2 z-10 -translate-x-1/2 transform rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white">
+              Swipe to navigate
+            </div>
+          )}
         </div>
       )}
     </>

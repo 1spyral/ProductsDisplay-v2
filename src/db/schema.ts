@@ -29,13 +29,18 @@ export const products = pgTable(
                 onUpdate: "cascade",
             }),
         clearance: boolean().notNull().default(false),
+        hidden: boolean().notNull().default(false),
     },
     (table) => [
-        index("products_category_clearance_idx").on(
+        index("products_category_hidden_clearance_idx").on(
             table.category,
+            table.hidden,
             table.clearance
         ),
-        index("products_clearance_idx").on(table.clearance),
+        index("products_hidden_clearance_idx").on(
+            table.hidden,
+            table.clearance
+        ),
     ]
 );
 

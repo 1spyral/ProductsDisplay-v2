@@ -50,6 +50,13 @@
       "when": 1763516999279,
       "tag": "0006_add-clearance",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1764455940544,
+      "tag": "0007_add_hidden",
+      "breakpoints": true
     }
   ]
 }

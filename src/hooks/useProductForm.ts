@@ -9,6 +9,7 @@ interface ProductFormData {
     description: string;
     category: string;
     clearance: boolean;
+    hidden: boolean;
 }
 
 interface UseProductFormProps {
@@ -29,6 +30,7 @@ export function useProductForm({
         description: initialProduct?.description || "",
         category: initialProduct?.category || categories[0]?.category || "",
         clearance: initialProduct?.clearance || false,
+        hidden: initialProduct?.hidden || false,
     });
 
     // Track if ID field is locked (only relevant for edit mode)
@@ -49,6 +51,7 @@ export function useProductForm({
                 description: initialProduct.description || "",
                 category: initialProduct.category,
                 clearance: initialProduct.clearance || false,
+                hidden: initialProduct.hidden || false,
             });
             setIsIdLocked(true); // Reset lock when product changes
         }
@@ -96,12 +99,15 @@ export function useProductForm({
         const clearanceChanged =
             initialProduct?.clearance !== formData.clearance;
 
+        const hiddenChanged = initialProduct?.hidden !== formData.hidden;
+
         return (
             idChanged ||
             nameChanged ||
             descriptionChanged ||
             categoryChanged ||
-            clearanceChanged
+            clearanceChanged ||
+            hiddenChanged
         );
     };
 
@@ -114,6 +120,7 @@ export function useProductForm({
                 description: initialProduct.description || "",
                 category: initialProduct.category,
                 clearance: initialProduct.clearance || false,
+                hidden: initialProduct.hidden || false,
             });
             setIsIdLocked(true);
         } else {
@@ -123,6 +130,7 @@ export function useProductForm({
                 description: "",
                 category: categories[0]?.category || "",
                 clearance: false,
+                hidden: false,
             });
         }
     };
@@ -134,6 +142,7 @@ export function useProductForm({
             description: formData.description.trim() || null,
             category: formData.category,
             clearance: formData.clearance,
+            hidden: formData.hidden,
         };
 
         if (mode === "add") {
@@ -160,6 +169,7 @@ export function useProductForm({
             description: formData.description.trim() || null,
             category: formData.category,
             clearance: formData.clearance,
+            hidden: formData.hidden,
         };
     };
 
@@ -169,6 +179,7 @@ export function useProductForm({
             description: formData.description.trim() || null,
             category: formData.category,
             clearance: formData.clearance,
+            hidden: formData.hidden,
             newId:
                 !isIdLocked && formData.id.trim() !== initialProduct?.id
                     ? formData.id.trim()

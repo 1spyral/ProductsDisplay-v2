@@ -9,3 +9,4 @@ export {
 export { ProductClearanceField } from "./ProductClearanceField";
 export { ProductFormError, ProductFormActions } from "./ProductFormActions";
 export { default as UnifiedImageManager } from "./UnifiedImageManager";
+export { ProductHiddenField } from "./ProductHiddenField";

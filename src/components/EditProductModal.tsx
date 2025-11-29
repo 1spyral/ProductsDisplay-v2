@@ -12,6 +12,7 @@ import {
   ProductDescriptionField,
   ProductCategoryField,
   ProductClearanceField,
+  ProductHiddenField,
   ProductFormError,
   ProductFormActions,
   UnifiedImageManager,
@@ -123,10 +124,17 @@ export default function EditProductModal({
         required
       />
 
-      <ProductClearanceField
-        value={formData.clearance}
-        onChange={(value) => updateField("clearance", value)}
-      />
+      <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+        <ProductClearanceField
+          value={formData.clearance}
+          onChange={(value) => updateField("clearance", value)}
+        />
+
+        <ProductHiddenField
+          value={formData.hidden}
+          onChange={(value) => updateField("hidden", value)}
+        />
+      </div>
 
       <ProductFormError error={error} />
 

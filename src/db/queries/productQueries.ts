@@ -116,18 +116,7 @@ export async function updateProduct(
             throw new Error(`Product with ID "${data.newId}" already exists`);
         }
 
-        // Import the migration function here to avoid circular dependency
-        const { migrateProductImages } = await import("@/lib/imageService");
-
-        // Migrate images first
-        const migrationResult = await migrateProductImages(id, data.newId);
-        if (!migrationResult.success) {
-            throw new Error(
-                `Failed to migrate images: ${migrationResult.error}`
-            );
-        }
-
-        // Update all fields including the ID
+        // Update product ID in database
         await db
             .update(products)
             .set({
@@ -137,6 +126,16 @@ export async function updateProduct(
                 category: data.category,
             })
             .where(eq(products.id, id));
+
+        const { migrateProductImages } = await import("@/lib/imageService");
+
+        // Migrate images
+        const migrationResult = await migrateProductImages(id, data.newId);
+        if (!migrationResult.success) {
+            throw new Error(
+                `Failed to migrate images: ${migrationResult.error}`
+            );
+        }
     } else {
         // Regular update without ID change
         const updateData: Partial<typeof products.$inferInsert> = {};

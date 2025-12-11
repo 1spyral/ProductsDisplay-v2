@@ -225,7 +225,27 @@ export async function copyImage(
         const sourceFile = bucket.file(sourceFilename);
         const destinationFile = bucket.file(destinationFilename);
 
-        await sourceFile.copy(destinationFile);
+        // Check if source file exists
+        const [sourceExists] = await sourceFile.exists();
+        if (!sourceExists) {
+            return {
+                success: false,
+                error: `Source file not found: ${sourceFilename}`,
+            };
+        }
+
+        // Perform the copy operation and wait for it to complete
+        const [destinationFileResponse] =
+            await sourceFile.copy(destinationFile);
+
+        // Verify the destination file was created successfully
+        const [destExists] = await destinationFileResponse.exists();
+        if (!destExists) {
+            return {
+                success: false,
+                error: `Failed to create destination file: ${destinationFilename}`,
+            };
+        }
 
         return { success: true };
     } catch (error) {

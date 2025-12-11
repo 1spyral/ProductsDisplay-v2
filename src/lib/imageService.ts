@@ -292,8 +292,13 @@ export async function migrateProductImages(
 
         if (!imagesResult.success || !imagesResult.images.length) {
             // No images to migrate
+            console.log(`No images found for product ${oldProductId}`);
             return { success: true };
         }
+
+        console.log(
+            `Starting migration of ${imagesResult.images.length} images from ${oldProductId} to ${newProductId}`
+        );
 
         const images = imagesResult.images;
         const migrationPromises = images.map(async (image) => {
@@ -304,6 +309,10 @@ export async function migrateProductImages(
                 // Build the old and new GCS paths
                 const oldGCSPath = `images/${oldProductId}/${filename}`;
                 const newGCSPath = `images/${newProductId}/${filename}`;
+
+                console.log(
+                    `Migrating image: ${image.id} from ${oldGCSPath} to ${newGCSPath}`
+                );
 
                 // Copy image to new location in GCS
                 const copyResult = await copyImage(oldGCSPath, newGCSPath);
@@ -338,6 +347,7 @@ export async function migrateProductImages(
                     // Continue even if deletion fails - the image is copied and DB is updated
                 }
 
+                console.log(`Successfully migrated image ${image.id}`);
                 return { success: true, imageId: image.id };
             } catch (error) {
                 console.error(`Error migrating image ${image.id}:`, error);

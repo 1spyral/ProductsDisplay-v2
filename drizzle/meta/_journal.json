@@ -64,6 +64,13 @@
       "when": 1765671143151,
       "tag": "0008_make_category_nullable",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1765742423475,
+      "tag": "0009_add_product_prices",
+      "breakpoints": true
     }
   ]
 }

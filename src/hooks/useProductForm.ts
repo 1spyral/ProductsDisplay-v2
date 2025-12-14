@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Product from "@/types/Product";
 import { useProductIdValidation } from "./useProductFormValidation";
 
@@ -35,21 +35,6 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
         initialId: initialProduct?.id,
         skipDuplicateCheck: mode === "edit" && isIdLocked,
     });
-
-    // Update form data when initial product changes (for edit mode)
-    useEffect(() => {
-        if (initialProduct) {
-            setFormData({
-                id: initialProduct.id,
-                name: initialProduct.name || "",
-                description: initialProduct.description || "",
-                category: initialProduct.category,
-                clearance: initialProduct.clearance || false,
-                hidden: initialProduct.hidden || false,
-            });
-            setIsIdLocked(true); // Reset lock when product changes
-        }
-    }, [initialProduct]);
 
     // Form field update handlers
     const updateField = (

@@ -565,6 +565,7 @@ export default function ProductsPage() {
       {/* Edit Product Modal */}
       {editingProduct && (
         <EditProductModal
+          key={editingProduct.id}
           product={editingProduct}
           categories={categories}
           isOpen={isEditModalOpen}

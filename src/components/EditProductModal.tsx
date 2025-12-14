@@ -47,7 +47,6 @@ export default function EditProductModal({
     resetForm,
     getEditFormData,
   } = useProductForm({
-    categories,
     initialProduct: product,
     mode: "edit",
   });
@@ -121,7 +120,7 @@ export default function EditProductModal({
         value={formData.category}
         onChange={(value) => updateField("category", value)}
         categories={categories}
-        required
+        required={false}
       />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">

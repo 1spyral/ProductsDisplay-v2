@@ -20,9 +20,9 @@ export default async function ProductPage({ id }: { id: string }) {
     );
   }
 
-  const categoryName = getCategoryName(
-    await getCategoryByCategory(product.category)
-  );
+  const categoryName = product.category
+    ? getCategoryName(await getCategoryByCategory(product.category))
+    : "No category";
   const hasName = product.name && product.name.trim().length > 0;
   const hasDescription =
     product.description && product.description.trim().length > 0;

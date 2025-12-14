@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Category from "@/types/Category";
 import Product from "@/types/Product";
 import { useProductIdValidation } from "./useProductFormValidation";
 
@@ -7,28 +6,23 @@ interface ProductFormData {
     id: string;
     name: string;
     description: string;
-    category: string;
+    category: string | null;
     clearance: boolean;
     hidden: boolean;
 }
 
 interface UseProductFormProps {
-    categories: Category[];
     initialProduct?: Product | null; // For edit mode
     mode: "add" | "edit";
 }
 
-export function useProductForm({
-    categories,
-    initialProduct,
-    mode,
-}: UseProductFormProps) {
+export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
     // Initialize form data
     const [formData, setFormData] = useState<ProductFormData>({
         id: initialProduct?.id || "",
         name: initialProduct?.name || "",
         description: initialProduct?.description || "",
-        category: initialProduct?.category || categories[0]?.category || "",
+        category: initialProduct?.category ?? null,
         clearance: initialProduct?.clearance || false,
         hidden: initialProduct?.hidden || false,
     });
@@ -60,7 +54,7 @@ export function useProductForm({
     // Form field update handlers
     const updateField = (
         field: keyof ProductFormData,
-        value: string | boolean
+        value: string | boolean | null
     ) => {
         setFormData((prev) => ({ ...prev, [field]: value }) as ProductFormData);
     };
@@ -70,7 +64,6 @@ export function useProductForm({
         if (mode === "add") {
             return !!(
                 formData.id.trim() &&
-                formData.category &&
                 !validation.getIdValidationMessage(formData.id) &&
                 !validation.isCheckingDuplicate
             );
@@ -128,7 +121,7 @@ export function useProductForm({
                 id: "",
                 name: "",
                 description: "",
-                category: categories[0]?.category || "",
+                category: null,
                 clearance: false,
                 hidden: false,
             });

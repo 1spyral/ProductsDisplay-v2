@@ -120,7 +120,9 @@ export default function ProductsPage() {
         const search = searchQuery.toLowerCase();
         const matchesId = product.id.toLowerCase().includes(search);
         const matchesName = product.name?.toLowerCase().includes(search);
-        const matchesCategory = product.category.toLowerCase().includes(search);
+        const matchesCategory = (product.category || "")
+          .toLowerCase()
+          .includes(search);
         return matchesId || matchesName || matchesCategory;
       }
 
@@ -134,8 +136,8 @@ export default function ProductsPage() {
         aValue = a.name || "";
         bValue = b.name || "";
       } else if (sortField === "category") {
-        aValue = a.category;
-        bValue = b.category;
+        aValue = a.category || "";
+        bValue = b.category || "";
       } else {
         aValue = a.id;
         bValue = b.id;
@@ -508,7 +510,11 @@ export default function ProductsPage() {
                       )}
                     </td>
                     <td className="p-2 text-sm sm:p-4 sm:text-base">
-                      {product.category}
+                      {product.category || (
+                        <span className="text-gray-500 italic">
+                          No category
+                        </span>
+                      )}
                     </td>
                     <td className="p-2 text-center sm:p-4">
                       <ToggleableCheckbox

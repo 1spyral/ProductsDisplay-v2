@@ -13,7 +13,7 @@ export default interface Product {
     id: string;
     name: string | null;
     description: string | null;
-    category: string;
+    category: string | null;
     clearance: boolean;
     hidden: boolean;
     images?: ProductImage[];

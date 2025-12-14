@@ -4,8 +4,8 @@ import Category from "@/types/Category";
 import { useState, useRef, useEffect } from "react";
 
 interface ProductCategoryFieldProps {
-  value: string;
-  onChange: (value: string) => void;
+  value: string | null;
+  onChange: (value: string | null) => void;
   categories: Category[];
   required?: boolean;
 }
@@ -22,7 +22,9 @@ export function ProductCategoryField({
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Get display name for selected category
-  const selectedCategory = categories.find((cat) => cat.category === value);
+  const selectedCategory = value
+    ? categories.find((cat) => cat.category === value)
+    : undefined;
   const displayValue = selectedCategory
     ? selectedCategory.name || selectedCategory.category
     : value || "";
@@ -66,7 +68,7 @@ export function ProductCategoryField({
   };
 
   const handleClear = () => {
-    onChange("");
+    onChange(null);
     setFilter("");
   };
 

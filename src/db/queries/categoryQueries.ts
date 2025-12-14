@@ -15,8 +15,9 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 export async function getCategoryByCategory(
-    category: string
+    category: string | null
 ): Promise<Category | null> {
+    if (!category) return null;
     return db
         .select({
             category: categories.category,

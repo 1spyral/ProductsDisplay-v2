@@ -43,7 +43,6 @@ export default function AddProductModal({
     resetForm,
     getAddFormData,
   } = useProductForm({
-    categories,
     mode: "add",
   });
 
@@ -133,7 +132,7 @@ export default function AddProductModal({
         value={formData.category}
         onChange={(value) => updateField("category", value)}
         categories={categories}
-        required
+        required={false}
       />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">

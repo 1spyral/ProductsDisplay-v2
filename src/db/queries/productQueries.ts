@@ -103,7 +103,7 @@ export async function updateProduct(
         newId?: string;
         name?: string | null;
         description?: string | null;
-        category?: string;
+        category?: string | null;
         clearance?: boolean;
         hidden?: boolean;
     }
@@ -116,16 +116,18 @@ export async function updateProduct(
             throw new Error(`Product with ID "${data.newId}" already exists`);
         }
 
-        // Update product ID in database
-        await db
-            .update(products)
-            .set({
-                id: data.newId,
-                name: data.name,
-                description: data.description,
-                category: data.category,
-            })
-            .where(eq(products.id, id));
+        const updateData: Partial<typeof products.$inferInsert> = {
+            id: data.newId,
+        };
+        if (data.name !== undefined) updateData.name = data.name;
+        if (data.description !== undefined)
+            updateData.description = data.description;
+        if (data.category !== undefined) updateData.category = data.category;
+        if (data.clearance !== undefined) updateData.clearance = data.clearance;
+        if (data.hidden !== undefined) updateData.hidden = data.hidden;
+
+        // Update product (including ID change)
+        await db.update(products).set(updateData).where(eq(products.id, id));
 
         const { migrateProductImages } = await import("@/lib/imageService");
 
@@ -159,7 +161,7 @@ export async function createProduct(data: {
     id: string;
     name?: string | null;
     description?: string | null;
-    category: string;
+    category: string | null;
     clearance?: boolean;
     hidden?: boolean;
 }): Promise<void> {

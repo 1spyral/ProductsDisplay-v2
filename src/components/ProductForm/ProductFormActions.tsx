@@ -32,7 +32,7 @@ export function ProductFormActions({
   loadingText,
 }: ProductFormActionsProps) {
   return (
-    <div className="mt-auto flex gap-3 pt-4 pb-6">
+    <div className="mt-auto flex gap-3 pt-4 pb-2">
       <button
         type="button"
         onClick={onCancel}

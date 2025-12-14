@@ -16,7 +16,13 @@ export default function ProductModal({
   };
 
   return (
-    <Modal isOpen={true} onClose={handleClose} size="full">
+    <Modal
+      isOpen={true}
+      onClose={handleClose}
+      size="5xl"
+      showFloatingCloseButton
+      showHeaderCloseButton={false}
+    >
       {children}
     </Modal>
   );

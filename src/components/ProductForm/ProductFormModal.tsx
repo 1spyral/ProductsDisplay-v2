@@ -25,19 +25,18 @@ export default function ProductFormModal({
       isOpen={isOpen}
       onClose={onClose}
       title={title}
-      size="4xl"
+      size="full"
+      showHeaderCloseButton
       className={className}
     >
-      <div className="flex h-[70vh] max-h-[700px] min-h-[500px] p-4">
-        {/* Left Panel - Image Management */}
-        <div className="flex w-1/2 flex-col overflow-y-auto border-r border-gray-300 pr-6">
+      <div className="flex h-full">
+        {/* Left Panel */}
+        <div className="flex w-1/2 flex-col overflow-y-auto border-r border-gray-300">
           {leftPanel}
         </div>
 
-        {/* Right Panel - Form Fields */}
-        <div className="flex w-1/2 flex-col overflow-y-auto pl-6">
-          {rightPanel}
-        </div>
+        {/* Right Panel */}
+        <div className="flex w-1/2 flex-col overflow-y-auto">{rightPanel}</div>
       </div>
     </Modal>
   );

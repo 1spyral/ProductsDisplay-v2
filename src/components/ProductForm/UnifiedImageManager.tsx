@@ -424,7 +424,7 @@ export default function UnifiedImageManager({
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col p-4">
       {/* Header */}
       <div className="flex-shrink-0 border-b border-gray-300 pb-3">
         <h3 className="mb-1 text-base font-bold tracking-wide text-gray-900 uppercase">

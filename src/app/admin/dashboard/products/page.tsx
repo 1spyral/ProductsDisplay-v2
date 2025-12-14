@@ -26,7 +26,7 @@ function getProductThumbnailUrl(product: Product): string | null {
     return null;
   }
   const firstImage = product.images[0];
-  return buildImageUrl(product.id, firstImage.objectKey);
+  return buildImageUrl(firstImage.objectKey);
 }
 
 export default function ProductsPage() {

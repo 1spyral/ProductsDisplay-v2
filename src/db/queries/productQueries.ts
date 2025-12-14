@@ -128,16 +128,6 @@ export async function updateProduct(
 
         // Update product (including ID change)
         await db.update(products).set(updateData).where(eq(products.id, id));
-
-        const { migrateProductImages } = await import("@/lib/imageService");
-
-        // Migrate images
-        const migrationResult = await migrateProductImages(id, data.newId);
-        if (!migrationResult.success) {
-            throw new Error(
-                `Failed to migrate images: ${migrationResult.error}`
-            );
-        }
     } else {
         // Regular update without ID change
         const updateData: Partial<typeof products.$inferInsert> = {};

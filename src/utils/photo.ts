@@ -6,9 +6,9 @@ function getImageBasePath(): string {
 }
 
 // Build image URL - can be used in both server and client components
-export function buildImageUrl(productId: string, objectKey: string): string {
+export function buildImageUrl(objectKey: string): string {
     const cdnBase = getImageBasePath();
-    return `${cdnBase}${productId}/${objectKey}`;
+    return `${cdnBase}${objectKey}`;
 }
 
 function buildPhotoFromImage(
@@ -19,7 +19,7 @@ function buildPhotoFromImage(
 ): Photo {
     return {
         id: image.id,
-        path: buildImageUrl(productId, image.objectKey),
+        path: buildImageUrl(image.objectKey),
         alt: `${productName} ${index + 1}`,
     };
 }

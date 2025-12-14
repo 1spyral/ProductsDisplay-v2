@@ -85,7 +85,7 @@ function SortableTile({
     if (item.type === "file" && item.file) {
       return URL.createObjectURL(item.file);
     } else if (item.type === "existing" && item.productImage && productId) {
-      return buildImageUrl(productId, item.productImage.objectKey);
+      return buildImageUrl(item.productImage.objectKey);
     }
     return "";
   };

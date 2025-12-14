@@ -36,7 +36,6 @@ interface ImageManagerProps {
 
 interface SortableImageTileProps {
   image: ProductImage;
-  productId: string;
   onDelete: (imageId: string) => void;
   onView: (imageUrl: string, alt: string) => void;
 }
@@ -44,7 +43,6 @@ interface SortableImageTileProps {
 // Individual sortable image tile component
 function SortableImageTile({
   image,
-  productId,
   onDelete,
   onView,
 }: SortableImageTileProps) {
@@ -66,7 +64,7 @@ function SortableImageTile({
     opacity: isDragging ? 0.8 : 1,
   };
 
-  const imageUrl = buildImageUrl(productId, image.objectKey);
+  const imageUrl = buildImageUrl(image.objectKey);
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -375,7 +373,6 @@ export default function ImageManager({
                   <SortableImageTile
                     key={image.id}
                     image={image}
-                    productId={productId}
                     onDelete={handleDeleteImage}
                     onView={openImageViewer}
                   />

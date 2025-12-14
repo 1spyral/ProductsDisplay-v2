@@ -2,8 +2,23 @@ import ProductList from "@/components/Product/ProductList";
 import { getProductsByCategory } from "@/db/queries/productQueries";
 import { getCategoryByCategory } from "@/db/queries/categoryQueries";
 import { getCategoryName } from "@/types/Category";
+import type { Metadata } from "next";
 
 export const revalidate = 60;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}): Promise<Metadata> {
+  const { category } = await params;
+  const categoryData = await getCategoryByCategory(category);
+  const displayName = getCategoryName(categoryData);
+
+  return {
+    title: displayName,
+  };
+}
 
 export default async function CategoryPage({
   params,

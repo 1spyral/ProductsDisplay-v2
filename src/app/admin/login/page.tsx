@@ -3,6 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { loginAdmin } from "@/actions/admin";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin Login",
+};
 
 export default function AdminLoginPage() {
   const [password, setPassword] = useState("");

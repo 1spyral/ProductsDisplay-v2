@@ -5,9 +5,13 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import React from "react";
 
+const siteName = process.env.NAME || "Store";
+
 export const metadata: Metadata = {
-  title: "",
-  description: "",
+  title: {
+    default: siteName,
+    template: `%s | ${siteName}`,
+  },
 };
 
 export default function RootLayout({

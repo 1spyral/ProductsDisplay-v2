@@ -1,11 +1,25 @@
 import ProductList from "@/components/Product/ProductList";
 import Product from "@/types/Product";
 import search from "@/utils/search";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
 interface SearchParams {
   [key: string]: string | string[] | undefined;
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}): Promise<Metadata> {
+  const { query } = await searchParams;
+  const searchQuery = Array.isArray(query) ? query.join(" ") : query;
+
+  return {
+    title: searchQuery ?? "Search Results",
+  };
 }
 
 export default async function SearchResultsPage({

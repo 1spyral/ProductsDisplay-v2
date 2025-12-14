@@ -1,3 +1,9 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard",
+};
+
 export default function AdminDashboard() {
   return (
     <div className="p-8">

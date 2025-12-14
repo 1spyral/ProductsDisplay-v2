@@ -1,7 +1,12 @@
 import ProductList from "@/components/Product/ProductList";
 import { getClearanceProducts } from "@/db/queries/productQueries";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Clearance",
+};
 
 export default async function ClearancePage() {
   const products = await getClearanceProducts();

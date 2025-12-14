@@ -17,7 +17,7 @@
     "db:drop": "drizzle-kit drop"
   },
   "engines": {
-    "bun": ">=1.1.0"
+    "bun": ">=1.3.4"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

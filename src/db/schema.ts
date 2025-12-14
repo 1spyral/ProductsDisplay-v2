@@ -22,12 +22,10 @@ export const products = pgTable(
         id: text().primaryKey().notNull(),
         name: text(),
         description: text(),
-        category: text()
-            .notNull()
-            .references(() => categories.category, {
-                onDelete: "restrict",
-                onUpdate: "cascade",
-            }),
+        category: text().references(() => categories.category, {
+            onDelete: "restrict",
+            onUpdate: "cascade",
+        }),
         clearance: boolean().notNull().default(false),
         hidden: boolean().notNull().default(false),
     },

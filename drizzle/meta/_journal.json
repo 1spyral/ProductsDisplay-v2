@@ -57,6 +57,13 @@
       "when": 1764455940544,
       "tag": "0007_add_hidden",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1765671143151,
+      "tag": "0008_make_category_nullable",
+      "breakpoints": true
     }
   ]
 }

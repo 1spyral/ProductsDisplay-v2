@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { handleAdminAuth } from "./middleware/auth";
+import { handleAdminAuth } from "./proxies/auth";
 import {
     handleAuthRateLimit,
     handlePublicRateLimit,
-} from "./middleware/rate-limit";
+} from "./proxies/rate-limit";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     // Apply rate limiting first (admin-specific)
     const adminRateLimitResponse = handleAuthRateLimit(request);
     if (adminRateLimitResponse) {

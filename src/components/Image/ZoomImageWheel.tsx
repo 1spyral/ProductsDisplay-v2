@@ -15,17 +15,16 @@ export default function ZoomImageWheel({
 }) {
   const [zoom, setZoom] = useState(false);
   const [position, setPosition] = useState({ x: "50%", y: "50%" });
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isTouchDevice] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      ("ontouchstart" in window || navigator.maxTouchPoints > 0)
+  );
   const [showFullscreen, setShowFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number>(0);
   const touchStartY = useRef<number>(0);
   const fullscreenRef = useRef<HTMLDivElement>(null);
-
-  // Detect if device supports touch
-  useEffect(() => {
-    setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0);
-  }, []);
 
   // Prevent body scroll when fullscreen is open
   useEffect(() => {

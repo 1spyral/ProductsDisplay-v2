@@ -160,6 +160,7 @@ export async function createAdminProduct(data: {
     description?: string | null;
     category: string | null;
     clearance?: boolean;
+    soldOut?: boolean;
     hidden?: boolean;
 }) {
     await requireAuth();
@@ -186,6 +187,7 @@ export async function createAdminProduct(data: {
             description: data.description?.trim() || null,
             category: data.category,
             clearance: data.clearance,
+            soldOut: data.soldOut,
             hidden: data.hidden,
         });
 
@@ -226,6 +228,7 @@ export async function updateAdminProduct(
         description?: string | null;
         category?: string | null;
         clearance?: boolean;
+        soldOut?: boolean;
         hidden?: boolean;
     }
 ) {

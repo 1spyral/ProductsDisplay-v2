@@ -48,6 +48,11 @@ export default async function ProductPage({ id }: { id: string }) {
                   Clearance
                 </span>
               )}
+              {product.soldOut && (
+                <span className="inline-block bg-gray-500 px-4 py-2 text-sm font-bold tracking-wider text-white uppercase">
+                  Sold Out
+                </span>
+              )}
             </div>
           </div>
 

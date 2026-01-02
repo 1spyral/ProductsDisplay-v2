@@ -15,6 +15,7 @@ export default interface Product {
     description: string | null;
     category: string | null;
     clearance: boolean;
+    soldOut: boolean;
     hidden: boolean;
     images?: ProductImage[];
 }

@@ -11,6 +11,7 @@ import {
   ProductDescriptionField,
   ProductCategoryField,
   ProductClearanceField,
+  ProductSoldOutField,
   ProductHiddenField,
   ProductFormError,
   ProductFormActions,
@@ -139,6 +140,11 @@ export default function AddProductModal({
         <ProductClearanceField
           value={formData.clearance}
           onChange={(value) => updateField("clearance", value)}
+        />
+
+        <ProductSoldOutField
+          value={formData.soldOut}
+          onChange={(value) => updateField("soldOut", value)}
         />
 
         <ProductHiddenField

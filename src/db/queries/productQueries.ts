@@ -103,6 +103,7 @@ export async function updateProduct(
         description?: string | null;
         category?: string | null;
         clearance?: boolean;
+        price?: string | null;
         soldOut?: boolean;
         hidden?: boolean;
     }
@@ -123,6 +124,7 @@ export async function updateProduct(
             updateData.description = data.description;
         if (data.category !== undefined) updateData.category = data.category;
         if (data.clearance !== undefined) updateData.clearance = data.clearance;
+        if (data.price !== undefined) updateData.price = data.price;
         if (data.soldOut !== undefined) updateData.soldOut = data.soldOut;
         if (data.hidden !== undefined) updateData.hidden = data.hidden;
 
@@ -136,6 +138,7 @@ export async function updateProduct(
             updateData.description = data.description;
         if (data.category !== undefined) updateData.category = data.category;
         if (data.clearance !== undefined) updateData.clearance = data.clearance;
+        if (data.price !== undefined) updateData.price = data.price;
         if (data.soldOut !== undefined) updateData.soldOut = data.soldOut;
         if (data.hidden !== undefined) updateData.hidden = data.hidden;
 
@@ -154,6 +157,7 @@ export async function createProduct(data: {
     description?: string | null;
     category: string | null;
     clearance?: boolean;
+    price?: string | null;
     soldOut?: boolean;
     hidden?: boolean;
 }): Promise<void> {

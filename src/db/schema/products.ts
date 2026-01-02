@@ -11,6 +11,7 @@ export const products = pgTable(
             onDelete: "restrict",
             onUpdate: "cascade",
         }),
+        price: text(),
         clearance: boolean().notNull().default(false),
         soldOut: boolean("sold_out").notNull().default(false),
         hidden: boolean().notNull().default(false),

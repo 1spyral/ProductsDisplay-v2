@@ -47,6 +47,7 @@ export async function createAdminProduct(data: {
     description?: string | null;
     category: string | null;
     clearance?: boolean;
+    price?: string | null;
     soldOut?: boolean;
     hidden?: boolean;
 }) {
@@ -66,15 +67,7 @@ export async function createAdminProduct(data: {
             );
         }
 
-        await createProduct({
-            id: data.id.trim(),
-            name: data.name?.trim() || null,
-            description: data.description?.trim() || null,
-            category: data.category,
-            clearance: data.clearance,
-            soldOut: data.soldOut,
-            hidden: data.hidden,
-        });
+        await createProduct(data);
 
         return { success: true, productId: data.id };
     } catch (error) {
@@ -110,6 +103,7 @@ export async function updateAdminProduct(
         description?: string | null;
         category?: string | null;
         clearance?: boolean;
+        price?: string | null;
         soldOut?: boolean;
         hidden?: boolean;
     }

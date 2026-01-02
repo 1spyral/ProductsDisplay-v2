@@ -8,6 +8,7 @@ interface ProductFormData {
     description: string;
     category: string | null;
     clearance: boolean;
+    price: string;
     soldOut: boolean;
     hidden: boolean;
 }
@@ -25,6 +26,7 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
         description: initialProduct?.description || "",
         category: initialProduct?.category ?? null,
         clearance: initialProduct?.clearance || false,
+        price: initialProduct?.price || "",
         soldOut: initialProduct?.soldOut || false,
         hidden: initialProduct?.hidden || false,
     });
@@ -76,6 +78,9 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
             initialProduct.description;
         const categoryChanged = formData.category !== initialProduct.category;
 
+        const priceChanged =
+            (formData.price.trim() || null) !== initialProduct.price;
+
         const clearanceChanged =
             initialProduct?.clearance !== formData.clearance;
 
@@ -89,6 +94,7 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
             descriptionChanged ||
             categoryChanged ||
             clearanceChanged ||
+            priceChanged ||
             soldOutChanged ||
             hiddenChanged
         );
@@ -103,6 +109,7 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
                 description: initialProduct.description || "",
                 category: initialProduct.category,
                 clearance: initialProduct.clearance || false,
+                price: initialProduct.price || "",
                 soldOut: initialProduct.soldOut || false,
                 hidden: initialProduct.hidden || false,
             });
@@ -114,36 +121,10 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
                 description: "",
                 category: null,
                 clearance: false,
+                price: "",
                 soldOut: false,
                 hidden: false,
             });
-        }
-    };
-
-    // Get form data for submission
-    const getFormDataForSubmission = () => {
-        const baseData = {
-            name: formData.name.trim() || null,
-            description: formData.description.trim() || null,
-            category: formData.category,
-            clearance: formData.clearance,
-            soldOut: formData.soldOut,
-            hidden: formData.hidden,
-        };
-
-        if (mode === "add") {
-            return {
-                id: formData.id.trim(),
-                ...baseData,
-            };
-        } else {
-            return {
-                ...baseData,
-                newId:
-                    !isIdLocked && formData.id.trim() !== initialProduct?.id
-                        ? formData.id.trim()
-                        : undefined,
-            };
         }
     };
 
@@ -155,6 +136,7 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
             description: formData.description.trim() || null,
             category: formData.category,
             clearance: formData.clearance,
+            price: formData.price.trim() || null,
             soldOut: formData.soldOut,
             hidden: formData.hidden,
         };
@@ -166,6 +148,7 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
             description: formData.description.trim() || null,
             category: formData.category,
             clearance: formData.clearance,
+            price: formData.price.trim() || null,
             soldOut: formData.soldOut,
             hidden: formData.hidden,
             newId:
@@ -184,7 +167,6 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
         isFormValid,
         hasChanges,
         resetForm,
-        getFormDataForSubmission,
         getAddFormData,
         getEditFormData,
     };

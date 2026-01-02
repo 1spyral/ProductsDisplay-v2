@@ -2,12 +2,19 @@ import CategoryButton from "@/components/CategoryButton";
 import Searchbar from "@/components/Searchbar";
 import { getCategories } from "@/db/queries/categoryQueries";
 import { hasClearanceProducts } from "@/db/queries/productQueries";
+import { getStoreInfo } from "@/db/queries/storeInfoQueries";
 
 export const revalidate = 60;
 
 export default async function HomePage() {
   const categories = await getCategories();
   const showClearance = await hasClearanceProducts();
+  const store = await getStoreInfo();
+
+  const headline = store.headline || store.name || "Welcome to Our Store";
+  const description =
+    store.description ||
+    "Browse products by category or search for what you need";
 
   return (
     <div className="min-h-full bg-gray-50">
@@ -15,10 +22,10 @@ export default async function HomePage() {
       <section className="border-b-4 border-slate-700 bg-white px-4 py-12 sm:px-8">
         <div className="mx-auto max-w-6xl">
           <h1 className="mb-4 text-center text-4xl font-bold text-gray-900 sm:text-5xl">
-            Welcome to Our Store
+            {headline}
           </h1>
           <p className="mb-8 text-center text-xl text-gray-700">
-            Browse products by category or search for what you need
+            {description}
           </p>
 
           {/* Search Section */}

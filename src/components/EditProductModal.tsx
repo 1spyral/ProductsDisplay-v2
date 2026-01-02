@@ -17,6 +17,7 @@ import {
   ProductFormError,
   ProductFormActions,
   UnifiedImageManager,
+  ProductPriceField,
 } from "./ProductForm";
 
 interface EditProductModalProps {
@@ -122,6 +123,11 @@ export default function EditProductModal({
         onChange={(value) => updateField("category", value)}
         categories={categories}
         required={false}
+      />
+
+      <ProductPriceField
+        value={formData.price}
+        onChange={(value) => updateField("price", value)}
       />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">

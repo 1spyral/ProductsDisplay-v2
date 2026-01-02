@@ -11,6 +11,7 @@ import {
   ProductDescriptionField,
   ProductCategoryField,
   ProductClearanceField,
+  ProductPriceField,
   ProductSoldOutField,
   ProductHiddenField,
   ProductFormError,
@@ -134,6 +135,11 @@ export default function AddProductModal({
         onChange={(value) => updateField("category", value)}
         categories={categories}
         required={false}
+      />
+
+      <ProductPriceField
+        value={formData.price}
+        onChange={(value) => updateField("price", value)}
       />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">

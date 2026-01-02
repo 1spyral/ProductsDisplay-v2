@@ -33,11 +33,18 @@ export default async function ProductBox({
       <div className="flex flex-col border-3 border-gray-400 bg-white transition-colors duration-200 hover:border-slate-700">
         <div className="relative h-64 w-full border-b-3 border-gray-400">
           <ImageCarousel photos={photos} />
-          {product.clearance && (
-            <span className="absolute top-2 right-2 bg-red-600 px-3 py-1 text-xs font-bold tracking-wider text-white uppercase">
-              Clearance
-            </span>
-          )}
+          <div className="absolute top-2 right-2 flex gap-2">
+            {product.clearance && (
+              <span className="bg-red-600 px-3 py-1 text-xs font-bold tracking-wider text-white uppercase">
+                Clearance
+              </span>
+            )}
+            {product.soldOut && (
+              <span className="bg-gray-500 px-3 py-1 text-xs font-bold tracking-wider text-white uppercase">
+                Sold Out
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex flex-col p-4">
           {hasName && (

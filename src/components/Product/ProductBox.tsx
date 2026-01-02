@@ -30,7 +30,9 @@ export default async function ProductBox({
 
   return (
     <Link href={`/product/${product.id}`} scroll={false}>
-      <div className="flex flex-col border-3 border-gray-400 bg-white transition-colors duration-200 hover:border-slate-700">
+      <div
+        className={`flex flex-col border-3 border-gray-400 bg-white transition-colors duration-200 hover:border-slate-700 ${product.soldOut ? "opacity-60" : ""}`}
+      >
         <div className="relative h-64 w-full border-b-3 border-gray-400">
           <ImageCarousel photos={photos} />
           <div className="absolute top-2 right-2 flex gap-2">

@@ -26,7 +26,8 @@ export default async function ProductBox({
   const hasDescription =
     product.description && product.description.trim().length > 0;
   const hasName = product.name && product.name.trim().length > 0;
-  const hasContent = hasName || hasDescription;
+  const hasPrice = product.price && product.price.trim().length > 0;
+  const hasContent = hasName || hasDescription || hasPrice;
 
   return (
     <Link href={`/product/${product.id}`} scroll={false}>
@@ -49,6 +50,14 @@ export default async function ProductBox({
           </div>
         </div>
         <div className="flex flex-col p-4">
+          {hasPrice && (
+            <div className="mb-1 flex items-baseline justify-between">
+              <span className="text-lg font-bold text-orange-600">Price</span>
+              <span className="text-lg font-bold text-orange-600">
+                ${product.price}
+              </span>
+            </div>
+          )}
           {hasName && (
             <h2 className="mb-3 text-center text-lg font-bold text-gray-900 uppercase">
               {product.name}

@@ -26,6 +26,7 @@ export default async function ProductPage({ id }: { id: string }) {
   const hasName = product.name && product.name.trim().length > 0;
   const hasDescription =
     product.description && product.description.trim().length > 0;
+  const hasPrice = product.price && product.price.trim().length > 0;
 
   return (
     <div className="flex h-full w-full flex-col md:flex-row">
@@ -38,7 +39,7 @@ export default async function ProductPage({ id }: { id: string }) {
       <div className="h-[50vh] w-full overflow-y-auto bg-gray-50 md:h-full md:w-1/2">
         <div className="px-6 pb-6 sm:px-8 sm:pb-8">
           {/* Category Badge */}
-          <div className="mt-6 mb-6 border-b-3 border-gray-400 pb-4 sm:mt-8">
+          <div className="mt-6 mb-4 border-b-3 border-gray-400 pb-4 sm:mt-8">
             <div className="flex items-center gap-3">
               <span className="inline-block bg-slate-700 px-4 py-2 text-sm font-bold tracking-wider text-white uppercase">
                 {categoryName}
@@ -55,6 +56,13 @@ export default async function ProductPage({ id }: { id: string }) {
               )}
             </div>
           </div>
+
+          {/* Product Price */}
+          {hasPrice && (
+            <h1 className="text-2xl font-bold text-orange-600">
+              ${product.price}
+            </h1>
+          )}
 
           {/* Product Name */}
           {hasName && (

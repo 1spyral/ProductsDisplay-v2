@@ -12,6 +12,7 @@ export const products = pgTable(
             onUpdate: "cascade",
         }),
         clearance: boolean().notNull().default(false),
+        soldOut: boolean("sold_out").notNull().default(false),
         hidden: boolean().notNull().default(false),
     },
     (table) => [

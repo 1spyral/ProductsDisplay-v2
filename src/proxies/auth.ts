@@ -1,20 +1,77 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+    createAdminAccessToken,
+    getAdminCookieNames,
+    getAdminTokenTtls,
+    verifyAdminAccessToken,
+    verifyAdminRefreshToken,
+} from "@/lib/adminTokens";
 
-export function isAuthenticated(request: NextRequest): boolean {
-    const authCookie = request.cookies.get("admin-auth");
-    return authCookie?.value === "authenticated";
+async function getAuthStatus(
+    request: NextRequest
+): Promise<
+    | { status: "authenticated" }
+    | { status: "refresh"; newAccessToken: string }
+    | { status: "unauthenticated" }
+> {
+    const { access, refresh } = getAdminCookieNames();
+    const accessToken = request.cookies.get(access)?.value;
+
+    if (accessToken) {
+        try {
+            await verifyAdminAccessToken(accessToken);
+            return { status: "authenticated" };
+        } catch {
+            // Fall back to refresh token for any access-token verification failure.
+        }
+    }
+
+    const refreshToken = request.cookies.get(refresh)?.value;
+    if (!refreshToken) {
+        return { status: "unauthenticated" };
+    }
+
+    try {
+        await verifyAdminRefreshToken(refreshToken);
+    } catch {
+        return { status: "unauthenticated" };
+    }
+
+    return {
+        status: "refresh",
+        newAccessToken: await createAdminAccessToken(),
+    };
 }
 
-export function handleAdminAuth(request: NextRequest): NextResponse | null {
-    const authenticated = isAuthenticated(request);
+function setAccessCookie(response: NextResponse, token: string) {
+    const { accessSeconds } = getAdminTokenTtls();
+    const { access } = getAdminCookieNames();
+    response.cookies.set(access, token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: accessSeconds,
+        path: "/",
+    });
+}
+
+export async function handleAdminAuth(
+    request: NextRequest
+): Promise<NextResponse | null> {
     const pathname = request.nextUrl.pathname;
+    const authStatus = await getAuthStatus(request);
+    const authenticated = authStatus.status !== "unauthenticated";
 
     // Handle /admin - redirect based on auth status
     if (pathname === "/admin") {
         if (authenticated) {
-            return NextResponse.redirect(
+            const response = NextResponse.redirect(
                 new URL("/admin/dashboard", request.url)
             );
+            if (authStatus.status === "refresh") {
+                setAccessCookie(response, authStatus.newAccessToken);
+            }
+            return response;
         } else {
             return NextResponse.redirect(new URL("/admin/login", request.url));
         }
@@ -25,14 +82,24 @@ export function handleAdminAuth(request: NextRequest): NextResponse | null {
         if (!authenticated) {
             return NextResponse.redirect(new URL("/admin/login", request.url));
         }
+
+        if (authStatus.status === "refresh") {
+            const response = NextResponse.next();
+            setAccessCookie(response, authStatus.newAccessToken);
+            return response;
+        }
     }
 
     // If authenticated and trying to access login, redirect to dashboard
     if (pathname === "/admin/login") {
         if (authenticated) {
-            return NextResponse.redirect(
+            const response = NextResponse.redirect(
                 new URL("/admin/dashboard", request.url)
             );
+            if (authStatus.status === "refresh") {
+                setAccessCookie(response, authStatus.newAccessToken);
+            }
+            return response;
         }
     }
 

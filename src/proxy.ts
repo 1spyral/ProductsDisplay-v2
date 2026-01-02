@@ -6,7 +6,7 @@ import {
     handlePublicRateLimit,
 } from "./proxies/rate-limit";
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     // Apply rate limiting first (admin-specific)
     const adminRateLimitResponse = handleAuthRateLimit(request);
     if (adminRateLimitResponse) {
@@ -20,7 +20,7 @@ export function proxy(request: NextRequest) {
     }
 
     // Handle admin authentication
-    const authResponse = handleAdminAuth(request);
+    const authResponse = await handleAdminAuth(request);
     if (authResponse) {
         return authResponse;
     }

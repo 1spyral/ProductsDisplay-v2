@@ -214,10 +214,11 @@ function ImageViewerModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="full"
+      size="5xl"
       className="border-0 bg-transparent"
       zIndex={60}
       darkBackground={true}
+      showHeaderCloseButton={true}
     >
       <div className="relative flex h-full w-full items-center justify-center">
         <Image

@@ -21,7 +21,6 @@ export default function ProductModal({
       onClose={handleClose}
       size="5xl"
       showFloatingCloseButton
-      showHeaderCloseButton={false}
     >
       {children}
     </Modal>

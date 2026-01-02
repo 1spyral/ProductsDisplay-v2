@@ -8,6 +8,7 @@ interface ProductFormData {
     description: string;
     category: string | null;
     clearance: boolean;
+    soldOut: boolean;
     hidden: boolean;
 }
 
@@ -24,6 +25,7 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
         description: initialProduct?.description || "",
         category: initialProduct?.category ?? null,
         clearance: initialProduct?.clearance || false,
+        soldOut: initialProduct?.soldOut || false,
         hidden: initialProduct?.hidden || false,
     });
 
@@ -77,6 +79,8 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
         const clearanceChanged =
             initialProduct?.clearance !== formData.clearance;
 
+        const soldOutChanged = initialProduct?.soldOut !== formData.soldOut;
+
         const hiddenChanged = initialProduct?.hidden !== formData.hidden;
 
         return (
@@ -85,6 +89,7 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
             descriptionChanged ||
             categoryChanged ||
             clearanceChanged ||
+            soldOutChanged ||
             hiddenChanged
         );
     };
@@ -98,6 +103,7 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
                 description: initialProduct.description || "",
                 category: initialProduct.category,
                 clearance: initialProduct.clearance || false,
+                soldOut: initialProduct.soldOut || false,
                 hidden: initialProduct.hidden || false,
             });
             setIsIdLocked(true);
@@ -108,6 +114,7 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
                 description: "",
                 category: null,
                 clearance: false,
+                soldOut: false,
                 hidden: false,
             });
         }
@@ -120,6 +127,7 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
             description: formData.description.trim() || null,
             category: formData.category,
             clearance: formData.clearance,
+            soldOut: formData.soldOut,
             hidden: formData.hidden,
         };
 
@@ -147,6 +155,7 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
             description: formData.description.trim() || null,
             category: formData.category,
             clearance: formData.clearance,
+            soldOut: formData.soldOut,
             hidden: formData.hidden,
         };
     };

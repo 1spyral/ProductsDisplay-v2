@@ -7,6 +7,7 @@ export {
     ProductToggleField,
     ProductClearanceField,
     ProductHiddenField,
+    ProductSoldOutField,
 } from "./ProductToggleFields";
 export { ProductFormError, ProductFormActions } from "./ProductFormActions";
 export { default as UnifiedImageManager } from "./UnifiedImageManager";

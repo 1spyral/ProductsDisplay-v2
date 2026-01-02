@@ -58,3 +58,16 @@ export function ProductHiddenField({
   );
 }
 
+interface ProductSoldOutFieldProps {
+  value: boolean;
+  onChange: (value: boolean) => void;
+}
+
+export function ProductSoldOutField({
+  value,
+  onChange,
+}: ProductSoldOutFieldProps) {
+  return (
+    <ProductToggleField label="Sold Out" value={value} onChange={onChange} />
+  );
+}

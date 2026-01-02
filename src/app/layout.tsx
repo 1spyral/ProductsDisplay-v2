@@ -3,16 +3,20 @@ import "./globals.css";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { getStoreInfo } from "@/db/queries/storeInfoQueries";
 import React from "react";
 
-const siteName = process.env.NAME || "Store";
+export async function generateMetadata(): Promise<Metadata> {
+  const store = await getStoreInfo();
+  const siteName = store.name || "Store";
 
-export const metadata: Metadata = {
-  title: {
-    default: siteName,
-    template: `%s | ${siteName}`,
-  },
-};
+  return {
+    title: {
+      default: siteName,
+      template: `%s | ${siteName}`,
+    },
+  };
+}
 
 export default function RootLayout({
   children,

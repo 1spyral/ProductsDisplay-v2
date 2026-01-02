@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { getStoreInfo } from "@/db/queries/storeInfoQueries";
 
-export default function Navbar() {
-  const name = process.env.NAME;
+export default async function Navbar() {
+  const store = await getStoreInfo();
+  const name = store.name || "Store";
 
   return (
     <header className="border-b-4 border-slate-900 bg-slate-800">

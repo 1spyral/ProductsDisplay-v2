@@ -166,6 +166,7 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
             description: formData.description.trim() || null,
             category: formData.category,
             clearance: formData.clearance,
+            soldOut: formData.soldOut,
             hidden: formData.hidden,
             newId:
                 !isIdLocked && formData.id.trim() !== initialProduct?.id

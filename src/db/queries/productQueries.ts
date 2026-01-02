@@ -105,6 +105,7 @@ export async function updateProduct(
         description?: string | null;
         category?: string | null;
         clearance?: boolean;
+        soldOut?: boolean;
         hidden?: boolean;
     }
 ): Promise<void> {
@@ -124,6 +125,7 @@ export async function updateProduct(
             updateData.description = data.description;
         if (data.category !== undefined) updateData.category = data.category;
         if (data.clearance !== undefined) updateData.clearance = data.clearance;
+        if (data.soldOut !== undefined) updateData.soldOut = data.soldOut;
         if (data.hidden !== undefined) updateData.hidden = data.hidden;
 
         // Update product (including ID change)
@@ -136,6 +138,7 @@ export async function updateProduct(
             updateData.description = data.description;
         if (data.category !== undefined) updateData.category = data.category;
         if (data.clearance !== undefined) updateData.clearance = data.clearance;
+        if (data.soldOut !== undefined) updateData.soldOut = data.soldOut;
         if (data.hidden !== undefined) updateData.hidden = data.hidden;
 
         await db.update(products).set(updateData).where(eq(products.id, id));
@@ -153,6 +156,7 @@ export async function createProduct(data: {
     description?: string | null;
     category: string | null;
     clearance?: boolean;
+    soldOut?: boolean;
     hidden?: boolean;
 }): Promise<void> {
     // Check if ID already exists

@@ -14,6 +14,7 @@ export default interface Product {
     name: string | null;
     description: string | null;
     category: string | null;
+    price: string | null;
     clearance: boolean;
     soldOut: boolean;
     hidden: boolean;

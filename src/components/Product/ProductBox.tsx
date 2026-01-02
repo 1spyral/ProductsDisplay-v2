@@ -51,20 +51,17 @@ export default async function ProductBox({
         </div>
         <div className="flex flex-col p-4">
           {hasPrice && (
-            <div className="mb-1 flex items-baseline justify-between">
-              <span className="text-lg font-bold text-orange-600">Price</span>
-              <span className="text-lg font-bold text-orange-600">
-                ${product.price}
-              </span>
-            </div>
+            <h3 className="text-lg font-bold text-orange-600 italic">
+              ${product.price}
+            </h3>
           )}
           {hasName && (
-            <h2 className="mb-3 text-center text-lg font-bold text-gray-900 uppercase">
+            <h2 className="mb-2 text-lg font-bold text-gray-900 uppercase">
               {product.name}
             </h2>
           )}
           {hasDescription && (
-            <p className="mb-3 text-center text-sm leading-relaxed text-gray-700">
+            <p className="mb-3 text-sm leading-relaxed text-gray-700 italic">
               {shortenDescription(product.description || "")}
             </p>
           )}

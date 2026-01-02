@@ -120,33 +120,6 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
         }
     };
 
-    // Get form data for submission
-    const getFormDataForSubmission = () => {
-        const baseData = {
-            name: formData.name.trim() || null,
-            description: formData.description.trim() || null,
-            category: formData.category,
-            clearance: formData.clearance,
-            soldOut: formData.soldOut,
-            hidden: formData.hidden,
-        };
-
-        if (mode === "add") {
-            return {
-                id: formData.id.trim(),
-                ...baseData,
-            };
-        } else {
-            return {
-                ...baseData,
-                newId:
-                    !isIdLocked && formData.id.trim() !== initialProduct?.id
-                        ? formData.id.trim()
-                        : undefined,
-            };
-        }
-    };
-
     // Get typed form data for submission
     const getAddFormData = () => {
         return {
@@ -184,7 +157,6 @@ export function useProductForm({ initialProduct, mode }: UseProductFormProps) {
         isFormValid,
         hasChanges,
         resetForm,
-        getFormDataForSubmission,
         getAddFormData,
         getEditFormData,
     };

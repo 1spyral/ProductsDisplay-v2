@@ -187,7 +187,10 @@ export async function deleteProduct(id: string): Promise<void> {
             // Delete all images (this handles both GCS and database cleanup)
             const deletePromises = product.images.map((image) =>
                 deleteProductImage(image.id).catch((error) => {
-                    logger.warn({ error, imageId: image.id }, "Failed to delete image");
+                    logger.warn(
+                        { error, imageId: image.id },
+                        "Failed to delete image"
+                    );
                     // Continue even if some images fail to delete
                 })
             );

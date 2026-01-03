@@ -114,12 +114,15 @@ export async function uploadProductImage(
             })
             .returning();
 
-        logger.info({
-            imageId: newImage.id,
-            productId,
-            objectKey,
-            publicUrl: uploadResult.publicUrl,
-        }, "Image uploaded successfully");
+        logger.info(
+            {
+                imageId: newImage.id,
+                productId,
+                objectKey,
+                publicUrl: uploadResult.publicUrl,
+            },
+            "Image uploaded successfully"
+        );
 
         return {
             success: true,
@@ -162,19 +165,25 @@ export async function deleteProductImage(
         const deleteResult = await deleteImage(gcsPath);
 
         if (!deleteResult.success) {
-            logger.warn({ error: deleteResult.error }, "Failed to delete from GCS");
+            logger.warn(
+                { error: deleteResult.error },
+                "Failed to delete from GCS"
+            );
             // Continue with database deletion even if GCS deletion fails
         }
 
         // Delete from database
         await db.delete(productImages).where(eq(productImages.id, imageId));
 
-        logger.info({
-            imageId,
-            productId: image.productId,
-            objectKey: image.objectKey,
-            gcsPath,
-        }, "Image deleted successfully");
+        logger.info(
+            {
+                imageId,
+                productId: image.productId,
+                objectKey: image.objectKey,
+                gcsPath,
+            },
+            "Image deleted successfully"
+        );
 
         return { success: true };
     } catch (error) {

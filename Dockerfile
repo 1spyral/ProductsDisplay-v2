@@ -11,7 +11,9 @@ WORKDIR /app
 COPY package.json bun.lock* .npmrc* ./
 RUN bun install --frozen-lockfile
 
-RUN bunx playwright install chromium --with-deps
+# Install Chromium for Playwright
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN bunx playwright install chromium
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -37,11 +39,20 @@ ENV NODE_ENV=production
 RUN groupadd --system --gid 1001 nodejs \
  && useradd  --system --uid 1001 --gid nodejs --create-home nextjs
 
+COPY --from=builder /app/.next/standalone ./
+
+# Install OS-level Playwright dependencies
+RUN bunx playwright install-deps chromium
+
+# Copy Playwright browsers into the runtime image.
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+COPY --from=deps /ms-playwright /ms-playwright
+RUN chown -R nextjs:nodejs /ms-playwright
+
 COPY --from=builder /app/public ./public
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs

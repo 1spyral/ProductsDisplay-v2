@@ -1,6 +1,7 @@
 "use client";
 
 import { logoutAdmin } from "@/actions/admin";
+import Link from "next/link";
 
 export default function AdminDashboardLayout({
   children,
@@ -16,9 +17,12 @@ export default function AdminDashboardLayout({
       {/* Admin Header */}
       <header className="border-b-4 border-slate-900 bg-slate-800">
         <div className="flex items-center justify-between px-4 py-4 sm:px-8">
-          <h1 className="text-2xl font-bold tracking-wide text-white uppercase">
+          <Link
+            href="/admin/dashboard"
+            className="text-2xl font-bold tracking-wide text-white uppercase"
+          >
             Admin Panel
-          </h1>
+          </Link>
           <button
             onClick={handleLogout}
             className="bg-red-700 px-6 py-2 font-bold tracking-wide text-white uppercase transition-colors duration-200 hover:bg-red-900"

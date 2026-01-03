@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import ConditionalFooter from "@/components/ConditionalFooter";
 import { getStoreInfo } from "@/db/queries/storeInfoQueries";
 import React from "react";
 
@@ -29,7 +29,7 @@ export default function RootLayout({
         <Navbar />
         <div className="flex grow flex-col overflow-x-hidden overflow-y-auto">
           <div className="flex grow flex-col">{children}</div>
-          <Footer />
+          <ConditionalFooter />
         </div>
       </body>
     </html>

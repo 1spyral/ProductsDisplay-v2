@@ -4,6 +4,7 @@ import { db } from "@/db/drizzle";
 import { productImages } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { randomUUID } from "crypto";
+import logger from "@/lib/logger";
 
 export interface ImageUploadData {
     file: File;
@@ -96,7 +97,7 @@ export async function uploadProductImage(
                     img.src = URL.createObjectURL(file);
                 });
             } catch (error) {
-                console.warn("Could not get image dimensions:", error);
+                logger.warn({ error }, "Could not get image dimensions");
             }
         }
 
@@ -113,12 +114,15 @@ export async function uploadProductImage(
             })
             .returning();
 
-        console.log("Image uploaded successfully:", {
-            imageId: newImage.id,
-            productId,
-            objectKey,
-            publicUrl: uploadResult.publicUrl,
-        });
+        logger.info(
+            {
+                imageId: newImage.id,
+                productId,
+                objectKey,
+                publicUrl: uploadResult.publicUrl,
+            },
+            "Image uploaded successfully"
+        );
 
         return {
             success: true,
@@ -126,7 +130,7 @@ export async function uploadProductImage(
             publicUrl: uploadResult.publicUrl,
         };
     } catch (error) {
-        console.error("Error uploading product image:", error);
+        logger.error({ error }, "Error uploading product image");
         return {
             success: false,
             error:
@@ -161,23 +165,29 @@ export async function deleteProductImage(
         const deleteResult = await deleteImage(gcsPath);
 
         if (!deleteResult.success) {
-            console.warn("Failed to delete from GCS:", deleteResult.error);
+            logger.warn(
+                { error: deleteResult.error },
+                "Failed to delete from GCS"
+            );
             // Continue with database deletion even if GCS deletion fails
         }
 
         // Delete from database
         await db.delete(productImages).where(eq(productImages.id, imageId));
 
-        console.log("Image deleted successfully:", {
-            imageId,
-            productId: image.productId,
-            objectKey: image.objectKey,
-            gcsPath,
-        });
+        logger.info(
+            {
+                imageId,
+                productId: image.productId,
+                objectKey: image.objectKey,
+                gcsPath,
+            },
+            "Image deleted successfully"
+        );
 
         return { success: true };
     } catch (error) {
-        console.error("Error deleting product image:", error);
+        logger.error({ error }, "Error deleting product image");
         return {
             success: false,
             error:
@@ -203,7 +213,7 @@ export async function updateImagePosition(
 
         return { success: true };
     } catch (error) {
-        console.error("Error updating image position:", error);
+        logger.error({ error }, "Error updating image position");
         return {
             success: false,
             error:
@@ -234,7 +244,7 @@ export async function reorderProductImages(
 
         return { success: true };
     } catch (error) {
-        console.error("Error reordering images:", error);
+        logger.error({ error }, "Error reordering images");
         return {
             success: false,
             error:
@@ -260,7 +270,7 @@ export async function getProductImages(productId: string) {
             images,
         };
     } catch (error) {
-        console.error("Error getting product images:", error);
+        logger.error({ error }, "Error getting product images");
         return {
             success: false,
             error:

@@ -1,65 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-    createAdminAccessToken,
-    getAdminCookieNames,
-    getAdminTokenTtls,
-    verifyAdminAccessToken,
-    verifyAdminRefreshToken,
-} from "@/lib/adminTokens";
-
-async function getAuthStatus(
-    request: NextRequest
-): Promise<
-    | { status: "authenticated" }
-    | { status: "refresh"; newAccessToken: string }
-    | { status: "unauthenticated" }
-> {
-    const { access, refresh } = getAdminCookieNames();
-    const accessToken = request.cookies.get(access)?.value;
-
-    if (accessToken) {
-        try {
-            await verifyAdminAccessToken(accessToken);
-            return { status: "authenticated" };
-        } catch {
-            // Fall back to refresh token for any access-token verification failure.
-        }
-    }
-
-    const refreshToken = request.cookies.get(refresh)?.value;
-    if (!refreshToken) {
-        return { status: "unauthenticated" };
-    }
-
-    try {
-        await verifyAdminRefreshToken(refreshToken);
-    } catch {
-        return { status: "unauthenticated" };
-    }
-
-    return {
-        status: "refresh",
-        newAccessToken: await createAdminAccessToken(),
-    };
-}
-
-function setAccessCookie(response: NextResponse, token: string) {
-    const { accessSeconds } = getAdminTokenTtls();
-    const { access } = getAdminCookieNames();
-    response.cookies.set(access, token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: accessSeconds,
-        path: "/",
-    });
-}
+import { getAdminAuthStatus, setAdminAccessCookie } from "@/lib/adminAuth";
 
 export async function handleAdminAuth(
     request: NextRequest
 ): Promise<NextResponse | null> {
     const pathname = request.nextUrl.pathname;
-    const authStatus = await getAuthStatus(request);
+    const authStatus = await getAdminAuthStatus(request);
     const authenticated = authStatus.status !== "unauthenticated";
 
     // Handle /admin - redirect based on auth status
@@ -69,7 +15,7 @@ export async function handleAdminAuth(
                 new URL("/admin/dashboard", request.url)
             );
             if (authStatus.status === "refresh") {
-                setAccessCookie(response, authStatus.newAccessToken);
+                setAdminAccessCookie(response, authStatus.newAccessToken);
             }
             return response;
         } else {
@@ -85,7 +31,7 @@ export async function handleAdminAuth(
 
         if (authStatus.status === "refresh") {
             const response = NextResponse.next();
-            setAccessCookie(response, authStatus.newAccessToken);
+            setAdminAccessCookie(response, authStatus.newAccessToken);
             return response;
         }
     }
@@ -97,12 +43,33 @@ export async function handleAdminAuth(
                 new URL("/admin/dashboard", request.url)
             );
             if (authStatus.status === "refresh") {
-                setAccessCookie(response, authStatus.newAccessToken);
+                setAdminAccessCookie(response, authStatus.newAccessToken);
             }
             return response;
         }
     }
 
     // No redirect needed
+    return null;
+}
+export async function handleAdminApiAuth(
+    request: NextRequest
+): Promise<NextResponse | null> {
+    if (!request.nextUrl.pathname.startsWith("/api/admin")) {
+        return null;
+    }
+
+    const auth = await getAdminAuthStatus(request);
+
+    if (auth.status === "unauthenticated") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (auth.status === "refresh") {
+        const response = NextResponse.next();
+        setAdminAccessCookie(response, auth.newAccessToken);
+        return response;
+    }
+
     return null;
 }

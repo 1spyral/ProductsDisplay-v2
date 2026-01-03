@@ -19,12 +19,17 @@ function getLogLevel(): LogLevel {
     return "info";
 }
 
+const isDevelopment = process.env.NODE_ENV !== "production";
+
 /**
  * Server-side logger instance using Pino.
  *
  * Configure the log level using the LOG_LEVEL environment variable.
  * Valid values: trace, debug, info, warn, error, fatal.
  * Defaults to "info" if not set or invalid.
+ *
+ * In development mode, uses pino-pretty for colored, human-readable logs.
+ * In production, uses standard JSON output for log aggregation.
  *
  * @example
  * import logger from "@/lib/logger";
@@ -34,6 +39,14 @@ function getLogLevel(): LogLevel {
  */
 const logger = pino({
     level: getLogLevel(),
+    ...(isDevelopment && {
+        transport: {
+            target: "pino-pretty",
+            options: {
+                colorize: true,
+            },
+        },
+    }),
 });
 
 export default logger;

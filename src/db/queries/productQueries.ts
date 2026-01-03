@@ -4,6 +4,7 @@ import { db } from "@/db/drizzle";
 import { products } from "@/db/schema";
 import Product from "@/types/Product";
 import { eq, inArray, and } from "drizzle-orm";
+import logger from "@/lib/logger";
 
 export async function getProducts(
     includeHidden: boolean = false
@@ -186,14 +187,17 @@ export async function deleteProduct(id: string): Promise<void> {
             // Delete all images (this handles both GCS and database cleanup)
             const deletePromises = product.images.map((image) =>
                 deleteProductImage(image.id).catch((error) => {
-                    console.warn(`Failed to delete image ${image.id}:`, error);
+                    logger.warn(
+                        { error, imageId: image.id },
+                        "Failed to delete image"
+                    );
                     // Continue even if some images fail to delete
                 })
             );
 
             await Promise.all(deletePromises);
         } catch (error) {
-            console.warn("Failed to clean up some product images:", error);
+            logger.warn({ error }, "Failed to clean up some product images");
             // Continue with product deletion even if image cleanup fails
         }
     }

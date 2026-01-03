@@ -1,4 +1,5 @@
 import { Storage, GetFilesOptions } from "@google-cloud/storage";
+import logger from "@/lib/logger";
 
 // Initialize Google Cloud Storage
 let storage: Storage;
@@ -32,7 +33,7 @@ try {
         });
     }
 } catch (error) {
-    console.error("Failed to initialize Google Cloud Storage:", error);
+    logger.error({ error }, "Failed to initialize Google Cloud Storage");
     throw new Error("Google Cloud Storage initialization failed");
 }
 
@@ -93,7 +94,7 @@ export async function uploadImage(
             filename: filename,
         };
     } catch (error) {
-        console.error("Error uploading image:", error);
+        logger.error({ error }, "Error uploading image");
         return {
             success: false,
             error:
@@ -128,7 +129,7 @@ export async function deleteImage(
 
         return { success: true };
     } catch (error) {
-        console.error("Error deleting image:", error);
+        logger.error({ error }, "Error deleting image");
         return {
             success: false,
             error:
@@ -157,7 +158,7 @@ export async function getSignedUrl(
 
         return signedUrl;
     } catch (error) {
-        console.error("Error getting signed URL:", error);
+        logger.error({ error }, "Error getting signed URL");
         return null;
     }
 }
@@ -175,7 +176,7 @@ export async function listImages(prefix?: string): Promise<string[]> {
         const [files] = await bucket.getFiles(options);
         return files.map((file) => file.name);
     } catch (error) {
-        console.error("Error listing images:", error);
+        logger.error({ error }, "Error listing images");
         return [];
     }
 }
@@ -201,7 +202,7 @@ export async function getImageMetadata(filename: string) {
             },
         };
     } catch (error) {
-        console.error("Error getting image metadata:", error);
+        logger.error({ error }, "Error getting image metadata");
         return {
             success: false,
             error:
@@ -249,7 +250,7 @@ export async function copyImage(
 
         return { success: true };
     } catch (error) {
-        console.error("Error copying image:", error);
+        logger.error({ error }, "Error copying image");
         return {
             success: false,
             error:

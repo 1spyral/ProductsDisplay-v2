@@ -13,6 +13,7 @@ WORKDIR /app
 COPY package.json bun.lock* .npmrc* ./
 RUN bun install --frozen-lockfile
 
+RUN bunx playwright install chromium --with-deps
 
 # Rebuild the source code only when needed
 FROM base AS builder

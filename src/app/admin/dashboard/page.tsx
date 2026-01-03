@@ -32,7 +32,8 @@ export default function AdminDashboard() {
         <DashboardCard
           title="Categories"
           description="Organize product categories"
-          comingSoon
+          href="/admin/dashboard/categories"
+          cta="View Categories →"
         />
       </div>
     </div>

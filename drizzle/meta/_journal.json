@@ -92,6 +92,13 @@
       "when": 1767393191512,
       "tag": "0012_change_product_price_to_field",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1767409922186,
+      "tag": "0013_update_category_foreign_key_constraints",
+      "breakpoints": true
     }
   ]
 }

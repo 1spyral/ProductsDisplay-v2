@@ -8,7 +8,7 @@ export const products = pgTable(
         name: text(),
         description: text(),
         category: text().references(() => categories.category, {
-            onDelete: "restrict",
+            onDelete: "set null",
             onUpdate: "cascade",
         }),
         price: text(),

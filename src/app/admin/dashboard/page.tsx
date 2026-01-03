@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import DashboardCard from "./DashboardCard";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
@@ -17,34 +18,22 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <a
+        <DashboardCard
+          title="Products"
+          description="Manage your product catalog"
           href="/admin/dashboard/products"
-          className="block border-3 border-gray-400 bg-white p-6 transition-colors hover:border-slate-700"
-        >
-          <h2 className="mb-2 text-xl font-bold text-gray-900 uppercase">
-            Products
-          </h2>
-          <p className="mb-4 text-gray-600">Manage your product catalog</p>
-          <p className="text-sm font-bold text-slate-700 uppercase">
-            View Products →
-          </p>
-        </a>
-
-        <div className="border-3 border-gray-400 bg-white p-6">
-          <h2 className="mb-2 text-xl font-bold text-gray-900 uppercase">
-            Images
-          </h2>
-          <p className="text-gray-600">Upload and manage product images</p>
-          <p className="mt-4 text-sm text-gray-500">Coming soon...</p>
-        </div>
-
-        <div className="border-3 border-gray-400 bg-white p-6">
-          <h2 className="mb-2 text-xl font-bold text-gray-900 uppercase">
-            Categories
-          </h2>
-          <p className="text-gray-600">Organize product categories</p>
-          <p className="mt-4 text-sm text-gray-500">Coming soon...</p>
-        </div>
+          cta="View Products →"
+        />
+        <DashboardCard
+          title="Images"
+          description="Upload and manage product images"
+          comingSoon
+        />
+        <DashboardCard
+          title="Categories"
+          description="Organize product categories"
+          comingSoon
+        />
       </div>
     </div>
   );

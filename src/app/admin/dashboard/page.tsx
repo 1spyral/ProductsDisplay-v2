@@ -25,9 +25,10 @@ export default function AdminDashboard() {
           cta="View Products →"
         />
         <DashboardCard
-          title="Images"
-          description="Upload and manage product images"
-          comingSoon
+          title="PDFs"
+          description="Build and compile product PDFs"
+          href="/admin/dashboard/pdf"
+          cta="Generate PDFs →"
         />
         <DashboardCard
           title="Categories"

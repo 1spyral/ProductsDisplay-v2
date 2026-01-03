@@ -33,7 +33,14 @@ export default function AdminDashboardLayout({
       </header>
 
       {/* Main Content */}
-      <main>{children}</main>
+      <main>
+        <style jsx global>{`
+          footer {
+            display: none;
+          }
+        `}</style>
+        {children}
+      </main>
     </div>
   );
 }

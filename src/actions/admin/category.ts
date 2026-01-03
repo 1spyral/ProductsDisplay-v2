@@ -9,6 +9,7 @@ import {
 } from "@/db/queries/categoryQueries";
 import { requireAdminAuth } from "./auth";
 import { checkRateLimit } from "./rateLimit";
+import logger from "@/lib/logger";
 
 export async function getAdminCategoriesForManagement() {
     await requireAdminAuth();
@@ -21,7 +22,7 @@ export async function getAdminCategoriesForManagement() {
     try {
         return await getCategories();
     } catch (error) {
-        console.error("Failed to fetch categories:", error);
+        logger.error({ error }, "Failed to fetch categories");
         throw new Error("Failed to fetch categories");
     }
 }
@@ -50,7 +51,7 @@ export async function createAdminCategory(data: {
 
         return { success: true, categoryId: data.category };
     } catch (error) {
-        console.error("Failed to create category:", error);
+        logger.error({ error }, "Failed to create category");
         if (error instanceof Error) {
             throw new Error(error.message);
         }
@@ -86,7 +87,7 @@ export async function updateAdminCategory(
         await updateCategory(categoryId, data);
         return { success: true };
     } catch (error) {
-        console.error("Failed to update category:", error);
+        logger.error({ error }, "Failed to update category");
         if (error instanceof Error) {
             throw new Error(error.message);
         }
@@ -102,7 +103,7 @@ export async function deleteAdminCategory(categoryId: string) {
         await deleteCategory(categoryId);
         return { success: true };
     } catch (error) {
-        console.error("Failed to delete category:", error);
+        logger.error({ error }, "Failed to delete category");
         if (error instanceof Error) {
             throw new Error(error.message);
         }
@@ -116,7 +117,7 @@ export async function checkAdminCategoryIdExists(categoryId: string) {
     try {
         return await checkCategoryIdExists(categoryId);
     } catch (error) {
-        console.error("Failed to check category ID:", error);
+        logger.error({ error }, "Failed to check category ID");
         throw new Error("Failed to check category ID");
     }
 }

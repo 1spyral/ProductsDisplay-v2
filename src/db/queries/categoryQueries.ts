@@ -73,12 +73,14 @@ export async function updateCategory(
             throw new Error("New category ID already exists");
         }
 
-        // Delete old and insert new since category is primary key
-        await db.delete(categories).where(eq(categories.category, categoryId));
-        await db.insert(categories).values({
-            category: data.newCategoryId,
-            name: data.name !== undefined ? data.name : existing.name,
-        });
+        // Update the primary key directly to trigger ON UPDATE CASCADE
+        await db
+            .update(categories)
+            .set({
+                category: data.newCategoryId,
+                name: data.name !== undefined ? data.name : existing.name,
+            })
+            .where(eq(categories.category, categoryId));
     } else {
         // Just update the name
         await db

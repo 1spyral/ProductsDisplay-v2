@@ -16,6 +16,7 @@ import {
 } from "@/lib/imageService";
 import { requireAdminAuth } from "./auth";
 import { checkRateLimit } from "./rateLimit";
+import logger from "@/lib/logger";
 
 export async function getAdminProducts() {
     await requireAdminAuth();
@@ -24,7 +25,7 @@ export async function getAdminProducts() {
     try {
         return await getProducts(true);
     } catch (error) {
-        console.error("Failed to fetch products:", error);
+        logger.error({ error }, "Failed to fetch products");
         throw new Error("Failed to fetch products");
     }
 }
@@ -36,7 +37,7 @@ export async function getAdminCategories() {
     try {
         return await getCategories();
     } catch (error) {
-        console.error("Failed to fetch categories:", error);
+        logger.error({ error }, "Failed to fetch categories");
         throw new Error("Failed to fetch categories");
     }
 }
@@ -71,7 +72,7 @@ export async function createAdminProduct(data: {
 
         return { success: true, productId: data.id };
     } catch (error) {
-        console.error("Failed to create product:", error);
+        logger.error({ error }, "Failed to create product");
         if (error instanceof Error) {
             throw new Error(error.message);
         }
@@ -87,7 +88,7 @@ export async function deleteAdminProduct(id: string) {
         await deleteProduct(id);
         return { success: true };
     } catch (error) {
-        console.error("Failed to delete product:", error);
+        logger.error({ error }, "Failed to delete product");
         if (error instanceof Error) {
             throw new Error(error.message);
         }
@@ -129,7 +130,7 @@ export async function updateAdminProduct(
         await updateProduct(id, data);
         return { success: true };
     } catch (error) {
-        console.error("Failed to update product:", error);
+        logger.error({ error }, "Failed to update product");
         if (error instanceof Error) {
             throw new Error(error.message);
         }
@@ -143,7 +144,7 @@ export async function checkAdminProductIdExists(id: string) {
     try {
         return await checkProductIdExists(id);
     } catch (error) {
-        console.error("Failed to check product ID:", error);
+        logger.error({ error }, "Failed to check product ID");
         throw new Error("Failed to check product ID");
     }
 }
@@ -159,7 +160,7 @@ export async function toggleAdminProductClearance(
         await updateProduct(id, { clearance });
         return { success: true };
     } catch (error) {
-        console.error("Failed to toggle clearance:", error);
+        logger.error({ error }, "Failed to toggle clearance");
         if (error instanceof Error) {
             throw new Error(error.message);
         }
@@ -175,7 +176,7 @@ export async function toggleAdminProductHidden(id: string, hidden: boolean) {
         await updateProduct(id, { hidden });
         return { success: true };
     } catch (error) {
-        console.error("Failed to toggle hidden:", error);
+        logger.error({ error }, "Failed to toggle hidden");
         if (error instanceof Error) {
             throw new Error(error.message);
         }
@@ -210,7 +211,7 @@ export async function uploadAdminProductImage(formData: FormData) {
 
         return result;
     } catch (error) {
-        console.error("Failed to upload image:", error);
+        logger.error({ error }, "Failed to upload image");
         throw new Error(
             error instanceof Error ? error.message : "Failed to upload image"
         );
@@ -230,7 +231,7 @@ export async function deleteAdminProductImage(imageId: string) {
 
         return { success: true };
     } catch (error) {
-        console.error("Failed to delete image:", error);
+        logger.error({ error }, "Failed to delete image");
         throw new Error(
             error instanceof Error ? error.message : "Failed to delete image"
         );
@@ -253,7 +254,7 @@ export async function updateAdminImagePosition(
 
         return { success: true };
     } catch (error) {
-        console.error("Failed to update image position:", error);
+        logger.error({ error }, "Failed to update image position");
         throw new Error(
             error instanceof Error
                 ? error.message
@@ -278,7 +279,7 @@ export async function reorderAdminProductImages(
 
         return { success: true };
     } catch (error) {
-        console.error("Failed to reorder images:", error);
+        logger.error({ error }, "Failed to reorder images");
         throw new Error(
             error instanceof Error ? error.message : "Failed to reorder images"
         );

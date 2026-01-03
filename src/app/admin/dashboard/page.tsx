@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function AdminDashboard() {
   return (
-    <div className="p-8">
+    <div className="h-full p-8">
       <div className="mb-8 border-4 border-slate-700 bg-white p-8">
         <h1 className="mb-4 text-4xl font-bold tracking-wide text-gray-900 uppercase">
           Admin Dashboard

@@ -13,7 +13,7 @@ export default function AdminDashboardLayout({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex h-full flex-col bg-gray-50">
       {/* Admin Header */}
       <header className="border-b-4 border-slate-900 bg-slate-800">
         <div className="flex items-center justify-between px-4 py-4 sm:px-8">
@@ -33,7 +33,7 @@ export default function AdminDashboardLayout({
       </header>
 
       {/* Main Content */}
-      <main>
+      <main className="flex-1">
         <style jsx global>{`
           footer {
             display: none;

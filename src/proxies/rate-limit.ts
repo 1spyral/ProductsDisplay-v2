@@ -87,6 +87,23 @@ export function rateLimit(
     return null;
 }
 
+export function handleAdminCompileRateLimit(
+    request: NextRequest
+): NextResponse | null {
+    const pathname = request.nextUrl.pathname;
+
+    // Rate limit PDF compile requests: 1 request per second
+    if (pathname === "/api/admin/compile" && request.method === "POST") {
+        return rateLimit(request, {
+            maxRequests: 1,
+            windowMs: 1000, // 1 second
+            message: "Too many compile requests. Please wait a second.",
+        });
+    }
+
+    return null;
+}
+
 export function handleAuthRateLimit(request: NextRequest): NextResponse | null {
     const pathname = request.nextUrl.pathname;
 

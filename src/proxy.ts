@@ -1,12 +1,19 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { handleAdminAuth } from "./proxies/auth";
+import { handleAdminApiAuth, handleAdminAuth } from "./proxies/auth";
 import {
+    handleAdminCompileRateLimit,
     handleAuthRateLimit,
     handlePublicRateLimit,
 } from "./proxies/rate-limit";
 
 export async function proxy(request: NextRequest) {
+    // Apply compile rate limiting
+    const adminCompileRateLimitResponse = handleAdminCompileRateLimit(request);
+    if (adminCompileRateLimitResponse) {
+        return adminCompileRateLimitResponse;
+    }
+
     // Apply rate limiting first (admin-specific)
     const adminRateLimitResponse = handleAuthRateLimit(request);
     if (adminRateLimitResponse) {
@@ -23,6 +30,12 @@ export async function proxy(request: NextRequest) {
     const authResponse = await handleAdminAuth(request);
     if (authResponse) {
         return authResponse;
+    }
+
+    // Protect admin API routes (no redirects)
+    const adminApiAuthResponse = await handleAdminApiAuth(request);
+    if (adminApiAuthResponse) {
+        return adminApiAuthResponse;
     }
 
     return NextResponse.next();

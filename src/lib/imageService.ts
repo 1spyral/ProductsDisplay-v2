@@ -1,5 +1,5 @@
 import { uploadImage, deleteImage, ImageUploadResult } from "@/lib/gcs";
-import { buildGlobalGcsPath } from "@/lib/imageKey";
+import { buildGlobalGcsPath } from "@/utils/imageKey";
 import { db } from "@/db/drizzle";
 import { productImages } from "@/db/schema";
 import { eq } from "drizzle-orm";

@@ -3,7 +3,7 @@
 import Category from "@/types/Category";
 import { db } from "@/db/drizzle";
 import { categories } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 
 export async function getCategories(): Promise<Category[]> {
     return db
@@ -11,7 +11,8 @@ export async function getCategories(): Promise<Category[]> {
             category: categories.category,
             name: categories.name,
         })
-        .from(categories);
+        .from(categories)
+        .orderBy(asc(categories.category));
 }
 
 export async function getCategoryByCategory(

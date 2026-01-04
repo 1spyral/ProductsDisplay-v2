@@ -13,3 +13,10 @@ export {
     updateAdminImagePosition,
     reorderAdminProductImages,
 } from "./product";
+export {
+    getAdminCategoriesForManagement,
+    createAdminCategory,
+    updateAdminCategory,
+    deleteAdminCategory,
+    checkAdminCategoryIdExists,
+} from "./category";

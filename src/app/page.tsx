@@ -7,9 +7,11 @@ import { getStoreInfo } from "@/db/queries/storeInfoQueries";
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const categories = await getCategories();
-  const showClearance = await hasClearanceProducts();
-  const store = await getStoreInfo();
+  const [categories, showClearance, store] = await Promise.all([
+    getCategories(),
+    hasClearanceProducts(),
+    getStoreInfo(),
+  ]);
 
   const headline = store.headline || store.name || "Welcome to Our Store";
   const description =

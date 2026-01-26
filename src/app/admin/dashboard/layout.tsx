@@ -1,17 +1,13 @@
 "use client";
 
-import { logoutAdmin } from "@/actions/admin";
 import Link from "next/link";
+import { logoutAdmin } from "@/actions/admin";
 
 export default function AdminDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const handleLogout = async () => {
-    await logoutAdmin();
-  };
-
   return (
     <div className="flex h-full flex-col bg-gray-50">
       {/* Admin Header */}
@@ -23,12 +19,14 @@ export default function AdminDashboardLayout({
           >
             Admin Panel
           </Link>
-          <button
-            onClick={handleLogout}
-            className="bg-red-700 px-6 py-2 font-bold tracking-wide text-white uppercase transition-colors duration-200 hover:bg-red-900"
-          >
-            Logout
-          </button>
+          <form action={logoutAdmin}>
+            <button
+              type="submit"
+              className="bg-red-700 px-6 py-2 font-bold tracking-wide text-white uppercase transition-colors duration-200 hover:bg-red-900"
+            >
+              Logout
+            </button>
+          </form>
         </div>
       </header>
 

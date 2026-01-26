@@ -16,7 +16,7 @@ async function clearAdminAuthCookiesAndRedirect() {
     const cookieStore = await cookies();
     const { access, refresh } = getAdminCookieNames();
     cookieStore.delete(access);
-    cookieStore.delete(refresh);
+    cookieStore.delete({ name: refresh, path: "/admin" });
     redirect("/admin/login");
 }
 

@@ -17,6 +17,7 @@ function getIconUrl(product: Product): string | null {
 export default function EditorPane({ className = "" }: EditorPaneProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+  const [productSearch, setProductSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -68,6 +69,14 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
     });
   };
 
+  const filteredProducts = useMemo(() => {
+    const normalizedQuery = productSearch.trim().toLowerCase();
+    if (!normalizedQuery) return products;
+    return products.filter((product) =>
+      (product.name || "").toLowerCase().includes(normalizedQuery)
+    );
+  }, [productSearch, products]);
+
   return (
     <div
       className={`flex h-full flex-col overflow-hidden border-3 border-gray-400 bg-white ${className}`}
@@ -90,16 +99,16 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
                   return (
                     <div
                       key={product.id}
-                      className="flex min-w-0 items-center gap-3 rounded border border-gray-200 px-2 py-2"
+                      className="flex min-w-0 items-center gap-3 rounded border border-gray-200 px-2"
                     >
                       {iconUrl ? (
                         <img
                           src={iconUrl}
                           alt={product.name || product.id}
-                          className="h-10 w-10 shrink-0 rounded object-cover"
+                          className="h-8 w-8 shrink-0 rounded object-cover"
                         />
                       ) : (
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-gray-100 text-[10px] text-gray-500 uppercase">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-gray-100 text-[10px] text-gray-500 uppercase">
                           No img
                         </div>
                       )}
@@ -115,8 +124,18 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col overflow-scroll p-4">
-          <div className="mb-3 shrink-0 text-xs font-semibold tracking-wide text-gray-700 uppercase">
-            Products
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div className="shrink-0 text-xs font-semibold tracking-wide text-gray-700 uppercase">
+              Products
+            </div>
+            <input
+              type="search"
+              value={productSearch}
+              onChange={(event) => setProductSearch(event.target.value)}
+              placeholder="Search"
+              aria-label="Search products by name"
+              className="h-8 w-50 rounded border border-gray-300 px-2 text-xs text-gray-900 placeholder:text-gray-400 focus:border-slate-600 focus:outline-none"
+            />
           </div>
           <div className="min-h-0 overflow-x-hidden overflow-y-auto">
             {isLoading ? (
@@ -125,13 +144,13 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
               <p className="text-sm text-red-600">{errorMessage}</p>
             ) : (
               <div className="space-y-2">
-                {products.map((product) => {
+                {filteredProducts.map((product) => {
                   const isSelected = selectedProductIds.includes(product.id);
                   const iconUrl = getIconUrl(product);
                   return (
                     <label
                       key={product.id}
-                      className="flex min-w-0 cursor-pointer items-center gap-3 rounded border border-gray-200 px-2 py-2 hover:bg-gray-50"
+                      className="flex min-w-0 cursor-pointer items-center gap-3 rounded border border-gray-200 px-2 hover:bg-gray-50"
                     >
                       <input
                         type="checkbox"

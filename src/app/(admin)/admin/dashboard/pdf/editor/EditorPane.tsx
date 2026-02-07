@@ -3,6 +3,24 @@
 import { getAdminProducts } from "@/actions/admin";
 import type Product from "@/types/Product";
 import { buildImageUrl } from "@/utils/photo";
+import Image from "next/image";
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { useEffect, useMemo, useState } from "react";
 
 type EditorPaneProps = {
@@ -12,6 +30,66 @@ type EditorPaneProps = {
 function getIconUrl(product: Product): string | null {
   const firstImage = product.images?.[0];
   return firstImage ? buildImageUrl(firstImage.objectKey) : null;
+}
+
+type SortableSelectedProductProps = {
+  product: Product;
+};
+
+function SortableSelectedProduct({ product }: SortableSelectedProductProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: product.id });
+  const iconUrl = getIconUrl(product);
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex min-w-0 items-center gap-3 rounded border border-gray-200 px-2 ${
+        isDragging ? "bg-slate-50 shadow-sm" : "bg-white"
+      }`}
+    >
+      {iconUrl ? (
+        <Image
+          src={iconUrl}
+          alt={product.name || product.id}
+          height={32}
+          width={32}
+          className="h-8 w-8 shrink-0 rounded object-cover"
+        />
+      ) : (
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-gray-100 text-[10px] text-gray-500 uppercase">
+          No img
+        </div>
+      )}
+      <span className="min-w-0 truncate text-sm text-gray-900">
+        {product.name || product.id}
+      </span>
+      <button
+        type="button"
+        {...attributes}
+        {...listeners}
+        className="ml-auto flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded border border-gray-200 text-gray-500 active:cursor-grabbing"
+        aria-label="Drag to reorder"
+      >
+        <span className="flex flex-col gap-1">
+          <span className="h-0.5 w-3.5 rounded bg-gray-400" />
+          <span className="h-0.5 w-3.5 rounded bg-gray-400" />
+          <span className="h-0.5 w-3.5 rounded bg-gray-400" />
+        </span>
+      </button>
+    </div>
+  );
 }
 
 export default function EditorPane({ className = "" }: EditorPaneProps) {
@@ -69,6 +147,11 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
     });
   };
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
   const filteredProducts = useMemo(() => {
     const normalizedQuery = productSearch.trim().toLowerCase();
     if (!normalizedQuery) return products;
@@ -89,36 +172,38 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
           <div className="mb-3 shrink-0 text-xs font-semibold tracking-wide text-gray-700 uppercase">
             Selected Products ({selectedProducts.length})
           </div>
-          <div className="min-h-0 overflow-x-hidden overflow-y-auto">
+          <div className="h-full overflow-x-hidden overflow-y-auto">
             {selectedProducts.length === 0 ? (
               <p className="text-sm text-gray-500">No products selected yet.</p>
             ) : (
-              <div className="space-y-2">
-                {selectedProducts.map((product) => {
-                  const iconUrl = getIconUrl(product);
-                  return (
-                    <div
-                      key={product.id}
-                      className="flex min-w-0 items-center gap-3 rounded border border-gray-200 px-2"
-                    >
-                      {iconUrl ? (
-                        <img
-                          src={iconUrl}
-                          alt={product.name || product.id}
-                          className="h-8 w-8 shrink-0 rounded object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-gray-100 text-[10px] text-gray-500 uppercase">
-                          No img
-                        </div>
-                      )}
-                      <span className="min-w-0 truncate text-sm text-gray-900">
-                        {product.name || product.id}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+              <DndContext
+                sensors={sensors}
+                modifiers={[restrictToVerticalAxis]}
+                collisionDetection={closestCenter}
+                onDragEnd={({ active, over }) => {
+                  if (!over || active.id === over.id) return;
+                  setSelectedProductIds((current) => {
+                    const oldIndex = current.indexOf(String(active.id));
+                    const newIndex = current.indexOf(String(over.id));
+                    if (oldIndex === -1 || newIndex === -1) return current;
+                    return arrayMove(current, oldIndex, newIndex);
+                  });
+                }}
+              >
+                <SortableContext
+                  items={selectedProducts.map((product) => product.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-2">
+                    {selectedProducts.map((product) => (
+                      <SortableSelectedProduct
+                        key={product.id}
+                        product={product}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
             )}
           </div>
         </div>
@@ -159,9 +244,11 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
                         className="h-4 w-4 shrink-0"
                       />
                       {iconUrl ? (
-                        <img
+                        <Image
                           src={iconUrl}
                           alt={product.name || product.id}
+                          width={32}
+                          height={32}
                           className="h-8 w-8 shrink-0 rounded object-cover"
                         />
                       ) : (

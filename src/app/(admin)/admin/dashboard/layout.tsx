@@ -32,11 +32,6 @@ export default function AdminDashboardLayout({
 
       {/* Main Content */}
       <main className="flex-1">
-        <style jsx global>{`
-          footer {
-            display: none;
-          }
-        `}</style>
         {children}
       </main>
     </div>

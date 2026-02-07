@@ -10,7 +10,7 @@ type RefreshPdfButtonProps = {
 export default function RefreshPdfButton({
   size = "md",
 }: RefreshPdfButtonProps) {
-  const { setPdfFromBlob } = usePdfEditor();
+  const { setPdfFromBlob, selectedProductIds } = usePdfEditor();
   const [isLoading, setIsLoading] = useState(false);
   const [isCooldown, setIsCooldown] = useState(false);
   const cooldownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -29,8 +29,16 @@ export default function RefreshPdfButton({
 
     setIsLoading(true);
     try {
+      if (selectedProductIds.length === 0) {
+        console.warn("No products selected for PDF compile.");
+        return;
+      }
       const response = await fetch("/api/admin/compile", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productIds: selectedProductIds }),
       });
 
       if (!response.ok) {
@@ -63,7 +71,7 @@ export default function RefreshPdfButton({
     <button
       type="button"
       onClick={handleClick}
-      disabled={isLoading || isCooldown}
+      disabled={isLoading || isCooldown || selectedProductIds.length === 0}
       className={`${baseClasses} ${sizeClasses}`}
     >
       {isLoading ? "Refreshing..." : "Refresh PDF"}

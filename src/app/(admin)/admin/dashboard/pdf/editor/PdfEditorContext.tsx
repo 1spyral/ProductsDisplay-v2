@@ -7,12 +7,16 @@ import {
   useEffect,
   useMemo,
   useState,
+  type Dispatch,
   type ReactNode,
+  type SetStateAction,
 } from "react";
 
 type PdfEditorContextValue = {
   pdfBytes: Uint8Array | null;
   pdfUrl: string | null;
+  selectedProductIds: string[];
+  setSelectedProductIds: Dispatch<SetStateAction<string[]>>;
   setPdfBytes: (bytes: Uint8Array | null) => void;
   setPdfFromArrayBuffer: (buffer: ArrayBuffer | null) => void;
   setPdfFromBlob: (blob: Blob | null) => Promise<void>;
@@ -23,6 +27,7 @@ const PdfEditorContext = createContext<PdfEditorContextValue | null>(null);
 
 export function PdfEditorProvider({ children }: { children: ReactNode }) {
   const [pdfBytes, setPdfBytesState] = useState<Uint8Array | null>(null);
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const pdfUrl = useMemo(() => {
     if (!pdfBytes) return null;
     const normalizedBytes = new Uint8Array(pdfBytes);
@@ -63,6 +68,8 @@ export function PdfEditorProvider({ children }: { children: ReactNode }) {
     () => ({
       pdfBytes,
       pdfUrl,
+      selectedProductIds,
+      setSelectedProductIds,
       setPdfBytes,
       setPdfFromArrayBuffer,
       setPdfFromBlob,
@@ -71,6 +78,8 @@ export function PdfEditorProvider({ children }: { children: ReactNode }) {
     [
       pdfBytes,
       pdfUrl,
+      selectedProductIds,
+      setSelectedProductIds,
       setPdfBytes,
       setPdfFromArrayBuffer,
       setPdfFromBlob,

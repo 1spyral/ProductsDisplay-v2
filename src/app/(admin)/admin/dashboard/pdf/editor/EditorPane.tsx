@@ -22,6 +22,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { useEffect, useMemo, useState } from "react";
+import { usePdfEditor } from "./PdfEditorContext";
 
 type EditorPaneProps = {
   className?: string;
@@ -94,7 +95,7 @@ function SortableSelectedProduct({ product }: SortableSelectedProductProps) {
 
 export default function EditorPane({ className = "" }: EditorPaneProps) {
   const [products, setProducts] = useState<Product[]>([]);
-  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+  const { selectedProductIds, setSelectedProductIds } = usePdfEditor();
   const [productSearch, setProductSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

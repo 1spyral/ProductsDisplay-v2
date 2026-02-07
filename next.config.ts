@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
     allowedDevOrigins: ["http://localhost:3000"],
     images: {
         qualities: [100, 75],
+        remotePatterns: process.env.NEXT_ALLOWED_IMAGE_REMOTE_PATTERNS?.split(
+            ","
+        ).map((pattern) => {
+            return new URL(pattern);
+        }),
     },
     experimental: {
         serverActions: {

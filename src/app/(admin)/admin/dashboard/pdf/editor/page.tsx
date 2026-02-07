@@ -3,6 +3,7 @@
 import { useState } from "react";
 import EditorPane from "./EditorPane";
 import PreviewPane from "./PreviewPane";
+import RefreshPdfButton from "./RefreshPdfButton";
 
 const defaultEditorText = `\\documentclass{article}
 \\begin{document}
@@ -26,14 +27,16 @@ export default function PdfEditorPage() {
         >
           &lt; Editor
         </button>
-        <span className="text-gray-500">{activePane}</span>
-        <button
-          type="button"
-          onClick={() => setActivePane("preview")}
-          className={`px-2 py-1 ${activePane === "preview" ? "bg-slate-700 text-white" : "text-gray-700"}`}
-        >
-          Preview &gt;
-        </button>
+        <div className="flex items-center gap-2">
+          <RefreshPdfButton size="sm" />
+          <button
+            type="button"
+            onClick={() => setActivePane("preview")}
+            className={`px-2 py-1 ${activePane === "preview" ? "bg-slate-700 text-white" : "text-gray-700"}`}
+          >
+            Preview &gt;
+          </button>
+        </div>
       </div>
 
       <div className="grid min-h-0 flex-1 grid-cols-1 grid-rows-1 gap-0 sm:grid-cols-10 sm:gap-4">
@@ -44,7 +47,6 @@ export default function PdfEditorPage() {
         />
 
         <PreviewPane
-          value={editorText}
           className={`sm:col-span-6 ${activePane === "editor" ? "hidden sm:flex" : ""}`}
         />
       </div>

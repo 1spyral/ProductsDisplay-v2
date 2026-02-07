@@ -6,7 +6,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -24,34 +23,19 @@ const PdfEditorContext = createContext<PdfEditorContextValue | null>(null);
 
 export function PdfEditorProvider({ children }: { children: ReactNode }) {
   const [pdfBytes, setPdfBytesState] = useState<Uint8Array | null>(null);
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const lastObjectUrlRef = useRef<string | null>(null);
-
-  const revokeLastUrl = useCallback(() => {
-    if (lastObjectUrlRef.current) {
-      URL.revokeObjectURL(lastObjectUrlRef.current);
-      lastObjectUrlRef.current = null;
-    }
-  }, []);
-
-  useEffect(() => {
-    revokeLastUrl();
-
-    if (!pdfBytes) {
-      setPdfUrl(null);
-      return;
-    }
-
+  const pdfUrl = useMemo(() => {
+    if (!pdfBytes) return null;
     const normalizedBytes = new Uint8Array(pdfBytes);
     const blob = new Blob([normalizedBytes], { type: "application/pdf" });
-    const nextUrl = URL.createObjectURL(blob);
-    lastObjectUrlRef.current = nextUrl;
-    setPdfUrl(nextUrl);
+    return URL.createObjectURL(blob);
+  }, [pdfBytes]);
 
+  useEffect(() => {
+    if (!pdfUrl) return;
     return () => {
-      revokeLastUrl();
+      URL.revokeObjectURL(pdfUrl);
     };
-  }, [pdfBytes, revokeLastUrl]);
+  }, [pdfUrl]);
 
   const setPdfBytes = useCallback((bytes: Uint8Array | null) => {
     setPdfBytesState(bytes);

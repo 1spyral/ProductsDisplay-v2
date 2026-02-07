@@ -23,7 +23,8 @@ export default function PreviewPane({ className = "" }: PreviewPaneProps) {
           <iframe title="PDF preview" src={pdfUrl} className="h-full w-full" />
         ) : (
           <div className="flex h-full items-center justify-center p-4 text-sm text-gray-600">
-            No PDF loaded yet. Click "Refresh PDF" to generate a preview.
+            No PDF loaded yet. Click &quot;Refresh PDF&quot; to generate a
+            preview.
           </div>
         )}
       </div>

@@ -55,6 +55,9 @@ COPY --from=builder /app/public ./public
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Ensure the runtime user can write Next.js prerender cache and related files.
+RUN chown -R nextjs:nodejs /app/.next
+
 USER nextjs
 
 EXPOSE 3000

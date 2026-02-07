@@ -31,9 +31,7 @@ export default function AdminDashboardLayout({
       </header>
 
       {/* Main Content */}
-      <main className="flex-1">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
     </div>
   );
 }

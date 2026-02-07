@@ -57,7 +57,7 @@ export default function RefreshPdfButton({
 
   const baseClasses =
     "inline-flex items-center justify-center rounded border border-gray-300 bg-white text-xs font-semibold uppercase tracking-wide text-gray-700 hover:bg-gray-50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60";
-  const sizeClasses = size === "sm" ? "px-2 py-1" : "px-3 py-1.5";
+  const sizeClasses = size === "sm" ? "px-2" : "px-3 py-1.5";
 
   return (
     <button

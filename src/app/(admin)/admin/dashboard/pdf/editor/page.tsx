@@ -3,17 +3,9 @@
 import { useState } from "react";
 import EditorPane from "./EditorPane";
 import PreviewPane from "./PreviewPane";
-
-const defaultEditorText = `\\documentclass{article}
-\\begin{document}
-Hello from the editor.
-
-This is placeholder content while we wire up PDF rendering.
-\\end{document}
-`;
+import RefreshPdfButton from "./RefreshPdfButton";
 
 export default function PdfEditorPage() {
-  const [editorText, setEditorText] = useState(defaultEditorText);
   const [activePane, setActivePane] = useState<"editor" | "preview">("editor");
 
   return (
@@ -26,26 +18,25 @@ export default function PdfEditorPage() {
         >
           &lt; Editor
         </button>
-        <span className="text-gray-500">{activePane}</span>
-        <button
-          type="button"
-          onClick={() => setActivePane("preview")}
-          className={`px-2 py-1 ${activePane === "preview" ? "bg-slate-700 text-white" : "text-gray-700"}`}
-        >
-          Preview &gt;
-        </button>
+        <div className="flex items-center gap-2">
+          <RefreshPdfButton size="sm" />
+          <button
+            type="button"
+            onClick={() => setActivePane("preview")}
+            className={`px-2 py-1 ${activePane === "preview" ? "bg-slate-700 text-white" : "text-gray-700"}`}
+          >
+            Preview &gt;
+          </button>
+        </div>
       </div>
 
       <div className="grid min-h-0 flex-1 grid-cols-1 grid-rows-1 gap-0 sm:grid-cols-10 sm:gap-4">
         <EditorPane
-          value={editorText}
-          onChange={setEditorText}
-          className={`sm:col-span-4 ${activePane === "preview" ? "hidden sm:flex" : ""}`}
+          className={`min-h-0 min-w-0 sm:col-span-4 ${activePane === "preview" ? "hidden sm:flex" : ""}`}
         />
 
         <PreviewPane
-          value={editorText}
-          className={`sm:col-span-6 ${activePane === "editor" ? "hidden sm:flex" : ""}`}
+          className={`min-h-0 min-w-0 sm:col-span-6 ${activePane === "editor" ? "hidden sm:flex" : ""}`}
         />
       </div>
     </div>

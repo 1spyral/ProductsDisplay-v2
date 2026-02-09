@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 import ImageCarousel from "@/components/Image/ImageCarousel";
-import Product from "@/types/Product";
-import Photo from "@/types/Photo";
-import { getCategoryName } from "@/types/Category";
 import { getCategoryByCategory } from "@/db/queries/categoryQueries";
+import { getCategoryName } from "@/types/Category";
+import Photo from "@/types/Photo";
+import Product from "@/types/Product";
 
 function shortenDescription(description: string): string {
   if (description.length > 100) {

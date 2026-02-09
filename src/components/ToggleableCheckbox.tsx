@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 type Props = {
   checked: boolean;
   onToggle: () => void | Promise<void>;

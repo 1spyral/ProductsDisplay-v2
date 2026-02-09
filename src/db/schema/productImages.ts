@@ -1,7 +1,7 @@
 import {
-    pgTable,
     index,
     integer,
+    pgTable,
     text,
     timestamp,
     uuid,

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { getStoreInfo } from "@/db/queries/storeInfoQueries";
+import Link from "next/link";
 
 export default async function Navbar() {
   const store = await getStoreInfo();

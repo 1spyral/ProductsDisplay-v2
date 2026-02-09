@@ -1,7 +1,7 @@
 "use client";
 
-import RefreshPdfButton from "./RefreshPdfButton";
 import { usePdfEditor } from "./PdfEditorContext";
+import RefreshPdfButton from "./RefreshPdfButton";
 
 type PreviewPaneProps = {
   className?: string;

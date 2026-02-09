@@ -2,8 +2,8 @@
 
 import { db } from "@/db/drizzle";
 import { productImages } from "@/db/schema";
-import { eq, asc } from "drizzle-orm";
 import { ProductImage } from "@/types/Product";
+import { asc, eq } from "drizzle-orm";
 
 export async function getProductImages(
     productId: string

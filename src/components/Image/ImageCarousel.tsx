@@ -1,11 +1,11 @@
 "use client";
 
+import ZoomImageWheel from "@/components/Image/ZoomImageWheel";
+import Photo from "@/types/Photo";
 import { useState } from "react";
-import ImageWheel from "./ImageWheel";
 import Arrows from "./Arrows";
 import Dots from "./Dots";
-import Photo from "@/types/Photo";
-import ZoomImageWheel from "@/components/Image/ZoomImageWheel";
+import ImageWheel from "./ImageWheel";
 
 interface ImageCarouselProps {
   photos: Photo[];

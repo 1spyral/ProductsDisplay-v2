@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import React from "react";
 
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 import { getStoreInfo } from "@/db/queries/storeInfoQueries";
 
 export async function generateMetadata(): Promise<Metadata> {

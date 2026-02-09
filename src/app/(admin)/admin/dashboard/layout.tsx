@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { logoutAdmin } from "@/actions/admin";
+import Link from "next/link";
 
 export default function AdminDashboardLayout({
   children,

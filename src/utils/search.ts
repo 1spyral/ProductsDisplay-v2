@@ -1,8 +1,8 @@
 "use server";
 
-import Fuse, { FuseResult } from "fuse.js";
-import Product from "@/types/Product";
 import { getProducts } from "@/db/queries/productQueries";
+import Product from "@/types/Product";
+import Fuse, { FuseResult } from "fuse.js";
 
 let data = await getProducts();
 

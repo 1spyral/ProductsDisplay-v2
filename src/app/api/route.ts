@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { getProducts } from "@/db/queries/productQueries";
+import { NextResponse } from "next/server";
 
 export async function GET() {
     return NextResponse.json({ message: await getProducts() });

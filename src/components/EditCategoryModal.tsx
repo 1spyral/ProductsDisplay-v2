@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import Category from "@/types/Category";
 import { updateAdminCategory } from "@/actions/admin";
 import { useCategoryForm } from "@/hooks/useCategoryForm";
-import Modal from "./Modal";
+import Category from "@/types/Category";
+import { useState } from "react";
 import {
+  CategoryFormActions,
+  CategoryFormError,
   CategoryIdField,
   CategoryNameField,
-  CategoryFormError,
-  CategoryFormActions,
 } from "./CategoryForm";
+import Modal from "./Modal";
 
 interface EditCategoryModalProps {
   category: Category;

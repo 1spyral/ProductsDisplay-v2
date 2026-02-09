@@ -1,10 +1,10 @@
-import { uploadImage, deleteImage, ImageUploadResult } from "@/lib/gcs";
-import { buildGlobalGcsPath } from "@/utils/imageKey";
 import { db } from "@/db/drizzle";
 import { productImages } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { randomUUID } from "crypto";
+import { deleteImage, ImageUploadResult, uploadImage } from "@/lib/gcs";
 import logger from "@/lib/logger";
+import { buildGlobalGcsPath } from "@/utils/imageKey";
+import { randomUUID } from "crypto";
+import { eq } from "drizzle-orm";
 
 export interface ImageUploadData {
     file: File;

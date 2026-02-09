@@ -1,5 +1,5 @@
-import Product, { ProductImage } from "@/types/Product";
 import Photo from "@/types/Photo";
+import Product, { ProductImage } from "@/types/Product";
 
 function getImageBasePath(): string {
     return process.env.NEXT_PUBLIC_IMAGE_PATH || "";

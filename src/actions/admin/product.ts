@@ -1,22 +1,22 @@
 "use server";
 
+import { getCategories } from "@/db/queries/categoryQueries";
 import {
-    getProducts,
-    updateProduct,
     checkProductIdExists,
     createProduct,
     deleteProduct,
+    getProducts,
+    updateProduct,
 } from "@/db/queries/productQueries";
-import { getCategories } from "@/db/queries/categoryQueries";
 import {
-    uploadProductImage,
     deleteProductImage,
-    updateImagePosition,
     reorderProductImages,
+    updateImagePosition,
+    uploadProductImage,
 } from "@/lib/imageService";
+import logger from "@/lib/logger";
 import { requireAdminAuth } from "./auth";
 import { checkRateLimit } from "./rateLimit";
-import logger from "@/lib/logger";
 
 export async function getAdminProducts() {
     await requireAdminAuth();

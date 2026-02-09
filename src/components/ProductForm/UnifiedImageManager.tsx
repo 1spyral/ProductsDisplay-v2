@@ -1,31 +1,31 @@
 "use client";
 
-import { useState, useRef } from "react";
-import Image from "next/image";
 import {
-  DndContext,
+  deleteAdminProductImage,
+  reorderAdminProductImages,
+  uploadAdminProductImage,
+} from "@/actions/admin";
+import { ProductImage } from "@/types/Product";
+import { buildImageUrl } from "@/utils/photo";
+import {
   closestCenter,
+  DndContext,
+  DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
   useSortable,
+  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ProductImage } from "@/types/Product";
-import { buildImageUrl } from "@/utils/photo";
-import {
-  uploadAdminProductImage,
-  deleteAdminProductImage,
-  reorderAdminProductImages,
-} from "@/actions/admin";
+import Image from "next/image";
+import { useRef, useState } from "react";
 import Modal from "../Modal";
 
 // Types for the unified component

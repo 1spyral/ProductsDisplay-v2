@@ -2,9 +2,9 @@
 
 import { db } from "@/db/drizzle";
 import { products } from "@/db/schema";
-import Product from "@/types/Product";
-import { eq, inArray, and } from "drizzle-orm";
 import logger from "@/lib/logger";
+import Product from "@/types/Product";
+import { and, eq, inArray } from "drizzle-orm";
 
 export async function getProducts(
     includeHidden: boolean = false

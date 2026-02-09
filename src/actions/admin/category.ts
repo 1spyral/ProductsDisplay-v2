@@ -1,15 +1,15 @@
 "use server";
 
 import {
-    getCategories,
-    createCategory,
-    updateCategory,
-    deleteCategory,
     checkCategoryIdExists,
+    createCategory,
+    deleteCategory,
+    getCategories,
+    updateCategory,
 } from "@/db/queries/categoryQueries";
+import logger from "@/lib/logger";
 import { requireAdminAuth } from "./auth";
 import { checkRateLimit } from "./rateLimit";
-import logger from "@/lib/logger";
 
 export async function getAdminCategoriesForManagement() {
     await requireAdminAuth();

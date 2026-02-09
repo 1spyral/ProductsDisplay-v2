@@ -1,8 +1,8 @@
 "use server";
 
-import Category from "@/types/Category";
 import { db } from "@/db/drizzle";
 import { categories } from "@/db/schema";
+import Category from "@/types/Category";
 import { asc, eq } from "drizzle-orm";
 
 export async function getCategories(): Promise<Category[]> {

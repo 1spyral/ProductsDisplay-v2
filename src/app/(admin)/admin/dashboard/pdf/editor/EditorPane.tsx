@@ -3,7 +3,6 @@
 import { getAdminProducts } from "@/actions/admin";
 import type Product from "@/types/Product";
 import { buildImageUrl } from "@/utils/photo";
-import Image from "next/image";
 import {
   DndContext,
   KeyboardSensor,
@@ -12,6 +11,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
   SortableContext,
   arrayMove,
@@ -20,7 +20,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { usePdfEditor } from "./PdfEditorContext";
 

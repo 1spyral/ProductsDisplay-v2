@@ -8,7 +8,7 @@ export * from "./relations";
 export { db } from "./drizzle";
 
 // Query functions
-export * from "./queries/productQueries";
 export * from "./queries/categoryQueries";
 export * from "./queries/productImageQueries";
+export * from "./queries/productQueries";
 export * from "./queries/storeInfoQueries";

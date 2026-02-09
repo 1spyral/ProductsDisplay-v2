@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import {
-  getAdminCategoriesForManagement,
   deleteAdminCategory,
+  getAdminCategoriesForManagement,
 } from "@/actions/admin";
-import Category from "@/types/Category";
-import EditCategoryModal from "@/components/EditCategoryModal";
 import AddCategoryModal from "@/components/AddCategoryModal";
-import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 import CategoriesTable from "@/components/CategoriesTable";
+import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
+import EditCategoryModal from "@/components/EditCategoryModal";
+import Category from "@/types/Category";
+import { useEffect, useState } from "react";
 
 type SortField = "category" | "name";
 type SortOrder = "asc" | "desc";

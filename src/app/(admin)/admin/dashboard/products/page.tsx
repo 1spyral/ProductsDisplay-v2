@@ -1,19 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import {
-  getAdminProducts,
-  getAdminCategories,
   deleteAdminProduct,
+  getAdminCategories,
+  getAdminProducts,
   toggleAdminProductClearance,
   toggleAdminProductHidden,
 } from "@/actions/admin";
-import Product from "@/types/Product";
-import Category from "@/types/Category";
-import EditProductModal from "@/components/EditProductModal";
 import AddProductModal from "@/components/AddProductModal";
 import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
+import EditProductModal from "@/components/EditProductModal";
 import ProductsTable from "@/components/ProductsTable";
+import Category from "@/types/Category";
+import Product from "@/types/Product";
+import { useEffect, useState } from "react";
 
 type SortField = "id" | "name" | "category";
 type SortOrder = "asc" | "desc";

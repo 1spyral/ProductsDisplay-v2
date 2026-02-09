@@ -1,6 +1,6 @@
+import Product from "@/types/Product";
 import getPhotos from "@/utils/photo";
 import ProductBox from "./ProductBox";
-import Product from "@/types/Product";
 
 export default async function ProductList({
   products,

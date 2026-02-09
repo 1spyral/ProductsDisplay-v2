@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import { createAdminCategory } from "@/actions/admin";
 import { useCategoryForm } from "@/hooks/useCategoryForm";
-import Modal from "./Modal";
+import { useState } from "react";
 import {
+  CategoryFormActions,
+  CategoryFormError,
   CategoryIdField,
   CategoryNameField,
-  CategoryFormError,
-  CategoryFormActions,
 } from "./CategoryForm";
+import Modal from "./Modal";
 
 interface AddCategoryModalProps {
   isOpen: boolean;

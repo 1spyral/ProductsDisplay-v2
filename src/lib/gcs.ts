@@ -1,5 +1,5 @@
-import { Storage, GetFilesOptions } from "@google-cloud/storage";
 import logger from "@/lib/logger";
+import { GetFilesOptions, Storage } from "@google-cloud/storage";
 
 // Initialize Google Cloud Storage
 let storage: Storage;
@@ -261,4 +261,4 @@ export async function copyImage(
     }
 }
 
-export { storage, bucket };
+export { bucket, storage };

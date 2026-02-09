@@ -1,9 +1,9 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
 import js from "@eslint/js";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import prettier from "eslint-config-prettier";
 import importPlugin from "eslint-plugin-import";
 import unusedImports from "eslint-plugin-unused-imports";
-import prettier from "eslint-config-prettier";
+import { defineConfig, globalIgnores } from "eslint/config";
 
 const commonLanguageOptions = {
     ecmaVersion: "latest",

@@ -1,9 +1,9 @@
-import getPhotos from "@/utils/photo";
-import Product from "@/types/Product";
 import ImageCarousel from "@/components/Image/ImageCarousel";
+import { getCategoryByCategory } from "@/db/queries/categoryQueries";
 import { getProductById } from "@/db/queries/productQueries";
 import { getCategoryName } from "@/types/Category";
-import { getCategoryByCategory } from "@/db/queries/categoryQueries";
+import Product from "@/types/Product";
+import getPhotos from "@/utils/photo";
 
 export default async function ProductPage({ id }: { id: string }) {
   const product: Product | null = await getProductById(id);

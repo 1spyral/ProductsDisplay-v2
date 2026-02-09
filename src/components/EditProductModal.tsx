@@ -1,23 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import Product from "@/types/Product";
-import Category from "@/types/Category";
 import { updateAdminProduct } from "@/actions/admin";
 import { useProductForm } from "@/hooks/useProductForm";
+import Category from "@/types/Category";
+import Product from "@/types/Product";
+import { useState } from "react";
 import {
-  ProductFormModal,
-  ProductIdField,
-  ProductNameField,
-  ProductDescriptionField,
   ProductCategoryField,
   ProductClearanceField,
-  ProductSoldOutField,
-  ProductHiddenField,
-  ProductFormError,
+  ProductDescriptionField,
   ProductFormActions,
-  UnifiedImageManager,
+  ProductFormError,
+  ProductFormModal,
+  ProductHiddenField,
+  ProductIdField,
+  ProductNameField,
   ProductPriceField,
+  ProductSoldOutField,
+  UnifiedImageManager,
 } from "./ProductForm";
 
 interface EditProductModalProps {

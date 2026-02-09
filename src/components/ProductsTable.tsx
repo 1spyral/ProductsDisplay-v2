@@ -1,7 +1,7 @@
-import Image from "next/image";
+import ToggleableCheckbox from "@/components/ToggleableCheckbox";
 import Product from "@/types/Product";
 import { buildImageUrl } from "@/utils/photo";
-import ToggleableCheckbox from "@/components/ToggleableCheckbox";
+import Image from "next/image";
 
 type SortField = "id" | "name" | "category";
 type SortOrder = "asc" | "desc";

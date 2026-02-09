@@ -7,7 +7,7 @@
     "useTabs": false,
     "arrowParens": "always",
     "endOfLine": "lf",
-    "plugins": ["prettier-plugin-tailwindcss"],
+    "plugins": ["prettier-plugin-tailwindcss", "prettier-plugin-organize-imports"],
     "overrides": [
         {
             "files": ["*.jsx", "*.tsx", "*.yml", "*.yaml"],

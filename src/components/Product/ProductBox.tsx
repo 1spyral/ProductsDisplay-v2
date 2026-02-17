@@ -55,11 +55,12 @@ export default async function ProductBox({
               {product.price}
             </h3>
           )}
-          {hasName && (
-            <h2 className="mb-2 text-lg font-bold text-gray-900 uppercase">
-              {product.name}
-            </h2>
-          )}
+          <h2 className="mb-2 text-lg font-bold text-gray-900 uppercase">
+            {hasName && <>{product.name} </>}
+            <span className="align-middle text-xs font-normal text-gray-400">
+              ID: {product.id}
+            </span>
+          </h2>
           {hasDescription && (
             <p className="mb-3 text-sm leading-relaxed text-gray-700 italic">
               {shortenDescription(product.description || "")}

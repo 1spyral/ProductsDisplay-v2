@@ -65,13 +65,12 @@ export default async function ProductPage({ id }: { id: string }) {
           )}
 
           {/* Product Name */}
-          {hasName && (
-            <div className="mb-6">
-              <h1 className="text-3xl leading-tight font-bold text-gray-900 uppercase sm:text-4xl">
-                {product.name}
-              </h1>
-            </div>
-          )}
+          <h1 className="mb-6 text-3xl leading-tight font-bold text-gray-900 uppercase sm:text-4xl">
+            {hasName && <>{product.name} </>}
+            <span className="align-middle text-sm font-normal text-gray-400">
+              ID: {product.id}
+            </span>
+          </h1>
 
           {/* Product Description */}
           {hasDescription && (

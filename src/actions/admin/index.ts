@@ -20,3 +20,10 @@ export {
     updateAdminProduct,
     uploadAdminProductImage,
 } from "./product";
+export {
+    createAdminSavedSelection,
+    deleteAdminSavedSelection,
+    getAdminSavedSelectionProductIds,
+    getAdminSavedSelections,
+    updateAdminSavedSelection,
+} from "./savedSelection";

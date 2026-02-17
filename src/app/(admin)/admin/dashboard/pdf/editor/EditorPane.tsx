@@ -1,6 +1,6 @@
 "use client";
 
-import { getAdminProducts } from "@/actions/admin";
+import { createAdminSavedSelection, getAdminProducts } from "@/actions/admin";
 import Modal from "@/components/Modal";
 import type Product from "@/types/Product";
 import { buildImageUrl } from "@/utils/photo";
@@ -22,6 +22,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { usePdfEditor } from "./PdfEditorContext";
 
@@ -142,6 +143,27 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
     url: string;
     alt: string;
   } | null>(null);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [saveName, setSaveName] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const handleSave = async () => {
+    if (!saveName.trim() || selectedProductIds.length === 0) return;
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      await createAdminSavedSelection(saveName.trim(), selectedProductIds);
+      setShowSaveModal(false);
+      setSaveName("");
+    } catch (error) {
+      setSaveError(
+        error instanceof Error ? error.message : "Failed to save selection"
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -213,8 +235,29 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
       </div>
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <div className="flex min-h-0 flex-1 flex-col overflow-scroll border-b-2 border-gray-300 p-4">
-          <div className="mb-3 shrink-0 text-xs font-semibold tracking-wide text-gray-700 uppercase">
-            Selected Products ({selectedProducts.length})
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div className="shrink-0 text-xs font-semibold tracking-wide text-gray-700 uppercase">
+              Selected Products ({selectedProducts.length})
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setSaveError(null);
+                  setShowSaveModal(true);
+                }}
+                disabled={selectedProducts.length === 0}
+                className="h-7 rounded border border-gray-300 px-2 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Save
+              </button>
+              <Link
+                href="/admin/dashboard/pdf/saved"
+                className="h-7 rounded border border-gray-300 px-2 text-xs font-medium leading-7 text-gray-700 hover:bg-gray-50"
+              >
+                View Saved
+              </Link>
+            </div>
           </div>
           <div className="h-full overflow-x-hidden overflow-y-auto">
             {selectedProducts.length === 0 ? (
@@ -354,6 +397,67 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
               unoptimized
             />
           </div>
+        </Modal>
+      )}
+
+      {/* Save Selection Modal */}
+      {showSaveModal && (
+        <Modal
+          isOpen={true}
+          onClose={() => {
+            setShowSaveModal(false);
+            setSaveName("");
+            setSaveError(null);
+          }}
+          title="Save Selection"
+          size="md"
+        >
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSave();
+            }}
+            className="space-y-4 p-4"
+          >
+            <div>
+              <label
+                htmlFor="selection-name"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
+                Name
+              </label>
+              <input
+                id="selection-name"
+                type="text"
+                value={saveName}
+                onChange={(e) => setSaveName(e.target.value)}
+                placeholder="e.g. Spring 2026 Flyer"
+                autoFocus
+                className="h-9 w-full rounded border border-gray-300 px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-slate-600 focus:outline-none"
+              />
+            </div>
+            {saveError && <p className="text-sm text-red-600">{saveError}</p>}
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowSaveModal(false);
+                  setSaveName("");
+                  setSaveError(null);
+                }}
+                className="h-9 rounded border border-gray-300 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSaving || !saveName.trim()}
+                className="h-9 rounded bg-slate-700 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+              >
+                {isSaving ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </form>
         </Modal>
       )}
     </div>

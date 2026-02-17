@@ -1,5 +1,6 @@
 "use client";
 
+import { getAdminSavedSelectionProductIds } from "@/actions/admin";
 import {
   createContext,
   useCallback,
@@ -21,19 +22,51 @@ type PdfEditorContextValue = {
   setPdfFromArrayBuffer: (buffer: ArrayBuffer | null) => void;
   setPdfFromBlob: (blob: Blob | null) => Promise<void>;
   clearPdf: () => void;
+  loadingSelection: boolean;
 };
 
 const PdfEditorContext = createContext<PdfEditorContextValue | null>(null);
 
+function hasSelectionParam() {
+  if (typeof window === "undefined") return false;
+  return new URLSearchParams(window.location.search).has("selectionId");
+}
+
 export function PdfEditorProvider({ children }: { children: ReactNode }) {
   const [pdfBytes, setPdfBytesState] = useState<Uint8Array | null>(null);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+  const [loadingSelection, setLoadingSelection] = useState(hasSelectionParam);
   const pdfUrl = useMemo(() => {
     if (!pdfBytes) return null;
     const normalizedBytes = new Uint8Array(pdfBytes);
     const blob = new Blob([normalizedBytes], { type: "application/pdf" });
     return URL.createObjectURL(blob);
   }, [pdfBytes]);
+
+  // Load saved selection from URL search params on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const selectionId = params.get("selectionId");
+    if (!selectionId) return;
+
+    let cancelled = false;
+
+    getAdminSavedSelectionProductIds(selectionId)
+      .then((productIds) => {
+        if (cancelled) return;
+        setSelectedProductIds(productIds);
+      })
+      .catch(() => {
+        // Silently fail — user can still use the editor
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingSelection(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!pdfUrl) return;
@@ -74,6 +107,7 @@ export function PdfEditorProvider({ children }: { children: ReactNode }) {
       setPdfFromArrayBuffer,
       setPdfFromBlob,
       clearPdf,
+      loadingSelection,
     }),
     [
       pdfBytes,
@@ -84,6 +118,7 @@ export function PdfEditorProvider({ children }: { children: ReactNode }) {
       setPdfFromArrayBuffer,
       setPdfFromBlob,
       clearPdf,
+      loadingSelection,
     ]
   );
 

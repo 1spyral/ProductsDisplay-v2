@@ -1,7 +1,7 @@
 "use client";
 
 import { useCart } from "@/contexts/CartContext";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface AddToCartButtonProps {
   productId: string;
@@ -25,12 +25,10 @@ export default function AddToCartButton({
     existingItem ? String(existingItem.quantity) : ""
   );
 
-  // Keep input in sync when quantity changes externally (e.g. +/- buttons)
-  useEffect(() => {
-    if (existingItem) {
-      setInputValue(String(existingItem.quantity));
-    }
-  }, [existingItem?.quantity]);
+  // Use existingItem.quantity directly in the input so it stays synced
+  const displayValue = existingItem
+    ? String(existingItem.quantity)
+    : inputValue;
 
   if (soldOut) {
     return (
@@ -65,7 +63,7 @@ export default function AddToCartButton({
           <input
             type="text"
             inputMode="numeric"
-            value={inputValue}
+            value={displayValue}
             onChange={(e) => {
               const val = e.target.value.replace(/\D/g, "");
               setInputValue(val);

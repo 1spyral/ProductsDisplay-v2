@@ -13,6 +13,7 @@ interface ModalProps {
   darkBackground?: boolean; // For image viewers with darker background
   showHeaderCloseButton?: boolean; // Control header "x" independently of size
   showFloatingCloseButton?: boolean; // Control floating top-right "x" independently of size
+  autoHeight?: boolean; // Use content height instead of fixed viewport height
 }
 
 export default function Modal({
@@ -26,20 +27,33 @@ export default function Modal({
   darkBackground = false,
   showHeaderCloseButton = false,
   showFloatingCloseButton = false,
+  autoHeight = false,
 }: ModalProps) {
   if (!isOpen) return null;
 
-  const sizeClasses = {
-    sm: "w-[40vw] h-[40vh]",
-    md: "w-[50vw] h-[50vh]",
-    lg: "w-[60vw] h-[60vh]",
-    xl: "w-[70vw] h-[70vh]",
-    "2xl": "w-[75vw] h-[75vh]",
-    "3xl": "w-[80vw] h-[80vh]",
-    "4xl": "w-[85vw] h-[85vh]",
-    "5xl": "w-[90vw] h-[90vh]",
-    full: "w-full h-full",
-  };
+  const sizeClasses = autoHeight
+    ? {
+        sm: "w-[40vw] max-h-[40vh]",
+        md: "w-[50vw] max-h-[50vh]",
+        lg: "w-[60vw] max-h-[60vh]",
+        xl: "w-[70vw] max-h-[70vh]",
+        "2xl": "w-[75vw] max-h-[75vh]",
+        "3xl": "w-[80vw] max-h-[80vh]",
+        "4xl": "w-[85vw] max-h-[85vh]",
+        "5xl": "w-[90vw] max-h-[90vh]",
+        full: "w-full h-full",
+      }
+    : {
+        sm: "w-[40vw] h-[40vh]",
+        md: "w-[50vw] h-[50vh]",
+        lg: "w-[60vw] h-[60vh]",
+        xl: "w-[70vw] h-[70vh]",
+        "2xl": "w-[75vw] h-[75vh]",
+        "3xl": "w-[80vw] h-[80vh]",
+        "4xl": "w-[85vw] h-[85vh]",
+        "5xl": "w-[90vw] h-[90vh]",
+        full: "w-full h-full",
+      };
 
   const backgroundClass = darkBackground ? "bg-black/90" : "bg-black/70";
 

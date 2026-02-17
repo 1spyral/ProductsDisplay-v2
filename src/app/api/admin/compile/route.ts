@@ -4,6 +4,7 @@ import { compilePdfFromHtml } from "@/lib/pdf/compilePdf";
 import type Product from "@/types/Product";
 import { buildImageUrl } from "@/utils/photo";
 import { NextResponse } from "next/server";
+import sharp from "sharp";
 
 export const runtime = "nodejs";
 
@@ -20,7 +21,67 @@ function escapeHtml(value: string): string {
         .replaceAll("'", "&#39;");
 }
 
-function renderProductCard(product: Product): string {
+const IMAGE_MAX_WIDTH = 400;
+const IMAGE_MAX_HEIGHT = 400;
+const IMAGE_QUALITY = 60;
+
+async function compressImageToDataUri(url: string): Promise<string | null> {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) return null;
+
+        const buffer = Buffer.from(await response.arrayBuffer());
+        const compressed = await sharp(buffer)
+            .resize(IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT, {
+                fit: "inside",
+                withoutEnlargement: true,
+            })
+            .jpeg({ quality: IMAGE_QUALITY, mozjpeg: true })
+            .toBuffer();
+
+        return `data:image/jpeg;base64,${compressed.toString("base64")}`;
+    } catch {
+        return null;
+    }
+}
+
+async function compressProductImages(
+    products: Product[]
+): Promise<Map<string, string>> {
+    const imageMap = new Map<string, string>();
+    const entries: { key: string; url: string }[] = [];
+
+    for (const product of products) {
+        for (const image of product.images ?? []) {
+            if (!imageMap.has(image.objectKey)) {
+                entries.push({
+                    key: image.objectKey,
+                    url: buildImageUrl(image.objectKey),
+                });
+            }
+        }
+    }
+
+    const results = await Promise.all(
+        entries.map(async ({ key, url }) => {
+            const dataUri = await compressImageToDataUri(url);
+            return { key, dataUri };
+        })
+    );
+
+    for (const { key, dataUri } of results) {
+        if (dataUri) {
+            imageMap.set(key, dataUri);
+        }
+    }
+
+    return imageMap;
+}
+
+function renderProductCard(
+    product: Product,
+    imageMap: Map<string, string>
+): string {
     const name = product.name?.trim() || product.id;
     const description = product.description?.trim();
     const category = product.category?.trim();
@@ -37,9 +98,11 @@ function renderProductCard(product: Product): string {
             ? `<div class="images">
         ${images
             .map((image) => {
-                const url = buildImageUrl(image.objectKey);
+                const src =
+                    imageMap.get(image.objectKey) ??
+                    buildImageUrl(image.objectKey);
                 return `<div class="image"><img src="${escapeHtml(
-                    url
+                    src
                 )}" alt="${escapeHtml(name)}" /></div>`;
             })
             .join("")}
@@ -69,7 +132,11 @@ function renderProductCard(product: Product): string {
     </section>`;
 }
 
-function buildPdfHtml(products: Product[], missingIds: string[]): string {
+function buildPdfHtml(
+    products: Product[],
+    missingIds: string[],
+    imageMap: Map<string, string>
+): string {
     const missingBlock =
         missingIds.length > 0
             ? `<div class="missing">
@@ -106,7 +173,7 @@ function buildPdfHtml(products: Product[], missingIds: string[]): string {
   <body>
     <h1>Products</h1>
     ${missingBlock}
-    ${products.map(renderProductCard).join("")}
+    ${products.map((p) => renderProductCard(p, imageMap)).join("")}
   </body>
 </html>`;
 }
@@ -153,7 +220,8 @@ export async function POST(request: Request) {
         .filter((product): product is Product => Boolean(product));
     const missingIds = normalizedIds.filter((id) => !productsById.has(id));
 
-    const html = buildPdfHtml(orderedProducts, missingIds);
+    const imageMap = await compressProductImages(orderedProducts);
+    const html = buildPdfHtml(orderedProducts, missingIds, imageMap);
 
     try {
         const pdfBytes = await compilePdfFromHtml(html);

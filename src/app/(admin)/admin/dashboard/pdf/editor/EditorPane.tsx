@@ -35,9 +35,13 @@ function getIconUrl(product: Product): string | null {
 
 type SortableSelectedProductProps = {
   product: Product;
+  onRemove?: (productId: string) => void;
 };
 
-function SortableSelectedProduct({ product }: SortableSelectedProductProps) {
+function SortableSelectedProduct({
+  product,
+  onRemove,
+}: SortableSelectedProductProps) {
   const {
     attributes,
     listeners,
@@ -76,19 +80,41 @@ function SortableSelectedProduct({ product }: SortableSelectedProductProps) {
       <span className="min-w-0 truncate text-sm text-gray-900">
         {product.name || product.id}
       </span>
-      <button
-        type="button"
-        {...attributes}
-        {...listeners}
-        className="ml-auto flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded border border-gray-200 text-gray-500 active:cursor-grabbing"
-        aria-label="Drag to reorder"
-      >
-        <span className="flex flex-col gap-1">
-          <span className="h-0.5 w-3.5 rounded bg-gray-400" />
-          <span className="h-0.5 w-3.5 rounded bg-gray-400" />
-          <span className="h-0.5 w-3.5 rounded bg-gray-400" />
-        </span>
-      </button>
+      <div className="ml-auto flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => onRemove?.(product.id)}
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-red-50 hover:text-red-600"
+          aria-label="Remove product"
+        >
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+        <button
+          type="button"
+          {...attributes}
+          {...listeners}
+          className="flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded border border-gray-200 text-gray-500 active:cursor-grabbing"
+          aria-label="Drag to reorder"
+        >
+          <span className="flex flex-col gap-1">
+            <span className="h-0.5 w-3.5 rounded bg-gray-400" />
+            <span className="h-0.5 w-3.5 rounded bg-gray-400" />
+            <span className="h-0.5 w-3.5 rounded bg-gray-400" />
+          </span>
+        </button>
+      </div>
     </div>
   );
 }
@@ -200,6 +226,11 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
                       <SortableSelectedProduct
                         key={product.id}
                         product={product}
+                        onRemove={(productId) =>
+                          setSelectedProductIds((current) =>
+                            current.filter((id) => id !== productId)
+                          )
+                        }
                       />
                     ))}
                   </div>

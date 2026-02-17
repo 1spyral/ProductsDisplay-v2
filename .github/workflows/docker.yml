@@ -16,6 +16,7 @@ concurrency:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    environment: build
 
     steps:
       - name: Checkout
@@ -42,5 +43,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/1spyral/kbw-productsdisplay:latest
+          build-args: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

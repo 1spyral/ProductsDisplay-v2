@@ -26,6 +26,10 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED=1
 
+# Database URL needed at build time for Next.js page pre-rendering
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+
 RUN bun run build
 
 # Production image, copy all the files and run next

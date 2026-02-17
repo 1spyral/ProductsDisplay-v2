@@ -36,10 +36,16 @@ export default function ConfirmDeleteModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onCancel} title={title} size="md">
+    <Modal
+      isOpen={isOpen}
+      onClose={onCancel}
+      title={title}
+      size="md"
+      autoHeight
+    >
       <div className="space-y-6">
         {/* Warning Icon */}
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center px-4 sm:px-6">
           <div className="rounded-full border-2 border-red-300 bg-red-100 p-4">
             <svg
               className="h-8 w-8 text-red-600"
@@ -56,7 +62,7 @@ export default function ConfirmDeleteModal({
         </div>
 
         {/* Message */}
-        <div className="text-center">
+        <div className="px-4 text-center sm:px-6">
           <p className="text-base leading-relaxed text-gray-900">{message}</p>
           <p className="mt-2 text-sm text-gray-600">
             This action cannot be undone.

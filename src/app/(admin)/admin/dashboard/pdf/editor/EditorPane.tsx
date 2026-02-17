@@ -411,6 +411,7 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
           }}
           title="Save Selection"
           size="md"
+          autoHeight
         >
           <form
             onSubmit={(e) => {

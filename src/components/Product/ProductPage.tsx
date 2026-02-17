@@ -60,7 +60,7 @@ export default async function ProductPage({ id }: { id: string }) {
           {/* Product Price */}
           {hasPrice && (
             <h1 className="text-2xl font-bold text-orange-600">
-              ${product.price}
+              {product.price}
             </h1>
           )}
 

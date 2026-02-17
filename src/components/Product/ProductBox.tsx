@@ -52,7 +52,7 @@ export default async function ProductBox({
         <div className="flex flex-col p-4">
           {hasPrice && (
             <h3 className="text-lg font-bold text-orange-600 italic">
-              ${product.price}
+              {product.price}
             </h3>
           )}
           {hasName && (

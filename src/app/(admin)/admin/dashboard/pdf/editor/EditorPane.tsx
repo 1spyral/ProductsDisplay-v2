@@ -1,6 +1,7 @@
 "use client";
 
 import { getAdminProducts } from "@/actions/admin";
+import Modal from "@/components/Modal";
 import type Product from "@/types/Product";
 import { buildImageUrl } from "@/utils/photo";
 import {
@@ -36,11 +37,13 @@ function getIconUrl(product: Product): string | null {
 type SortableSelectedProductProps = {
   product: Product;
   onRemove?: (productId: string) => void;
+  onImageClick?: (url: string, alt: string) => void;
 };
 
 function SortableSelectedProduct({
   product,
   onRemove,
+  onImageClick,
 }: SortableSelectedProductProps) {
   const {
     attributes,
@@ -65,13 +68,23 @@ function SortableSelectedProduct({
       }`}
     >
       {iconUrl ? (
-        <Image
-          src={iconUrl}
-          alt={product.name || product.id}
-          height={32}
-          width={32}
-          className="h-8 w-8 shrink-0 rounded object-cover"
-        />
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onImageClick?.(iconUrl, product.name || product.id);
+          }}
+          className="shrink-0 cursor-pointer transition-opacity hover:opacity-80"
+          title="Click to view full image"
+        >
+          <Image
+            src={iconUrl}
+            alt={product.name || product.id}
+            height={32}
+            width={32}
+            className="h-8 w-8 rounded object-cover"
+          />
+        </button>
       ) : (
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-gray-100 text-[10px] text-gray-500 uppercase">
           No img
@@ -125,6 +138,10 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
   const [productSearch, setProductSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [viewerImage, setViewerImage] = useState<{
+    url: string;
+    alt: string;
+  } | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -231,6 +248,9 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
                             current.filter((id) => id !== productId)
                           )
                         }
+                        onImageClick={(url, alt) =>
+                          setViewerImage({ url, alt })
+                        }
                       />
                     ))}
                   </div>
@@ -276,13 +296,26 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
                         className="h-4 w-4 shrink-0"
                       />
                       {iconUrl ? (
-                        <Image
-                          src={iconUrl}
-                          alt={product.name || product.id}
-                          width={32}
-                          height={32}
-                          className="h-8 w-8 shrink-0 rounded object-cover"
-                        />
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setViewerImage({
+                              url: iconUrl,
+                              alt: product.name || product.id,
+                            });
+                          }}
+                          className="shrink-0 cursor-pointer transition-opacity hover:opacity-80"
+                          title="Click to view full image"
+                        >
+                          <Image
+                            src={iconUrl}
+                            alt={product.name || product.id}
+                            width={32}
+                            height={32}
+                            className="h-8 w-8 rounded object-cover"
+                          />
+                        </button>
                       ) : (
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-gray-100 text-[10px] text-gray-500 uppercase">
                           No img
@@ -299,6 +332,30 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
           </div>
         </div>
       </div>
+
+      {/* Image Viewer Modal */}
+      {viewerImage && (
+        <Modal
+          isOpen={true}
+          onClose={() => setViewerImage(null)}
+          size="5xl"
+          className="border-0 bg-transparent"
+          zIndex={60}
+          darkBackground={true}
+          showHeaderCloseButton={true}
+        >
+          <div className="relative flex h-full w-full items-center justify-center">
+            <Image
+              src={viewerImage.url}
+              alt={viewerImage.alt}
+              width={1200}
+              height={800}
+              className="max-h-full max-w-full object-contain"
+              unoptimized
+            />
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

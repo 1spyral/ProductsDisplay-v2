@@ -99,6 +99,13 @@
       "when": 1767409922186,
       "tag": "0013_update_category_foreign_key_constraints",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1771292428958,
+      "tag": "0014_prepend_dollar_to_prices",
+      "breakpoints": true
     }
   ]
 }

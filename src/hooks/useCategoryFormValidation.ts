@@ -4,7 +4,10 @@ import { useCallback, useEffect, useState } from "react";
 interface UseCategoryFormValidationProps {
     initialId?: string; // For edit mode, the original ID
     skipDuplicateCheck?: boolean; // For cases where we want to skip duplicate checking
+    debounceMs?: number; // Debounce delay for automatic ID validation
 }
+
+const DEFAULT_DEBOUNCE_MS = 500;
 
 export interface CategoryValidationState {
     isDuplicate: boolean;
@@ -84,6 +87,7 @@ export function useCategoryIdValidation(
 ): CategoryValidationState {
     const [isDuplicate, setIsDuplicate] = useState(false);
     const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
+    const debounceMs = options.debounceMs ?? DEFAULT_DEBOUNCE_MS;
 
     // Validate ID format in real-time
     const isValidIdFormat = useCallback((id: string): boolean => {
@@ -139,10 +143,10 @@ export function useCategoryIdValidation(
 
         const timeoutId = setTimeout(() => {
             checkForDuplicate(id);
-        }, 500); // 500ms debounce
+        }, debounceMs);
 
         return () => clearTimeout(timeoutId);
-    }, [id, options.skipDuplicateCheck, checkForDuplicate]);
+    }, [id, options.skipDuplicateCheck, checkForDuplicate, debounceMs]);
 
     return {
         isDuplicate,

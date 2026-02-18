@@ -1,9 +1,9 @@
+import { createProduct } from "@/db/queries/productQueries";
 import {
     createSavedSelection,
     getSavedSelectionProductIds,
     getSavedSelections,
 } from "@/db/queries/savedSelectionQueries";
-import { createProduct } from "@/db/queries/productQueries";
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 import { resetTestDatabase } from "../db/helpers";
 
@@ -66,7 +66,9 @@ describe("savedSelection admin actions (integration)", () => {
 
         const selections = await getAdminSavedSelections();
 
-        const target = selections.find((selection) => selection.id === selectionId);
+        const target = selections.find(
+            (selection) => selection.id === selectionId
+        );
         expect(target).toBeDefined();
         expect(target?.name).toBe("Featured");
         expect(target?.products.map((product) => product.product.id)).toEqual([
@@ -87,10 +89,9 @@ describe("savedSelection admin actions (integration)", () => {
             "product-a",
         ]);
 
-        await expect(getAdminSavedSelectionProductIds(selectionId)).resolves.toEqual([
-            "product-b",
-            "product-a",
-        ]);
+        await expect(
+            getAdminSavedSelectionProductIds(selectionId)
+        ).resolves.toEqual(["product-b", "product-a"]);
         expect(requireAdminAuth).toHaveBeenCalledTimes(1);
         expect(checkRateLimit).toHaveBeenCalledWith(
             "getAdminSavedSelectionProductIds",
@@ -114,7 +115,9 @@ describe("savedSelection admin actions (integration)", () => {
         ]);
 
         const selections = await getSavedSelections();
-        const created = selections.find((selection) => selection.id === result.id);
+        const created = selections.find(
+            (selection) => selection.id === result.id
+        );
         expect(created?.name).toBe("Weekly Picks");
         expect(checkRateLimit).toHaveBeenCalledWith(
             "createAdminSavedSelection",
@@ -124,8 +127,9 @@ describe("savedSelection admin actions (integration)", () => {
     });
 
     test("createAdminSavedSelection rejects empty names", async () => {
-        await expect(createAdminSavedSelection("   ", ["product-a"]))
-            .rejects.toThrow("Selection name cannot be empty");
+        await expect(
+            createAdminSavedSelection("   ", ["product-a"])
+        ).rejects.toThrow("Selection name cannot be empty");
         expect(checkRateLimit).toHaveBeenCalledWith(
             "createAdminSavedSelection",
             30,
@@ -146,15 +150,14 @@ describe("savedSelection admin actions (integration)", () => {
             ])
         ).resolves.toEqual({ success: true });
 
-        await expect(getSavedSelectionProductIds(selectionId)).resolves.toEqual([
-            "product-c",
-            "product-a",
-        ]);
+        await expect(getSavedSelectionProductIds(selectionId)).resolves.toEqual(
+            ["product-c", "product-a"]
+        );
 
         const selections = await getSavedSelections();
-        expect(selections.find((selection) => selection.id === selectionId)?.name).toBe(
-            "Updated"
-        );
+        expect(
+            selections.find((selection) => selection.id === selectionId)?.name
+        ).toBe("Updated");
         expect(checkRateLimit).toHaveBeenCalledWith(
             "updateAdminSavedSelection",
             30,
@@ -163,15 +166,21 @@ describe("savedSelection admin actions (integration)", () => {
     });
 
     test("deleteAdminSavedSelection removes saved selection", async () => {
-        const selectionId = await createSavedSelection("Delete Me", ["product-b"]);
+        const selectionId = await createSavedSelection("Delete Me", [
+            "product-b",
+        ]);
 
         await expect(deleteAdminSavedSelection(selectionId)).resolves.toEqual({
             success: true,
         });
 
         const selections = await getSavedSelections();
-        expect(selections.find((selection) => selection.id === selectionId)).toBeUndefined();
-        await expect(getSavedSelectionProductIds(selectionId)).resolves.toEqual([]);
+        expect(
+            selections.find((selection) => selection.id === selectionId)
+        ).toBeUndefined();
+        await expect(getSavedSelectionProductIds(selectionId)).resolves.toEqual(
+            []
+        );
         expect(checkRateLimit).toHaveBeenCalledWith(
             "deleteAdminSavedSelection",
             30,

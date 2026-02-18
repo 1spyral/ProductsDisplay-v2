@@ -4,7 +4,7 @@ import { db } from "@/db/drizzle";
 import { products } from "@/db/schema";
 import logger from "@/lib/logger";
 import Product from "@/types/Product";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 
 export async function getProducts(
     includeHidden: boolean = false
@@ -94,6 +94,55 @@ export async function getProductsByIds(
             },
         },
     });
+}
+
+export async function searchProducts(query: string): Promise<Product[]> {
+    const searchQuery = query.trim();
+    if (!searchQuery) return getProducts();
+
+    const searchPattern = `%${searchQuery}%`;
+    const rankExpression = sql<number>`greatest(
+        similarity(${products.id}, ${searchQuery}),
+        similarity(coalesce(${products.name}, ''), ${searchQuery}),
+        similarity(coalesce(${products.description}, ''), ${searchQuery}),
+        similarity(coalesce(${products.category}, ''), ${searchQuery})
+    )`;
+
+    const matches = await db
+        .select({
+            id: products.id,
+            rank: rankExpression,
+        })
+        .from(products)
+        .where(
+            and(
+                eq(products.hidden, false),
+                or(
+                    ilike(products.id, searchPattern),
+                    ilike(products.name, searchPattern),
+                    ilike(products.description, searchPattern),
+                    ilike(products.category, searchPattern),
+                    sql`${products.id} % ${searchQuery}`,
+                    sql`coalesce(${products.name}, '') % ${searchQuery}`,
+                    sql`coalesce(${products.description}, '') % ${searchQuery}`,
+                    sql`coalesce(${products.category}, '') % ${searchQuery}`
+                )
+            )
+        )
+        .orderBy(desc(rankExpression), products.id);
+
+    if (matches.length === 0) return [];
+
+    const matchedProducts = await getProductsByIds(
+        matches.map((match) => match.id)
+    );
+    const productsById = new Map(
+        matchedProducts.map((product) => [product.id, product])
+    );
+
+    return matches
+        .map((match) => productsById.get(match.id))
+        .filter((product): product is Product => product !== undefined);
 }
 
 export async function updateProduct(

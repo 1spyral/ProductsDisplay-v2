@@ -1,6 +1,6 @@
 import ProductList from "@/components/Product/ProductList";
+import { getProducts, searchProducts } from "@/db/queries/productQueries";
 import Product from "@/types/Product";
-import search from "@/utils/search";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -30,8 +30,11 @@ export default async function SearchResultsPage({
   const { query } = await searchParams;
 
   const searchQuery = Array.isArray(query) ? query.join(" ") : query || "";
+  const normalizedSearchQuery = searchQuery.trim();
 
-  const products: Product[] = await search(searchQuery);
+  const products: Product[] = normalizedSearchQuery
+    ? await searchProducts(normalizedSearchQuery)
+    : await getProducts();
 
   if (!products.length) {
     return (

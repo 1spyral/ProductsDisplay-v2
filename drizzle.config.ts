@@ -4,6 +4,7 @@ export default defineConfig({
     out: "./drizzle",
     schema: "./src/db/schema",
     dialect: "postgresql",
+    casing: "snake_case",
     dbCredentials: {
         host: process.env.DB_HOST as string,
         port: parseInt(process.env.DB_PORT as string),

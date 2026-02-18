@@ -5,8 +5,6 @@ import { categories } from "@/db/schema";
 import Category from "@/types/Category";
 import { asc, eq, sql } from "drizzle-orm";
 
-type MoveDirection = "up" | "down";
-
 async function getOrderedCategoryIds(): Promise<string[]> {
     const rows = await db
         .select({ category: categories.category })
@@ -32,6 +30,29 @@ async function persistCategoryOrder(
 async function normalizeCategoryDisplayOrder(): Promise<void> {
     const orderedCategoryIds = await getOrderedCategoryIds();
     await persistCategoryOrder(orderedCategoryIds);
+}
+
+export async function reorderCategories(categoryIds: string[]): Promise<void> {
+    const currentCategoryIds = await getOrderedCategoryIds();
+
+    if (categoryIds.length !== currentCategoryIds.length) {
+        throw new Error("Invalid category order payload");
+    }
+
+    const currentCategoryIdSet = new Set(currentCategoryIds);
+    const seenCategoryIds = new Set<string>();
+
+    for (const categoryId of categoryIds) {
+        if (!currentCategoryIdSet.has(categoryId)) {
+            throw new Error("Invalid category in order payload");
+        }
+        if (seenCategoryIds.has(categoryId)) {
+            throw new Error("Duplicate category in order payload");
+        }
+        seenCategoryIds.add(categoryId);
+    }
+
+    await persistCategoryOrder(categoryIds);
 }
 
 export async function getCategories(): Promise<Category[]> {
@@ -139,31 +160,4 @@ export async function deleteCategory(categoryId: string): Promise<void> {
 
     await db.delete(categories).where(eq(categories.category, categoryId));
     await normalizeCategoryDisplayOrder();
-}
-
-export async function moveCategory(
-    categoryId: string,
-    direction: MoveDirection
-): Promise<void> {
-    const orderedCategoryIds = await getOrderedCategoryIds();
-    const currentIndex = orderedCategoryIds.indexOf(categoryId);
-
-    if (currentIndex === -1) {
-        throw new Error("Category not found");
-    }
-
-    const targetIndex =
-        direction === "up" ? currentIndex - 1 : currentIndex + 1;
-
-    if (targetIndex < 0 || targetIndex >= orderedCategoryIds.length) {
-        return;
-    }
-
-    const reorderedCategoryIds = [...orderedCategoryIds];
-    [reorderedCategoryIds[currentIndex], reorderedCategoryIds[targetIndex]] = [
-        reorderedCategoryIds[targetIndex],
-        reorderedCategoryIds[currentIndex],
-    ];
-
-    await persistCategoryOrder(reorderedCategoryIds);
 }

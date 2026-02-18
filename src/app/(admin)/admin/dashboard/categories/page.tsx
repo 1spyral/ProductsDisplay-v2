@@ -3,7 +3,7 @@
 import {
   deleteAdminCategory,
   getAdminCategoriesForManagement,
-  moveAdminCategory,
+  reorderAdminCategories,
 } from "@/actions/admin";
 import AddCategoryModal from "@/components/AddCategoryModal";
 import CategoriesTable from "@/components/CategoriesTable";
@@ -31,7 +31,7 @@ export default function CategoriesPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Reorder state
-  const [movingCategoryId, setMovingCategoryId] = useState<string | null>(null);
+  const [isReordering, setIsReordering] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -108,50 +108,49 @@ export default function CategoriesPage() {
     }
   };
 
-  const moveCategoryLocally = (
-    categoryId: string,
-    direction: "up" | "down"
-  ) => {
-    setCategories((previous) => {
-      const currentIndex = previous.findIndex(
-        (category) => category.category === categoryId
-      );
-      if (currentIndex === -1) return previous;
+  const applyOrderedCategories = (
+    existingCategories: Category[],
+    orderedCategoryIds: string[]
+  ): Category[] => {
+    const categoryMap = new Map(
+      existingCategories.map((category) => [category.category, category])
+    );
+    const reordered = orderedCategoryIds
+      .map((categoryId, index) => {
+        const category = categoryMap.get(categoryId);
+        if (!category) return null;
+        return {
+          ...category,
+          displayOrder: index,
+        };
+      })
+      .filter((category): category is Category => category !== null);
 
-      const targetIndex =
-        direction === "up" ? currentIndex - 1 : currentIndex + 1;
-      if (targetIndex < 0 || targetIndex >= previous.length) return previous;
+    if (reordered.length !== existingCategories.length) {
+      return existingCategories;
+    }
 
-      const reordered = [...previous];
-      [reordered[currentIndex], reordered[targetIndex]] = [
-        reordered[targetIndex],
-        reordered[currentIndex],
-      ];
-
-      return reordered.map((category, index) => ({
-        ...category,
-        displayOrder: index,
-      }));
-    });
+    return reordered;
   };
 
-  const handleMoveCategory = async (
-    categoryId: string,
-    direction: "up" | "down"
-  ) => {
-    if (movingCategoryId) return;
+  const handleReorderCategories = async (orderedCategoryIds: string[]) => {
+    if (isReordering) return;
 
     const previousCategories = categories;
-    setMovingCategoryId(categoryId);
-    moveCategoryLocally(categoryId, direction);
+    const nextCategories = applyOrderedCategories(
+      categories,
+      orderedCategoryIds
+    );
+    setCategories(nextCategories);
+    setIsReordering(true);
 
     try {
-      await moveAdminCategory(categoryId, direction);
+      await reorderAdminCategories(orderedCategoryIds);
     } catch (error) {
       setCategories(previousCategories);
-      console.error("Failed to reorder category:", error);
+      console.error("Failed to reorder categories:", error);
     } finally {
-      setMovingCategoryId(null);
+      setIsReordering(false);
     }
   };
 
@@ -213,9 +212,9 @@ export default function CategoriesPage() {
       {/* Categories Table */}
       <CategoriesTable
         categories={filteredCategories}
-        onMoveCategory={handleMoveCategory}
+        onReorderCategories={handleReorderCategories}
         isReorderEnabled={isReorderEnabled}
-        movingCategoryId={movingCategoryId}
+        isReordering={isReordering}
         onEdit={handleEditCategory}
         onDelete={handleDeleteCategory}
       />

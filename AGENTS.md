@@ -19,6 +19,9 @@
 - `bun run start`: run the production-style standalone server.
 - `bun run lint`: run ESLint.
 - `bun run format` / `bun run format:check`: format or check formatting with Prettier.
+- `bun run test:unit`: run unit tests.
+- `bun run test:integration`: run integration tests against configured Postgres.
+- `bun run test:integration:local`: spin up local Docker Postgres, migrate, run integration tests, and tear down.
 - `bun run db:generate --name <name>`: generate a named Drizzle migration from schema changes.
 - `bun run db:generate --custom --name <name>`: generate a custom migration scaffold for raw SQL changes (do not create migration files manually).
 - `bun run db:migrate` / `bun run db:push`: apply schema changes to Postgres.
@@ -33,8 +36,14 @@
 
 ## Testing Guidelines
 
-- No dedicated automated test suite is configured yet (`package.json` has no `test` script).
-- Minimum validation for changes: `bun run lint`, `bun run build`, and manual verification of affected routes.
+- Unit tests use Bun: `bun run test:unit`.
+- Integration tests use Bun + Postgres: `bun run test:integration` (run `bun run db:migrate` first).
+- Preferred local integration flow: `bun run test:integration:local` (Docker required).
+- Coverage reports: `bun run test:coverage`.
+- Opt-in concurrency is enabled through `bunfig.toml` with `concurrentTestGlob`.
+    - Name only concurrency-safe files as `*.concurrent.test.ts`.
+    - Keep files as `*.test.ts` when tests mutate shared state (`process.env`, global maps, module mocks, timers, or DOM globals).
+- Minimum validation for changes: `bun run lint`, `bun run build`, and relevant test commands.
 - For DB changes, generate and commit a migration with `bun run db:generate --name <name>`, then verify affected admin/storefront flows.
 
 ## Commit & Pull Request Guidelines

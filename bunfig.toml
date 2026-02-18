@@ -1,0 +1,4 @@
+[test]
+# Opt-in per-file concurrency: only files using the `.concurrent.test.ts`
+# suffix run their tests concurrently.
+concurrentTestGlob = ["**/*.concurrent.test.ts"]

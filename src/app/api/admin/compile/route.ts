@@ -127,7 +127,6 @@ function renderProductCard(
                 : ""
         }
       </div>
-      ${description ? `<p class="description">${escapeHtml(description)}</p>` : ""}
       ${imageGrid}
     </section>`;
 }
@@ -153,27 +152,26 @@ function buildPdfHtml(
     <title>Products</title>
     <style>
       * { box-sizing: border-box; }
-      body { font-family: "Helvetica Neue", Arial, sans-serif; color: #0f172a; padding: 32px; }
-      h1 { font-size: 24px; margin: 0 0 16px; }
-      .missing { margin-bottom: 16px; padding: 12px; border: 1px solid #fecaca; background: #fef2f2; color: #991b1b; font-size: 12px; }
-      .product { padding: 16px 0; border-bottom: 1px solid #e2e8f0; page-break-inside: avoid; }
-      .product:last-child { border-bottom: none; }
-      .header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
-      .title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-      .meta { font-size: 12px; color: #475569; display: flex; flex-wrap: wrap; gap: 10px; }
-      .badges { display: flex; gap: 6px; flex-wrap: wrap; }
-      .badges span { font-size: 10px; text-transform: uppercase; padding: 4px 6px; border-radius: 999px; background: #0f172a; color: white; }
-      .description { margin: 12px 0 0; font-size: 12px; color: #334155; white-space: pre-wrap; }
-      .images { margin-top: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-      .image { width: 100%; height: 96px; position: relative; overflow: hidden; border-radius: 6px; border: 1px solid #e2e8f0; background: #f8fafc; }
+      body { font-family: "Helvetica Neue", Arial, sans-serif; color: #0f172a; padding: 8px; }
+      .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .missing { grid-column: 1 / -1; margin-bottom: 8px; padding: 12px; border: 1px solid #fecaca; background: #fef2f2; color: #991b1b; font-size: 12px; }
+      .product { display: flex; flex-direction: column; border: 3px solid #475569; padding: 6px; page-break-inside: avoid; }
+      .header { display: flex; flex-direction: column; gap: 3px; }
+      .title { font-size: 13px; font-weight: 700; }
+      .meta { font-size: 9px; color: #475569; display: flex; flex-direction: column; gap: 1px; }
+      .badges { display: flex; gap: 3px; flex-wrap: wrap; }
+      .badges span { font-size: 7px; text-transform: uppercase; padding: 1px 3px; background: #0f172a; color: white; }
+      .images { margin-top: 4px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; flex-grow: 1; }
+      .image { width: 100%; aspect-ratio: 1; position: relative; overflow: hidden; border: 1px solid #e2e8f0; background: #f8fafc; }
       .image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
-      .no-images { margin-top: 12px; font-size: 11px; color: #64748b; }
+      .no-images { font-size: 10px; color: #64748b; text-align: center; display: flex; align-items: center; justify-content: center; }
     </style>
   </head>
   <body>
-    <h1>Products</h1>
     ${missingBlock}
-    ${products.map((p) => renderProductCard(p, imageMap)).join("")}
+    <div class="products-grid">
+      ${products.map((p) => renderProductCard(p, imageMap)).join("")}
+    </div>
   </body>
 </html>`;
 }

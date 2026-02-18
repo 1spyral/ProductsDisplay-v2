@@ -1,15 +1,19 @@
 import type { NextConfig } from "next";
 
+const allowedImageRemotePatterns = process.env
+    .NEXT_ALLOWED_IMAGE_REMOTE_PATTERNS
+    ? process.env.NEXT_ALLOWED_IMAGE_REMOTE_PATTERNS.split(",")
+          .map((pattern) => pattern.trim())
+          .filter(Boolean)
+          .map((pattern) => new URL(pattern))
+    : undefined;
+
 const nextConfig: NextConfig = {
     output: "standalone",
     allowedDevOrigins: ["http://localhost:3000"],
     images: {
         qualities: [100, 75],
-        remotePatterns: process.env.NEXT_ALLOWED_IMAGE_REMOTE_PATTERNS?.split(
-            ","
-        ).map((pattern) => {
-            return new URL(pattern);
-        }),
+        remotePatterns: allowedImageRemotePatterns,
     },
     experimental: {
         serverActions: {

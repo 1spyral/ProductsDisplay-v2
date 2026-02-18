@@ -13,6 +13,8 @@
     "test:integration:db:up": "docker compose -f docker-compose.test.yml up -d postgres",
     "test:integration:db:down": "docker compose -f docker-compose.test.yml down -v",
     "test:integration:local": "bash ./scripts/test-integration-local.sh",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
     "test:coverage": "bun test tests/unit --coverage --coverage-reporter=text --coverage-reporter=lcov --coverage-dir=coverage --max-concurrency 4",
     "lint": "eslint .",
     "cp": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",

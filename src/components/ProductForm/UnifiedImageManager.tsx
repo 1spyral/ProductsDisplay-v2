@@ -25,7 +25,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef, useState, type DragEvent, type RefObject } from "react";
 import Modal from "../Modal";
 
 // Types for the unified component
@@ -45,6 +45,9 @@ interface UnifiedImageManagerProps {
   onFilesChange?: (files: File[]) => void; // For add mode
   onImagesUpdated?: () => void; // For edit mode
 }
+
+const EMPTY_EXISTING_IMAGES: ProductImage[] = [];
+const EMPTY_SELECTED_FILES: File[] = [];
 
 // Sortable tile component that handles both file previews and existing images
 interface SortableTileProps {
@@ -153,17 +156,33 @@ function SortableTile({
         </svg>
       </div>
 
-      <div
-        className={`relative aspect-square ${onView ? "cursor-pointer" : ""}`}
-        onClick={handleView}
-      >
-        <Image
-          src={getImageSrc()}
-          alt={getImageAlt()}
-          fill
-          className="object-cover"
-          unoptimized
-        />
+      <div className="relative aspect-square">
+        {onView ? (
+          <button
+            type="button"
+            className="h-full w-full cursor-pointer"
+            onClick={handleView}
+            aria-label={`View ${getImageAlt().toLowerCase()}`}
+          >
+            <Image
+              src={getImageSrc()}
+              alt={getImageAlt()}
+              fill
+              sizes="(max-width: 768px) 50vw, 33vw"
+              className="object-cover"
+              unoptimized
+            />
+          </button>
+        ) : (
+          <Image
+            src={getImageSrc()}
+            alt={getImageAlt()}
+            fill
+            sizes="(max-width: 768px) 50vw, 33vw"
+            className="object-cover"
+            unoptimized
+          />
+        )}
 
         {/* Remove button */}
         {isHovered && (
@@ -234,11 +253,169 @@ function ImageViewerModal({
   );
 }
 
+type ImageGridSectionProps = {
+  imageItems: ImageItem[];
+  sensors: ReturnType<typeof useSensors>;
+  productId?: string;
+  mode: "add" | "edit";
+  onDragEnd: (event: DragEndEvent) => void;
+  onRemoveItem: (itemId: string) => void;
+  onView: (url: string, alt: string) => void;
+};
+
+function ImageGridSection({
+  imageItems,
+  sensors,
+  productId,
+  mode,
+  onDragEnd,
+  onRemoveItem,
+  onView,
+}: ImageGridSectionProps) {
+  return (
+    <div className="min-h-0 flex-1 overflow-y-auto py-3">
+      {imageItems.length > 0 ? (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={onDragEnd}
+        >
+          <SortableContext
+            items={imageItems.map((item) => item.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="grid grid-cols-3 gap-2">
+              {imageItems.map((item) => (
+                <SortableTile
+                  key={item.id}
+                  item={item}
+                  productId={productId}
+                  onRemove={onRemoveItem}
+                  onView={mode === "edit" ? onView : undefined}
+                  mode={mode}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      ) : (
+        <div className="flex h-32 items-center justify-center text-gray-500">
+          <div className="text-center">
+            <svg
+              className="mx-auto mb-2 h-8 w-8 text-gray-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <p className="text-xs">
+              {mode === "add" ? "No images selected" : "No images"}
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+type UploadSectionProps = {
+  mode: "add" | "edit";
+  dragActive: boolean;
+  isUploading: boolean;
+  uploadError: string;
+  fileInputRef: RefObject<HTMLInputElement | null>;
+  onDrop: (e: DragEvent) => void;
+  onDragOver: (e: DragEvent) => void;
+  onDragEnter: (e: DragEvent) => void;
+  onDragLeave: (e: DragEvent) => void;
+  onFileSelect: (files: FileList) => void;
+};
+
+function UploadSection({
+  mode,
+  dragActive,
+  isUploading,
+  uploadError,
+  fileInputRef,
+  onDrop,
+  onDragOver,
+  onDragEnter,
+  onDragLeave,
+  onFileSelect,
+}: UploadSectionProps) {
+  return (
+    <div className="flex-shrink-0 border-t border-gray-300 pt-3">
+      <div
+        className={`rounded-lg border-2 border-dashed p-3 text-center transition-colors duration-200 ${
+          dragActive
+            ? "border-slate-700 bg-slate-50"
+            : isUploading
+              ? "border-blue-400 bg-blue-50"
+              : "border-gray-300 hover:border-gray-400"
+        }`}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
+        onDragEnter={onDragEnter}
+        onDragLeave={onDragLeave}
+      >
+        {isUploading ? (
+          <div className="flex items-center justify-center space-x-2">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+            <span className="text-sm font-medium text-blue-600">
+              Uploading...
+            </span>
+          </div>
+        ) : (
+          <>
+            <svg
+              className="mx-auto mb-1 h-5 w-5 text-gray-400"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M8 12a1 1 0 001 1h2a1 1 0 001-1V9.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L8 9.414V12z" />
+              <path d="M3 7a1 1 0 011-1h1V5a3 3 0 016 0v1h1a1 1 0 011 1v8a3 3 0 01-3 3H6a3 3 0 01-3-3V7z" />
+            </svg>
+            <p className="text-xs text-gray-600">
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="font-medium text-slate-700 underline hover:text-slate-900"
+                disabled={isUploading}
+              >
+                {mode === "add" ? "Select images" : "Upload"}
+              </button>{" "}
+              or drag & drop (4MB max each)
+            </p>
+          </>
+        )}
+      </div>
+
+      {uploadError && (
+        <div className="mt-2 rounded border border-red-300 bg-red-100 p-2 text-sm text-red-700">
+          {uploadError}
+        </div>
+      )}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        multiple
+        onChange={(e) => e.target.files && onFileSelect(e.target.files)}
+        className="hidden"
+      />
+    </div>
+  );
+}
+
 export default function UnifiedImageManager({
   mode,
   productId,
-  existingImages = [],
-  selectedFiles = [],
+  existingImages = EMPTY_EXISTING_IMAGES,
+  selectedFiles = EMPTY_SELECTED_FILES,
   onFilesChange,
   onImagesUpdated,
 }: UnifiedImageManagerProps) {
@@ -437,115 +614,28 @@ export default function UnifiedImageManager({
         </p>
       </div>
 
-      {/* Images Grid */}
-      <div className="min-h-0 flex-1 overflow-y-auto py-3">
-        {imageItems.length > 0 ? (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={imageItems.map((item) => item.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="grid grid-cols-3 gap-2">
-                {imageItems.map((item) => (
-                  <SortableTile
-                    key={item.id}
-                    item={item}
-                    productId={productId}
-                    onRemove={handleRemoveItem}
-                    onView={mode === "edit" ? openImageViewer : undefined}
-                    mode={mode}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
-        ) : (
-          <div className="flex h-32 items-center justify-center text-gray-500">
-            <div className="text-center">
-              <svg
-                className="mx-auto mb-2 h-8 w-8 text-gray-400"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <p className="text-xs">
-                {mode === "add" ? "No images selected" : "No images"}
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
+      <ImageGridSection
+        imageItems={imageItems}
+        sensors={sensors}
+        productId={productId}
+        mode={mode}
+        onDragEnd={handleDragEnd}
+        onRemoveItem={handleRemoveItem}
+        onView={openImageViewer}
+      />
 
-      {/* Upload Section */}
-      <div className="flex-shrink-0 border-t border-gray-300 pt-3">
-        <div
-          className={`rounded-lg border-2 border-dashed p-3 text-center transition-colors duration-200 ${
-            dragActive
-              ? "border-slate-700 bg-slate-50"
-              : isUploading
-                ? "border-blue-400 bg-blue-50"
-                : "border-gray-300 hover:border-gray-400"
-          }`}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-        >
-          {isUploading ? (
-            <div className="flex items-center justify-center space-x-2">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
-              <span className="text-sm font-medium text-blue-600">
-                Uploading...
-              </span>
-            </div>
-          ) : (
-            <>
-              <svg
-                className="mx-auto mb-1 h-5 w-5 text-gray-400"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path d="M8 12a1 1 0 001 1h2a1 1 0 001-1V9.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L8 9.414V12z" />
-                <path d="M3 7a1 1 0 011-1h1V5a3 3 0 016 0v1h1a1 1 0 011 1v8a3 3 0 01-3 3H6a3 3 0 01-3-3V7z" />
-              </svg>
-              <p className="text-xs text-gray-600">
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="font-medium text-slate-700 underline hover:text-slate-900"
-                  disabled={isUploading}
-                >
-                  {mode === "add" ? "Select images" : "Upload"}
-                </button>{" "}
-                or drag & drop (4MB max each)
-              </p>
-            </>
-          )}
-        </div>
-
-        {uploadError && (
-          <div className="mt-2 rounded border border-red-300 bg-red-100 p-2 text-sm text-red-700">
-            {uploadError}
-          </div>
-        )}
-
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          multiple
-          onChange={(e) => e.target.files && handleFileSelect(e.target.files)}
-          className="hidden"
-        />
-      </div>
+      <UploadSection
+        mode={mode}
+        dragActive={dragActive}
+        isUploading={isUploading}
+        uploadError={uploadError}
+        fileInputRef={fileInputRef}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onFileSelect={handleFileSelect}
+      />
 
       {/* Image Viewer Modal */}
       {viewerImage && (

@@ -12,23 +12,44 @@ import EditCategoryModal from "@/components/EditCategoryModal";
 import Category from "@/types/Category";
 import { useEffect, useState } from "react";
 
+type CategoriesDataState = {
+  categories: Category[];
+  loading: boolean;
+};
+
+type CategoryModalState = {
+  editingCategory: Category | null;
+  isEditModalOpen: boolean;
+  isAddModalOpen: boolean;
+  deleteCategory: Category | null;
+  isDeleteModalOpen: boolean;
+};
+
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [dataState, setDataState] = useState<CategoriesDataState>({
+    categories: [],
+    loading: true,
+  });
+  const { categories, loading } = dataState;
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Edit modal
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
-  // Add modal
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
-  // Delete confirmation modal
-  const [deleteCategory, setDeleteCategory] = useState<Category | null>(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  // Modal state
+  const [modalState, setModalState] = useState<CategoryModalState>({
+    editingCategory: null,
+    isEditModalOpen: false,
+    isAddModalOpen: false,
+    deleteCategory: null,
+    isDeleteModalOpen: false,
+  });
+  const {
+    editingCategory,
+    isEditModalOpen,
+    isAddModalOpen,
+    deleteCategory,
+    isDeleteModalOpen,
+  } = modalState;
 
   // Reorder state
   const [isReordering, setIsReordering] = useState(false);
@@ -40,11 +61,13 @@ export default function CategoriesPage() {
   const fetchData = async () => {
     try {
       const categoriesData = await getAdminCategoriesForManagement();
-      setCategories(categoriesData);
+      setDataState({
+        categories: categoriesData,
+        loading: false,
+      });
     } catch (error) {
       console.error("Failed to fetch data:", error);
-    } finally {
-      setLoading(false);
+      setDataState((prev) => ({ ...prev, loading: false }));
     }
   };
 
@@ -60,21 +83,27 @@ export default function CategoriesPage() {
   });
 
   const handleEditCategory = (category: Category) => {
-    setEditingCategory(category);
-    setIsEditModalOpen(true);
+    setModalState((prev) => ({
+      ...prev,
+      editingCategory: category,
+      isEditModalOpen: true,
+    }));
   };
 
   const handleCloseEditModal = () => {
-    setIsEditModalOpen(false);
-    setEditingCategory(null);
+    setModalState((prev) => ({
+      ...prev,
+      isEditModalOpen: false,
+      editingCategory: null,
+    }));
   };
 
   const handleAddCategory = () => {
-    setIsAddModalOpen(true);
+    setModalState((prev) => ({ ...prev, isAddModalOpen: true }));
   };
 
   const handleCloseAddModal = () => {
-    setIsAddModalOpen(false);
+    setModalState((prev) => ({ ...prev, isAddModalOpen: false }));
   };
 
   const handleCategoryUpdated = () => {
@@ -86,13 +115,19 @@ export default function CategoriesPage() {
   };
 
   const handleDeleteCategory = (category: Category) => {
-    setDeleteCategory(category);
-    setIsDeleteModalOpen(true);
+    setModalState((prev) => ({
+      ...prev,
+      deleteCategory: category,
+      isDeleteModalOpen: true,
+    }));
   };
 
   const handleCloseDeleteModal = () => {
-    setIsDeleteModalOpen(false);
-    setDeleteCategory(null);
+    setModalState((prev) => ({
+      ...prev,
+      isDeleteModalOpen: false,
+      deleteCategory: null,
+    }));
   };
 
   const handleConfirmDelete = async () => {
@@ -141,13 +176,13 @@ export default function CategoriesPage() {
       categories,
       orderedCategoryIds
     );
-    setCategories(nextCategories);
+    setDataState((prev) => ({ ...prev, categories: nextCategories }));
     setIsReordering(true);
 
     try {
       await reorderAdminCategories(orderedCategoryIds);
     } catch (error) {
-      setCategories(previousCategories);
+      setDataState((prev) => ({ ...prev, categories: previousCategories }));
       console.error("Failed to reorder categories:", error);
     } finally {
       setIsReordering(false);
@@ -192,10 +227,14 @@ export default function CategoriesPage() {
 
       {/* Search */}
       <div className="mb-4 border-3 border-gray-400 bg-white p-4 sm:mb-6 sm:p-6">
-        <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
+        <label
+          htmlFor="categories-search"
+          className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase"
+        >
           Search
         </label>
         <input
+          id="categories-search"
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}

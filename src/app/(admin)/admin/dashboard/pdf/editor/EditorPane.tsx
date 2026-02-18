@@ -23,11 +23,36 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { usePdfEditor } from "./PdfEditorContext";
 
 type EditorPaneProps = {
   className?: string;
+};
+
+type ProductListState = {
+  products: Product[];
+  isLoading: boolean;
+  errorMessage: string | null;
+};
+
+type FilterState = {
+  productSearch: string;
+  selectedCategories: Set<string>;
+  showCategoryMenu: boolean;
+};
+
+type SaveSelectionState = {
+  isOpen: boolean;
+  name: string;
+  isSaving: boolean;
+  error: string | null;
 };
 
 function getIconUrl(product: Product): string | null {
@@ -133,39 +158,406 @@ function SortableSelectedProduct({
   );
 }
 
+type SelectedProductsPanelProps = {
+  selectedProducts: Product[];
+  onOpenSaveModal: () => void;
+  onRemoveProduct: (productId: string) => void;
+  onReorderProducts: (activeId: string, overId: string) => void;
+  onImageClick: (url: string, alt: string) => void;
+};
+
+function SelectedProductsPanel({
+  selectedProducts,
+  onOpenSaveModal,
+  onRemoveProduct,
+  onReorderProducts,
+  onImageClick,
+}: SelectedProductsPanelProps) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  return (
+    <div className="flex min-h-0 flex-1 flex-col overflow-scroll border-b-2 border-gray-300 p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="shrink-0 text-xs font-semibold tracking-wide text-gray-700 uppercase">
+          Selected Products ({selectedProducts.length})
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onOpenSaveModal}
+            disabled={selectedProducts.length === 0}
+            className="h-7 rounded border border-gray-300 px-2 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Save
+          </button>
+          <Link
+            href="/admin/dashboard/pdf/saved"
+            className="h-7 rounded border border-gray-300 px-2 text-xs font-medium leading-7 text-gray-700 hover:bg-gray-50"
+          >
+            View Saved
+          </Link>
+        </div>
+      </div>
+      <div className="h-full overflow-x-hidden overflow-y-auto">
+        {selectedProducts.length === 0 ? (
+          <p className="text-sm text-gray-500">No products selected yet.</p>
+        ) : (
+          <DndContext
+            sensors={sensors}
+            modifiers={[restrictToVerticalAxis]}
+            collisionDetection={closestCenter}
+            onDragEnd={({ active, over }) => {
+              if (!over || active.id === over.id) return;
+              onReorderProducts(String(active.id), String(over.id));
+            }}
+          >
+            <SortableContext
+              items={selectedProducts.map((product) => product.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-2">
+                {selectedProducts.map((product) => (
+                  <SortableSelectedProduct
+                    key={product.id}
+                    product={product}
+                    onRemove={onRemoveProduct}
+                    onImageClick={onImageClick}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        )}
+      </div>
+    </div>
+  );
+}
+
+type ProductSelectionPanelProps = {
+  productSearch: string;
+  showCategoryMenu: boolean;
+  selectedCategories: Set<string>;
+  allCategories: string[];
+  filteredProducts: Product[];
+  selectedProductIds: string[];
+  isLoading: boolean;
+  errorMessage: string | null;
+  setFilterState: Dispatch<SetStateAction<FilterState>>;
+  onToggleSelected: (productId: string) => void;
+  onImageClick: (url: string, alt: string) => void;
+};
+
+function ProductSelectionPanel({
+  productSearch,
+  showCategoryMenu,
+  selectedCategories,
+  allCategories,
+  filteredProducts,
+  selectedProductIds,
+  isLoading,
+  errorMessage,
+  setFilterState,
+  onToggleSelected,
+  onImageClick,
+}: ProductSelectionPanelProps) {
+  return (
+    <div className="flex min-h-0 flex-1 flex-col overflow-scroll p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="shrink-0 text-xs font-semibold tracking-wide text-gray-700 uppercase">
+          Products
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            type="search"
+            value={productSearch}
+            onChange={(event) =>
+              setFilterState((prev) => ({
+                ...prev,
+                productSearch: event.target.value,
+              }))
+            }
+            placeholder="Search"
+            aria-label="Search products by name"
+            className="h-8 w-36 rounded border border-gray-300 px-2 text-xs text-gray-900 placeholder:text-gray-400 focus:border-slate-600 focus:outline-none"
+          />
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() =>
+                setFilterState((prev) => ({
+                  ...prev,
+                  showCategoryMenu: !prev.showCategoryMenu,
+                }))
+              }
+              className={`flex h-8 items-center gap-1 rounded border px-2 text-xs font-medium ${
+                selectedCategories.size > 0
+                  ? "border-slate-600 bg-slate-700 text-white"
+                  : "border-gray-300 text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              <svg
+                className="h-3.5 w-3.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-.293.707L13 13.414V19a1 1 0 0 1-.553.894l-4 2A1 1 0 0 1 7 21v-7.586L3.293 6.707A1 1 0 0 1 3 6V4Z"
+                />
+              </svg>
+              {selectedCategories.size > 0
+                ? `${selectedCategories.size}`
+                : "Filter"}
+            </button>
+            {showCategoryMenu && (
+              <>
+                <button
+                  type="button"
+                  className="fixed inset-0 z-10"
+                  onClick={() =>
+                    setFilterState((prev) => ({
+                      ...prev,
+                      showCategoryMenu: false,
+                    }))
+                  }
+                  aria-label="Close category filter menu"
+                />
+                <div className="absolute right-0 z-20 mt-1 min-w-44 rounded border border-gray-200 bg-white shadow-lg">
+                  <div className="max-h-56 overflow-y-auto py-1">
+                    {allCategories.length === 0 ? (
+                      <p className="px-3 py-2 text-xs text-gray-400">
+                        No categories
+                      </p>
+                    ) : (
+                      allCategories.map((cat) => (
+                        <label
+                          key={cat}
+                          className="flex cursor-pointer items-center gap-2 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedCategories.has(cat)}
+                            onChange={() => {
+                              setFilterState((prev) => {
+                                const next = new Set(prev.selectedCategories);
+                                if (next.has(cat)) next.delete(cat);
+                                else next.add(cat);
+                                return {
+                                  ...prev,
+                                  selectedCategories: next,
+                                };
+                              });
+                            }}
+                            className="h-3.5 w-3.5"
+                          />
+                          {cat}
+                        </label>
+                      ))
+                    )}
+                  </div>
+                  {selectedCategories.size > 0 && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setFilterState((prev) => ({
+                          ...prev,
+                          selectedCategories: new Set(),
+                        }))
+                      }
+                      className="w-full border-t border-gray-100 px-3 py-1.5 text-left text-xs text-red-600 hover:bg-gray-50"
+                    >
+                      Clear filters
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="min-h-0 overflow-x-hidden overflow-y-auto">
+        {isLoading ? (
+          <p className="text-sm text-gray-500">Loading products...</p>
+        ) : errorMessage ? (
+          <p className="text-sm text-red-600">{errorMessage}</p>
+        ) : (
+          <div className="space-y-2">
+            {filteredProducts.map((product) => {
+              const isSelected = selectedProductIds.includes(product.id);
+              const iconUrl = getIconUrl(product);
+              return (
+                <label
+                  key={product.id}
+                  className="flex min-w-0 cursor-pointer items-center gap-3 rounded border border-gray-200 px-2 hover:bg-gray-50"
+                >
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => onToggleSelected(product.id)}
+                    className="h-4 w-4 shrink-0"
+                  />
+                  {iconUrl ? (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onImageClick(iconUrl, product.name || product.id);
+                      }}
+                      className="shrink-0 cursor-pointer transition-opacity hover:opacity-80"
+                      title="Click to view full image"
+                    >
+                      <Image
+                        src={iconUrl}
+                        alt={product.name || product.id}
+                        width={32}
+                        height={32}
+                        className="h-8 w-8 rounded object-cover"
+                      />
+                    </button>
+                  ) : (
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-gray-100 text-[10px] text-gray-500 uppercase">
+                      No img
+                    </div>
+                  )}
+                  <span className="min-w-0 truncate text-sm text-gray-900">
+                    {product.name || product.id}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+type SaveSelectionModalProps = {
+  isOpen: boolean;
+  saveName: string;
+  isSaving: boolean;
+  saveError: string | null;
+  onNameChange: (name: string) => void;
+  onSave: () => void;
+  onClose: () => void;
+};
+
+function SaveSelectionModal({
+  isOpen,
+  saveName,
+  isSaving,
+  saveError,
+  onNameChange,
+  onSave,
+  onClose,
+}: SaveSelectionModalProps) {
+  if (!isOpen) return null;
+
+  return (
+    <Modal
+      isOpen={true}
+      onClose={onClose}
+      title="Save Selection"
+      size="md"
+      autoHeight
+    >
+      <div className="space-y-4 p-4">
+        <div>
+          <label
+            htmlFor="selection-name"
+            className="mb-1 block text-sm font-medium text-gray-700"
+          >
+            Name
+          </label>
+          <input
+            id="selection-name"
+            type="text"
+            value={saveName}
+            onChange={(e) => onNameChange(e.target.value)}
+            placeholder="e.g. Spring 2026 Flyer"
+            className="h-9 w-full rounded border border-gray-300 px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-slate-600 focus:outline-none"
+          />
+        </div>
+        {saveError && <p className="text-sm text-red-600">{saveError}</p>}
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-9 rounded border border-gray-300 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={isSaving || !saveName.trim()}
+            className="h-9 rounded bg-slate-700 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+          >
+            {isSaving ? "Saving..." : "Save"}
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
 export default function EditorPane({ className = "" }: EditorPaneProps) {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [productState, setProductState] = useState<ProductListState>({
+    products: [],
+    isLoading: true,
+    errorMessage: null,
+  });
+  const { products, isLoading, errorMessage } = productState;
   const { selectedProductIds, setSelectedProductIds } = usePdfEditor();
-  const [productSearch, setProductSearch] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [filterState, setFilterState] = useState<FilterState>({
+    productSearch: "",
+    selectedCategories: new Set(),
+    showCategoryMenu: false,
+  });
+  const { productSearch, selectedCategories, showCategoryMenu } = filterState;
   const [viewerImage, setViewerImage] = useState<{
     url: string;
     alt: string;
   } | null>(null);
-  const [showSaveModal, setShowSaveModal] = useState(false);
-  const [saveName, setSaveName] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
-    new Set()
-  );
-  const [showCategoryMenu, setShowCategoryMenu] = useState(false);
+  const [saveState, setSaveState] = useState<SaveSelectionState>({
+    isOpen: false,
+    name: "",
+    isSaving: false,
+    error: null,
+  });
+  const {
+    isOpen: showSaveModal,
+    name: saveName,
+    isSaving,
+    error: saveError,
+  } = saveState;
 
   const handleSave = async () => {
-    if (!saveName.trim() || selectedProductIds.length === 0) return;
-    setIsSaving(true);
-    setSaveError(null);
+    const trimmedName = saveName.trim();
+    if (!trimmedName || selectedProductIds.length === 0) return;
+
+    setSaveState((prev) => ({ ...prev, isSaving: true, error: null }));
     try {
-      await createAdminSavedSelection(saveName.trim(), selectedProductIds);
-      setShowSaveModal(false);
-      setSaveName("");
+      await createAdminSavedSelection(trimmedName, selectedProductIds);
+      setSaveState({
+        isOpen: false,
+        name: "",
+        isSaving: false,
+        error: null,
+      });
     } catch (error) {
-      setSaveError(
-        error instanceof Error ? error.message : "Failed to save selection"
-      );
-    } finally {
-      setIsSaving(false);
+      setSaveState((prev) => ({
+        ...prev,
+        isSaving: false,
+        error:
+          error instanceof Error ? error.message : "Failed to save selection",
+      }));
     }
   };
 
@@ -173,22 +565,22 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
     let isMounted = true;
 
     const loadProducts = async () => {
-      setIsLoading(true);
-      setErrorMessage(null);
-
       try {
         const nextProducts = await getAdminProducts();
         if (!isMounted) return;
-        setProducts(nextProducts);
+        setProductState({
+          products: nextProducts,
+          isLoading: false,
+          errorMessage: null,
+        });
       } catch (error) {
         if (!isMounted) return;
-        setErrorMessage(
-          error instanceof Error ? error.message : "Failed to load products"
-        );
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+        setProductState((prev) => ({
+          ...prev,
+          isLoading: false,
+          errorMessage:
+            error instanceof Error ? error.message : "Failed to load products",
+        }));
       }
     };
 
@@ -216,11 +608,6 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
       return [...current, productId];
     });
   };
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
 
   const allCategories = useMemo(() => {
     const cats = new Set<string>();
@@ -255,224 +642,40 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
         Editor
       </div>
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <div className="flex min-h-0 flex-1 flex-col overflow-scroll border-b-2 border-gray-300 p-4">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <div className="shrink-0 text-xs font-semibold tracking-wide text-gray-700 uppercase">
-              Selected Products ({selectedProducts.length})
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setSaveError(null);
-                  setShowSaveModal(true);
-                }}
-                disabled={selectedProducts.length === 0}
-                className="h-7 rounded border border-gray-300 px-2 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                Save
-              </button>
-              <Link
-                href="/admin/dashboard/pdf/saved"
-                className="h-7 rounded border border-gray-300 px-2 text-xs font-medium leading-7 text-gray-700 hover:bg-gray-50"
-              >
-                View Saved
-              </Link>
-            </div>
-          </div>
-          <div className="h-full overflow-x-hidden overflow-y-auto">
-            {selectedProducts.length === 0 ? (
-              <p className="text-sm text-gray-500">No products selected yet.</p>
-            ) : (
-              <DndContext
-                sensors={sensors}
-                modifiers={[restrictToVerticalAxis]}
-                collisionDetection={closestCenter}
-                onDragEnd={({ active, over }) => {
-                  if (!over || active.id === over.id) return;
-                  setSelectedProductIds((current) => {
-                    const oldIndex = current.indexOf(String(active.id));
-                    const newIndex = current.indexOf(String(over.id));
-                    if (oldIndex === -1 || newIndex === -1) return current;
-                    return arrayMove(current, oldIndex, newIndex);
-                  });
-                }}
-              >
-                <SortableContext
-                  items={selectedProducts.map((product) => product.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-2">
-                    {selectedProducts.map((product) => (
-                      <SortableSelectedProduct
-                        key={product.id}
-                        product={product}
-                        onRemove={(productId) =>
-                          setSelectedProductIds((current) =>
-                            current.filter((id) => id !== productId)
-                          )
-                        }
-                        onImageClick={(url, alt) =>
-                          setViewerImage({ url, alt })
-                        }
-                      />
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
-            )}
-          </div>
-        </div>
+        <SelectedProductsPanel
+          selectedProducts={selectedProducts}
+          onOpenSaveModal={() =>
+            setSaveState((prev) => ({ ...prev, isOpen: true, error: null }))
+          }
+          onRemoveProduct={(productId) =>
+            setSelectedProductIds((current) =>
+              current.filter((id) => id !== productId)
+            )
+          }
+          onReorderProducts={(activeId, overId) =>
+            setSelectedProductIds((current) => {
+              const oldIndex = current.indexOf(activeId);
+              const newIndex = current.indexOf(overId);
+              if (oldIndex === -1 || newIndex === -1) return current;
+              return arrayMove(current, oldIndex, newIndex);
+            })
+          }
+          onImageClick={(url, alt) => setViewerImage({ url, alt })}
+        />
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-scroll p-4">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <div className="shrink-0 text-xs font-semibold tracking-wide text-gray-700 uppercase">
-              Products
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="search"
-                value={productSearch}
-                onChange={(event) => setProductSearch(event.target.value)}
-                placeholder="Search"
-                aria-label="Search products by name"
-                className="h-8 w-36 rounded border border-gray-300 px-2 text-xs text-gray-900 placeholder:text-gray-400 focus:border-slate-600 focus:outline-none"
-              />
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setShowCategoryMenu((v) => !v)}
-                  className={`flex h-8 items-center gap-1 rounded border px-2 text-xs font-medium ${
-                    selectedCategories.size > 0
-                      ? "border-slate-600 bg-slate-700 text-white"
-                      : "border-gray-300 text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  <svg
-                    className="h-3.5 w-3.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-.293.707L13 13.414V19a1 1 0 0 1-.553.894l-4 2A1 1 0 0 1 7 21v-7.586L3.293 6.707A1 1 0 0 1 3 6V4Z"
-                    />
-                  </svg>
-                  {selectedCategories.size > 0
-                    ? `${selectedCategories.size}`
-                    : "Filter"}
-                </button>
-                {showCategoryMenu && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setShowCategoryMenu(false)}
-                    />
-                    <div className="absolute right-0 z-20 mt-1 min-w-44 rounded border border-gray-200 bg-white shadow-lg">
-                      <div className="max-h-56 overflow-y-auto py-1">
-                        {allCategories.length === 0 ? (
-                          <p className="px-3 py-2 text-xs text-gray-400">
-                            No categories
-                          </p>
-                        ) : (
-                          allCategories.map((cat) => (
-                            <label
-                              key={cat}
-                              className="flex cursor-pointer items-center gap-2 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={selectedCategories.has(cat)}
-                                onChange={() => {
-                                  setSelectedCategories((prev) => {
-                                    const next = new Set(prev);
-                                    if (next.has(cat)) next.delete(cat);
-                                    else next.add(cat);
-                                    return next;
-                                  });
-                                }}
-                                className="h-3.5 w-3.5"
-                              />
-                              {cat}
-                            </label>
-                          ))
-                        )}
-                      </div>
-                      {selectedCategories.size > 0 && (
-                        <button
-                          type="button"
-                          onClick={() => setSelectedCategories(new Set())}
-                          className="w-full border-t border-gray-100 px-3 py-1.5 text-left text-xs text-red-600 hover:bg-gray-50"
-                        >
-                          Clear filters
-                        </button>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="min-h-0 overflow-x-hidden overflow-y-auto">
-            {isLoading ? (
-              <p className="text-sm text-gray-500">Loading products...</p>
-            ) : errorMessage ? (
-              <p className="text-sm text-red-600">{errorMessage}</p>
-            ) : (
-              <div className="space-y-2">
-                {filteredProducts.map((product) => {
-                  const isSelected = selectedProductIds.includes(product.id);
-                  const iconUrl = getIconUrl(product);
-                  return (
-                    <label
-                      key={product.id}
-                      className="flex min-w-0 cursor-pointer items-center gap-3 rounded border border-gray-200 px-2 hover:bg-gray-50"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => toggleSelected(product.id)}
-                        className="h-4 w-4 shrink-0"
-                      />
-                      {iconUrl ? (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setViewerImage({
-                              url: iconUrl,
-                              alt: product.name || product.id,
-                            });
-                          }}
-                          className="shrink-0 cursor-pointer transition-opacity hover:opacity-80"
-                          title="Click to view full image"
-                        >
-                          <Image
-                            src={iconUrl}
-                            alt={product.name || product.id}
-                            width={32}
-                            height={32}
-                            className="h-8 w-8 rounded object-cover"
-                          />
-                        </button>
-                      ) : (
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-gray-100 text-[10px] text-gray-500 uppercase">
-                          No img
-                        </div>
-                      )}
-                      <span className="min-w-0 truncate text-sm text-gray-900">
-                        {product.name || product.id}
-                      </span>
-                    </label>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
+        <ProductSelectionPanel
+          productSearch={productSearch}
+          showCategoryMenu={showCategoryMenu}
+          selectedCategories={selectedCategories}
+          allCategories={allCategories}
+          filteredProducts={filteredProducts}
+          selectedProductIds={selectedProductIds}
+          isLoading={isLoading}
+          errorMessage={errorMessage}
+          setFilterState={setFilterState}
+          onToggleSelected={toggleSelected}
+          onImageClick={(url, alt) => setViewerImage({ url, alt })}
+        />
       </div>
 
       {/* Image Viewer Modal */}
@@ -499,67 +702,22 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
         </Modal>
       )}
 
-      {/* Save Selection Modal */}
-      {showSaveModal && (
-        <Modal
-          isOpen={true}
-          onClose={() => {
-            setShowSaveModal(false);
-            setSaveName("");
-            setSaveError(null);
-          }}
-          title="Save Selection"
-          size="md"
-          autoHeight
-        >
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSave();
-            }}
-            className="space-y-4 p-4"
-          >
-            <div>
-              <label
-                htmlFor="selection-name"
-                className="mb-1 block text-sm font-medium text-gray-700"
-              >
-                Name
-              </label>
-              <input
-                id="selection-name"
-                type="text"
-                value={saveName}
-                onChange={(e) => setSaveName(e.target.value)}
-                placeholder="e.g. Spring 2026 Flyer"
-                autoFocus
-                className="h-9 w-full rounded border border-gray-300 px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-slate-600 focus:outline-none"
-              />
-            </div>
-            {saveError && <p className="text-sm text-red-600">{saveError}</p>}
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowSaveModal(false);
-                  setSaveName("");
-                  setSaveError(null);
-                }}
-                className="h-9 rounded border border-gray-300 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isSaving || !saveName.trim()}
-                className="h-9 rounded bg-slate-700 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
-              >
-                {isSaving ? "Saving..." : "Save"}
-              </button>
-            </div>
-          </form>
-        </Modal>
-      )}
+      <SaveSelectionModal
+        isOpen={showSaveModal}
+        saveName={saveName}
+        isSaving={isSaving}
+        saveError={saveError}
+        onNameChange={(name) => setSaveState((prev) => ({ ...prev, name }))}
+        onSave={handleSave}
+        onClose={() =>
+          setSaveState({
+            isOpen: false,
+            name: "",
+            isSaving: false,
+            error: null,
+          })
+        }
+      />
     </div>
   );
 }

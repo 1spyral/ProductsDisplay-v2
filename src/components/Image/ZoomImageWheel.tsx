@@ -115,6 +115,7 @@ export default function ZoomImageWheel({
             src={photo.path}
             alt={photo.alt}
             fill={true}
+            sizes="100vw"
             quality={100}
             unoptimized
           />
@@ -167,6 +168,7 @@ export default function ZoomImageWheel({
                 src={photo.path}
                 alt={photo.alt}
                 fill={true}
+                sizes="100vw"
                 quality={100}
                 unoptimized
               />

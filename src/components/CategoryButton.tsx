@@ -19,8 +19,8 @@ export default function CategoryButton({
 
   const baseClasses = "block border-3 p-6 transition-colors duration-200";
   const colorClasses = isClearance
-    ? "border-red-500 bg-red-50 hover:border-red-700 hover:bg-red-100"
-    : "border-gray-400 bg-white hover:border-slate-700 hover:bg-gray-50";
+    ? "border-red-500 bg-red-50/70 hover:border-red-700 hover:bg-red-100/80 backdrop-blur-sm"
+    : "border-gray-400 bg-white/70 hover:border-slate-700 hover:bg-white/90 backdrop-blur-sm";
   const textColorClass = isClearance ? "text-red-700" : "text-gray-900";
 
   return (

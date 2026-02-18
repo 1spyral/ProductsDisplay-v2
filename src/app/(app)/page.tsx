@@ -19,9 +19,27 @@ export default async function HomePage() {
     "Browse products by category or search for what you need";
 
   return (
-    <div className="min-h-full bg-gray-50">
+    <div
+      className="min-h-full bg-gray-50"
+      style={
+        store.backgroundImageUrl
+          ? {
+              backgroundImage: `url(${store.backgroundImageUrl})`,
+              backgroundAttachment: "fixed",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+            }
+          : {
+              backgroundImage:
+                "radial-gradient(circle, #94a3b8 1px, transparent 1px)",
+              backgroundSize: "24px 24px",
+              backgroundAttachment: "fixed",
+            }
+      }
+    >
       {/* Header Section */}
-      <section className="border-b-4 border-slate-700 bg-white px-4 py-12 sm:px-8">
+      <section className="border-b-4 border-slate-700 bg-white/90 px-4 py-12 sm:px-8">
         <div className="mx-auto max-w-6xl">
           <h1 className="mb-4 text-center text-4xl font-bold text-gray-900 sm:text-5xl">
             {headline}
@@ -38,7 +56,7 @@ export default async function HomePage() {
       </section>
 
       {/* Categories Section */}
-      <section className="px-4 py-12 sm:px-8">
+      <section className="bg-white/70 px-4 py-12 sm:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 border-b-2 border-gray-300 pb-4">
             <h2 className="text-3xl font-bold text-gray-900">
@@ -46,7 +64,7 @@ export default async function HomePage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {categories.map((category) => (
               <CategoryButton key={category.category} category={category} />
             ))}

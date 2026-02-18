@@ -14,6 +14,7 @@ export const getStoreInfo = cache(async (): Promise<StoreInfo> => {
             headline: storeInfo.headline,
             description: storeInfo.description,
             copyright: storeInfo.copyright,
+            backgroundImageUrl: storeInfo.backgroundImageUrl,
         })
         .from(storeInfo)
         .where(eq(storeInfo.id, 1))
@@ -28,6 +29,7 @@ export const getStoreInfo = cache(async (): Promise<StoreInfo> => {
         headline: null,
         description: null,
         copyright: "© 2026 Store",
+        backgroundImageUrl: null,
     };
 
     await db
@@ -38,6 +40,7 @@ export const getStoreInfo = cache(async (): Promise<StoreInfo> => {
             headline: seeded.headline,
             description: seeded.description,
             copyright: seeded.copyright,
+            backgroundImageUrl: seeded.backgroundImageUrl,
         })
         .onConflictDoNothing();
 

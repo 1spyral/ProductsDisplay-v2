@@ -123,9 +123,9 @@ export async function searchProducts(query: string): Promise<Product[]> {
                     ilike(products.description, searchPattern),
                     ilike(products.category, searchPattern),
                     sql`${products.id} % ${searchQuery}`,
-                    sql`coalesce(${products.name}, '') % ${searchQuery}`,
-                    sql`coalesce(${products.description}, '') % ${searchQuery}`,
-                    sql`coalesce(${products.category}, '') % ${searchQuery}`
+                    sql`${products.name} % ${searchQuery}`,
+                    sql`${products.description} % ${searchQuery}`,
+                    sql`${products.category} % ${searchQuery}`
                 )
             )
         )

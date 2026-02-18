@@ -8,6 +8,7 @@
 - Database schema and access layers are in `src/db/schema/*`, `src/db/queries/*`, and `src/db/drizzle.ts`.
 - SQL migrations are generated into `drizzle/`; do not hand-write migration SQL files.
 - Always generate migrations with `bun run db:generate --name <name>` and commit generated files.
+- If raw SQL is needed (for example extensions, functions, triggers, or non-schema operations), generate the file with `bun run db:generate --custom --name <name>` and then edit that generated file.
 - Static assets are in `public/`.
 
 ## Build, Test, and Development Commands
@@ -19,6 +20,7 @@
 - `bun run lint`: run ESLint.
 - `bun run format` / `bun run format:check`: format or check formatting with Prettier.
 - `bun run db:generate --name <name>`: generate a named Drizzle migration from schema changes.
+- `bun run db:generate --custom --name <name>`: generate a custom migration scaffold for raw SQL changes (do not create migration files manually).
 - `bun run db:migrate` / `bun run db:push`: apply schema changes to Postgres.
 
 ## Coding Style & Naming Conventions

@@ -103,6 +103,44 @@ The build uses a standalone Next.js output and the `cp` script in `package.json`
     # Check formatting only
     bun run format:check
 
+## Testing
+
+    # Run all tests (unit + integration)
+    bun run test
+
+    # Run unit tests only
+    bun run test:unit
+
+    # Run unit tests with coverage output (text + lcov)
+    bun run test:coverage
+
+    # Run integration tests only
+    bun run test:integration
+
+    # Standard local integration flow (starts Docker Postgres, migrates, tests, tears down)
+    bun run test:integration:local
+
+### Opt-in Unit Test Concurrency
+
+Unit tests support selective concurrency via `bunfig.toml`:
+
+- Files named `*.concurrent.test.ts` are executed with Bun's concurrent test mode.
+- Files named `*.test.ts` remain standard (non-concurrent) tests.
+
+Use `*.concurrent.test.ts` only for stateless tests that do not mutate shared
+runtime state (`process.env`, global module mocks, shared maps, timers, or DOM
+globals).
+
+Integration tests require PostgreSQL. Standard local method is Docker:
+
+- `bun run test:integration:local` uses `docker-compose.test.yml`, waits for DB
+  readiness, exports test DB env vars, runs `bun run db:migrate`, runs
+  integration tests, then tears down the test DB.
+- To keep the DB running after tests for debugging:
+  `KEEP_TEST_DB_RUNNING=1 bun run test:integration:local`.
+- Manual DB lifecycle commands are available:
+  `bun run test:integration:db:up` and `bun run test:integration:db:down`.
+
 ## Deployment Notes
 
 - Ensure all required env vars (DB, GCS, `ADMIN_PASSWORD`) are set in the target environment.

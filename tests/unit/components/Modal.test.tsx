@@ -91,4 +91,33 @@ describe("Modal", () => {
       ?.parentElement as HTMLElement;
     expect(modalRoot.className).toContain("max-h-[60vh]");
   });
+
+  test("closes on Escape key press from the backdrop", () => {
+    const onClose = mock(() => undefined);
+
+    const { container } = render(
+      <Modal isOpen={true} onClose={onClose} title="Title">
+        <div>Content</div>
+      </Modal>
+    );
+
+    const backdrop = container.firstElementChild as HTMLElement;
+    fireEvent.keyDown(backdrop, { key: "Escape" });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  test("does not close on Escape when key event originates from content", () => {
+    const onClose = mock(() => undefined);
+
+    const { getByText } = render(
+      <Modal isOpen={true} onClose={onClose} title="Title">
+        <button type="button">Focusable content</button>
+      </Modal>
+    );
+
+    fireEvent.keyDown(getByText("Focusable content"), { key: "Escape" });
+
+    expect(onClose).not.toHaveBeenCalled();
+  });
 });

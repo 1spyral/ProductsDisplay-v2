@@ -83,7 +83,6 @@ function renderProductCard(
     imageMap: Map<string, string>
 ): string {
     const name = product.name?.trim() || product.id;
-    const description = product.description?.trim();
     const category = product.category?.trim();
     const price = product.price?.trim();
     const badges = [

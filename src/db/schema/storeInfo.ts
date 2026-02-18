@@ -7,4 +7,5 @@ export const storeInfo = pgTable("store_info", {
     headline: text(),
     description: text(),
     copyright: text(),
+    backgroundImageUrl: text("background_image_url"),
 });

@@ -4,4 +4,5 @@ export default interface StoreInfo {
     headline: string | null;
     description: string | null;
     copyright: string | null;
+    backgroundImageUrl: string | null;
 }

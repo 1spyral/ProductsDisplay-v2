@@ -120,6 +120,13 @@
       "when": 1771432149727,
       "tag": "0016_add_store_info_background_image_url",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1771433868653,
+      "tag": "0017_add_category_display_order",
+      "breakpoints": true
     }
   ]
 }

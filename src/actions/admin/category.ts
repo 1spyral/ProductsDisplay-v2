@@ -5,6 +5,7 @@ import {
     createCategory,
     deleteCategory,
     getCategories,
+    reorderCategories,
     updateCategory,
 } from "@/db/queries/categoryQueries";
 import logger from "@/lib/logger";
@@ -108,6 +109,26 @@ export async function deleteAdminCategory(categoryId: string) {
             throw new Error(error.message);
         }
         throw new Error("Failed to delete category");
+    }
+}
+
+export async function reorderAdminCategories(categoryIds: string[]) {
+    await requireAdminAuth();
+    await checkRateLimit("reorderAdminCategories", 80, 15 * 60 * 1000);
+
+    try {
+        if (categoryIds.length <= 1) {
+            return { success: true };
+        }
+
+        await reorderCategories(categoryIds);
+        return { success: true };
+    } catch (error) {
+        logger.error({ error }, "Failed to reorder categories");
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
+        throw new Error("Failed to reorder categories");
     }
 }
 

@@ -1,6 +1,7 @@
 export default interface Category {
     category: string;
     name: string | null;
+    displayOrder: number;
 }
 
 export function getCategoryName(

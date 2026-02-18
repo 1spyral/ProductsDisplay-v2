@@ -147,6 +147,10 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
   const [saveName, setSaveName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
+    new Set()
+  );
+  const [showCategoryMenu, setShowCategoryMenu] = useState(false);
 
   const handleSave = async () => {
     if (!saveName.trim() || selectedProductIds.length === 0) return;
@@ -218,13 +222,30 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
+  const allCategories = useMemo(() => {
+    const cats = new Set<string>();
+    for (const p of products) {
+      if (p.category) cats.add(p.category);
+    }
+    return Array.from(cats).sort();
+  }, [products]);
+
   const filteredProducts = useMemo(() => {
     const normalizedQuery = productSearch.trim().toLowerCase();
-    if (!normalizedQuery) return products;
-    return products.filter((product) =>
-      (product.name || "").toLowerCase().includes(normalizedQuery)
-    );
-  }, [productSearch, products]);
+    return products.filter((product) => {
+      if (
+        normalizedQuery &&
+        !(product.name || "").toLowerCase().includes(normalizedQuery)
+      )
+        return false;
+      if (
+        selectedCategories.size > 0 &&
+        !selectedCategories.has(product.category ?? "")
+      )
+        return false;
+      return true;
+    });
+  }, [productSearch, products, selectedCategories]);
 
   return (
     <div
@@ -308,14 +329,92 @@ export default function EditorPane({ className = "" }: EditorPaneProps) {
             <div className="shrink-0 text-xs font-semibold tracking-wide text-gray-700 uppercase">
               Products
             </div>
-            <input
-              type="search"
-              value={productSearch}
-              onChange={(event) => setProductSearch(event.target.value)}
-              placeholder="Search"
-              aria-label="Search products by name"
-              className="h-8 w-50 rounded border border-gray-300 px-2 text-xs text-gray-900 placeholder:text-gray-400 focus:border-slate-600 focus:outline-none"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="search"
+                value={productSearch}
+                onChange={(event) => setProductSearch(event.target.value)}
+                placeholder="Search"
+                aria-label="Search products by name"
+                className="h-8 w-36 rounded border border-gray-300 px-2 text-xs text-gray-900 placeholder:text-gray-400 focus:border-slate-600 focus:outline-none"
+              />
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowCategoryMenu((v) => !v)}
+                  className={`flex h-8 items-center gap-1 rounded border px-2 text-xs font-medium ${
+                    selectedCategories.size > 0
+                      ? "border-slate-600 bg-slate-700 text-white"
+                      : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  <svg
+                    className="h-3.5 w-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-.293.707L13 13.414V19a1 1 0 0 1-.553.894l-4 2A1 1 0 0 1 7 21v-7.586L3.293 6.707A1 1 0 0 1 3 6V4Z"
+                    />
+                  </svg>
+                  {selectedCategories.size > 0
+                    ? `${selectedCategories.size}`
+                    : "Filter"}
+                </button>
+                {showCategoryMenu && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setShowCategoryMenu(false)}
+                    />
+                    <div className="absolute right-0 z-20 mt-1 min-w-44 rounded border border-gray-200 bg-white shadow-lg">
+                      <div className="max-h-56 overflow-y-auto py-1">
+                        {allCategories.length === 0 ? (
+                          <p className="px-3 py-2 text-xs text-gray-400">
+                            No categories
+                          </p>
+                        ) : (
+                          allCategories.map((cat) => (
+                            <label
+                              key={cat}
+                              className="flex cursor-pointer items-center gap-2 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedCategories.has(cat)}
+                                onChange={() => {
+                                  setSelectedCategories((prev) => {
+                                    const next = new Set(prev);
+                                    if (next.has(cat)) next.delete(cat);
+                                    else next.add(cat);
+                                    return next;
+                                  });
+                                }}
+                                className="h-3.5 w-3.5"
+                              />
+                              {cat}
+                            </label>
+                          ))
+                        )}
+                      </div>
+                      {selectedCategories.size > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedCategories(new Set())}
+                          className="w-full border-t border-gray-100 px-3 py-1.5 text-left text-xs text-red-600 hover:bg-gray-50"
+                        >
+                          Clear filters
+                        </button>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
           <div className="min-h-0 overflow-x-hidden overflow-y-auto">
             {isLoading ? (

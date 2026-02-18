@@ -120,6 +120,9 @@ The build uses a standalone Next.js output and the `cp` script in `package.json`
     # Standard local integration flow (starts Docker Postgres, migrates, tests, tears down)
     bun run test:integration:local
 
+    # Run end-to-end tests (Playwright)
+    bun run test:e2e
+
 ### Opt-in Unit Test Concurrency
 
 Unit tests support selective concurrency via `bunfig.toml`:
@@ -140,6 +143,10 @@ Integration tests require PostgreSQL. Standard local method is Docker:
   `KEEP_TEST_DB_RUNNING=1 bun run test:integration:local`.
 - Manual DB lifecycle commands are available:
   `bun run test:integration:db:up` and `bun run test:integration:db:down`.
+
+E2E tests use Playwright (`playwright.config.ts`) and by default start a local
+Next dev server on `http://127.0.0.1:3100`. To point at an already-running
+environment, set `PLAYWRIGHT_BASE_URL` before running `bun run test:e2e`.
 
 ## Deployment Notes
 

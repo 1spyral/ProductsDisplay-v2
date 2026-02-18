@@ -19,7 +19,17 @@ function getLogLevel(): LogLevel {
     return "info";
 }
 
-const isDevelopment = process.env.NODE_ENV !== "production";
+function shouldUsePrettyTransport(): boolean {
+    const explicitPretty = process.env.LOG_PRETTY?.toLowerCase();
+    if (explicitPretty === "1" || explicitPretty === "true") return true;
+    if (explicitPretty === "0" || explicitPretty === "false") return false;
+
+    return (
+        process.env.NODE_ENV !== "production" &&
+        process.env.CI !== "true" &&
+        !!process.stdout?.isTTY
+    );
+}
 
 /**
  * Server-side logger instance using Pino.
@@ -39,7 +49,7 @@ const isDevelopment = process.env.NODE_ENV !== "production";
  */
 const logger = pino({
     level: getLogLevel(),
-    ...(isDevelopment && {
+    ...(shouldUsePrettyTransport() && {
         transport: {
             target: "pino-pretty",
             options: {

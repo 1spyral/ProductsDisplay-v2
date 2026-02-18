@@ -22,6 +22,7 @@
 - `bun run test:unit`: run unit tests.
 - `bun run test:integration`: run integration tests against configured Postgres.
 - `bun run test:integration:local`: spin up local Docker Postgres, migrate, run integration tests, and tear down.
+- `bun run test:e2e`: run Playwright end-to-end tests (auto-starts local Next dev server unless `PLAYWRIGHT_BASE_URL` is set).
 - `bun run db:generate --name <name>`: generate a named Drizzle migration from schema changes.
 - `bun run db:generate --custom --name <name>`: generate a custom migration scaffold for raw SQL changes (do not create migration files manually).
 - `bun run db:migrate` / `bun run db:push`: apply schema changes to Postgres.
@@ -39,6 +40,7 @@
 - Unit tests use Bun: `bun run test:unit`.
 - Integration tests use Bun + Postgres: `bun run test:integration` (run `bun run db:migrate` first).
 - Preferred local integration flow: `bun run test:integration:local` (Docker required).
+- E2E tests use Playwright: `bun run test:e2e`.
 - Coverage reports: `bun run test:coverage`.
 - Opt-in concurrency is enabled through `bunfig.toml` with `concurrentTestGlob`.
     - Name only concurrency-safe files as `*.concurrent.test.ts`.

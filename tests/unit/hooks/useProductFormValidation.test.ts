@@ -13,10 +13,36 @@ import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 const checkAdminProductIdExists = mock(async (_id: string) => false);
 const checkAdminCategoryIdExists = mock(async (_id: string) => false);
+const getAdminProducts = mock(async () => []);
+const getAdminCategories = mock(async () => []);
+const deleteAdminProduct = mock(async (_id: string) => undefined);
+const toggleAdminProductClearance = mock(
+    async (_id: string, _next: boolean) => undefined
+);
+const toggleAdminProductHidden = mock(
+    async (_id: string, _next: boolean) => undefined
+);
+const getAdminCategoriesForManagement = mock(async () => []);
+const deleteAdminCategory = mock(async (_id: string) => undefined);
+const reorderAdminCategories = mock(async (_ids: string[]) => undefined);
+const createAdminSavedSelection = mock(
+    async (_name: string, _productIds: string[]) => undefined
+);
+const getAdminSavedSelectionProductIds = mock(async (_id: string) => []);
 
 mock.module("@/actions/admin", () => ({
     checkAdminCategoryIdExists,
     checkAdminProductIdExists,
+    getAdminProducts,
+    getAdminCategories,
+    deleteAdminProduct,
+    toggleAdminProductClearance,
+    toggleAdminProductHidden,
+    getAdminCategoriesForManagement,
+    deleteAdminCategory,
+    reorderAdminCategories,
+    createAdminSavedSelection,
+    getAdminSavedSelectionProductIds,
 }));
 
 const { useProductFormValidation, useProductIdValidation } =

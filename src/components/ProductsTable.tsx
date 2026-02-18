@@ -28,6 +28,8 @@ type ProductsTableProps = {
   };
 };
 
+const DEFAULT_VISIBLE_COLUMNS: ProductsTableProps["visibleColumns"] = {};
+
 function getProductThumbnailUrl(product: Product): string | null {
   if (!product.images || product.images.length === 0) {
     return null;
@@ -47,7 +49,7 @@ export default function ProductsTable({
   onToggleHidden,
   updatingClearance,
   updatingHidden,
-  visibleColumns = {},
+  visibleColumns = DEFAULT_VISIBLE_COLUMNS,
 }: ProductsTableProps) {
   const columns = {
     image: visibleColumns.image !== false,
@@ -142,6 +144,7 @@ export default function ProductsTable({
                             src={imageUrl}
                             alt={product.name || product.id}
                             fill
+                            sizes="64px"
                             className="object-cover"
                             unoptimized
                           />

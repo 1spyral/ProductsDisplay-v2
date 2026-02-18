@@ -70,10 +70,19 @@ export default function Modal({
       }`}
       style={{ zIndex }}
       onClick={handleBackdropClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.target !== e.currentTarget) return;
+        if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClose();
+        }
+      }}
+      aria-label="Close modal"
     >
       <div
         className={`relative flex flex-col border-4 border-slate-700 bg-white ${sizeClasses[size]} ${className}`}
-        onClick={(e) => e.stopPropagation()}
       >
         {/* Full-size modal close button (always shown) */}
         {showFloatingCloseButton && (

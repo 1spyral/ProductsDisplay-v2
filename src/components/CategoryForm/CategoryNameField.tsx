@@ -1,5 +1,7 @@
 "use client";
 
+import { useId } from "react";
+
 interface CategoryNameFieldProps {
   value: string;
   onChange: (value: string) => void;
@@ -11,12 +13,18 @@ export default function CategoryNameField({
   onChange,
   placeholder = "Enter category name...",
 }: CategoryNameFieldProps) {
+  const inputId = useId();
+
   return (
     <div>
-      <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
+      <label
+        htmlFor={inputId}
+        className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase"
+      >
         Name
       </label>
       <input
+        id={inputId}
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}

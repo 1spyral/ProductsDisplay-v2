@@ -17,6 +17,7 @@ export default function ImageWheel({
           src={photo.path}
           alt={photo.alt}
           fill={true}
+          sizes="100vw"
           quality={100}
           unoptimized
         />

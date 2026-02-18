@@ -1,5 +1,7 @@
 "use client";
 
+import { useId } from "react";
+
 interface ProductNameFieldProps {
   value: string;
   onChange: (value: string) => void;
@@ -11,12 +13,18 @@ export function ProductNameField({
   onChange,
   placeholder = "Enter product name...",
 }: ProductNameFieldProps) {
+  const inputId = useId();
+
   return (
     <div>
-      <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
+      <label
+        htmlFor={inputId}
+        className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase"
+      >
         Name
       </label>
       <input
+        id={inputId}
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -40,12 +48,18 @@ export function ProductDescriptionField({
   placeholder = "Enter product description...",
   rows = 4,
 }: ProductDescriptionFieldProps) {
+  const inputId = useId();
+
   return (
     <div>
-      <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
+      <label
+        htmlFor={inputId}
+        className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase"
+      >
         Description
       </label>
       <textarea
+        id={inputId}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
@@ -67,12 +81,18 @@ export function ProductPriceField({
   onChange,
   placeholder = "Enter product price...",
 }: ProductPriceFieldProps) {
+  const inputId = useId();
+
   return (
     <div>
-      <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
+      <label
+        htmlFor={inputId}
+        className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase"
+      >
         Price
       </label>
       <input
+        id={inputId}
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}

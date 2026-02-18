@@ -25,7 +25,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Modal from "./Modal";
 
 interface ImageManagerProps {
@@ -39,6 +39,19 @@ interface SortableImageTileProps {
   onDelete: (imageId: string) => void;
   onView: (imageUrl: string, alt: string) => void;
 }
+
+type ImageManagerUiState = {
+  isUploading: boolean;
+  dragActive: boolean;
+  uploadErrorState: {
+    productId: string;
+    message: string;
+  } | null;
+  viewerImage: {
+    url: string;
+    alt: string;
+  } | null;
+};
 
 // Individual sortable image tile component
 function SortableImageTile({
@@ -122,11 +135,20 @@ function SortableImageTile({
       <div
         className="relative aspect-square cursor-pointer"
         onClick={handleView}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleView();
+          }
+        }}
       >
         <Image
           src={imageUrl}
           alt={`Product image ${image.position + 1}`}
           fill
+          sizes="(max-width: 768px) 50vw, 33vw"
           className="object-cover"
           unoptimized
         />
@@ -204,16 +226,22 @@ export default function ImageManager({
   images,
   onImagesUpdated,
 }: ImageManagerProps) {
-  const [sortedImages, setSortedImages] = useState<ProductImage[]>(images);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadError, setUploadError] = useState("");
-  const [viewerImage, setViewerImage] = useState<{
-    url: string;
-    alt: string;
-  } | null>(null);
+  const sortedImagesFromProps = useMemo(
+    () => [...images].sort((a, b) => a.position - b.position),
+    [images]
+  );
+  const [optimisticSortedImages, setOptimisticSortedImages] = useState<
+    ProductImage[] | null
+  >(null);
+  const [uiState, setUiState] = useState<ImageManagerUiState>({
+    isUploading: false,
+    dragActive: false,
+    uploadErrorState: null,
+    viewerImage: null,
+  });
+  const { isUploading, dragActive, uploadErrorState, viewerImage } = uiState;
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [dragActive, setDragActive] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -222,16 +250,9 @@ export default function ImageManager({
     })
   );
 
-  // Update sorted images when props change
-  useEffect(() => {
-    setSortedImages([...images].sort((a, b) => a.position - b.position));
-  }, [images]);
-
-  // Also update editingProduct state when product ID changes (for migration scenarios)
-  useEffect(() => {
-    // Reset upload error when product changes
-    setUploadError("");
-  }, [productId]);
+  const sortedImages = optimisticSortedImages ?? sortedImagesFromProps;
+  const uploadError =
+    uploadErrorState?.productId === productId ? uploadErrorState.message : "";
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -245,7 +266,7 @@ export default function ImageManager({
 
     if (oldIndex !== -1 && newIndex !== -1) {
       const newOrder = arrayMove(sortedImages, oldIndex, newIndex);
-      setSortedImages(newOrder);
+      setOptimisticSortedImages(newOrder);
 
       // Update positions in database
       try {
@@ -254,8 +275,8 @@ export default function ImageManager({
         onImagesUpdated();
       } catch (error) {
         console.error("Failed to reorder images:", error);
-        // Revert on error
-        setSortedImages(sortedImages);
+      } finally {
+        setOptimisticSortedImages(null);
       }
     }
   };
@@ -263,8 +284,11 @@ export default function ImageManager({
   const handleFileSelect = async (files: FileList) => {
     if (files.length === 0) return;
 
-    setIsUploading(true);
-    setUploadError("");
+    setUiState((prev) => ({
+      ...prev,
+      isUploading: true,
+      uploadErrorState: null,
+    }));
 
     try {
       // Upload files one by one
@@ -283,11 +307,16 @@ export default function ImageManager({
       onImagesUpdated();
     } catch (error) {
       console.error("Failed to upload images:", error);
-      setUploadError(
-        error instanceof Error ? error.message : "Failed to upload images"
-      );
+      setUiState((prev) => ({
+        ...prev,
+        uploadErrorState: {
+          productId,
+          message:
+            error instanceof Error ? error.message : "Failed to upload images",
+        },
+      }));
     } finally {
-      setIsUploading(false);
+      setUiState((prev) => ({ ...prev, isUploading: false }));
     }
   };
 
@@ -299,7 +328,7 @@ export default function ImageManager({
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    setDragActive(false);
+    setUiState((prev) => ({ ...prev, dragActive: false }));
 
     if (e.dataTransfer.files) {
       handleFileSelect(e.dataTransfer.files);
@@ -312,12 +341,12 @@ export default function ImageManager({
 
   const handleDragEnter = (e: React.DragEvent) => {
     e.preventDefault();
-    setDragActive(true);
+    setUiState((prev) => ({ ...prev, dragActive: true }));
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
-    setDragActive(false);
+    setUiState((prev) => ({ ...prev, dragActive: false }));
   };
 
   const handleDeleteImage = async (imageId: string) => {
@@ -328,25 +357,30 @@ export default function ImageManager({
     } catch (error) {
       console.error("Failed to delete image:", error);
       // You might want to show an error message to the user
-      setUploadError(
-        error instanceof Error ? error.message : "Failed to delete image"
-      );
+      setUiState((prev) => ({
+        ...prev,
+        uploadErrorState: {
+          productId,
+          message:
+            error instanceof Error ? error.message : "Failed to delete image",
+        },
+      }));
       throw error; // Let the tile component handle the error display
     }
   };
 
   const openImageViewer = (url: string, alt: string) => {
-    setViewerImage({ url, alt });
+    setUiState((prev) => ({ ...prev, viewerImage: { url, alt } }));
   };
 
   const closeImageViewer = () => {
-    setViewerImage(null);
+    setUiState((prev) => ({ ...prev, viewerImage: null }));
   };
 
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex-shrink-0 border-b border-gray-300 pb-3">
+      <div className="shrink-0 border-b border-gray-300 pb-3">
         <h3 className="mb-1 text-base font-bold tracking-wide text-gray-900 uppercase">
           Product Images
         </h3>
@@ -401,7 +435,7 @@ export default function ImageManager({
       </div>
 
       {/* Compact Upload Section */}
-      <div className="flex-shrink-0 border-t border-gray-300 pt-3">
+      <div className="shrink-0 border-t border-gray-300 pt-3">
         <div
           className={`rounded-lg border-2 border-dashed p-3 text-center transition-colors duration-200 ${
             dragActive

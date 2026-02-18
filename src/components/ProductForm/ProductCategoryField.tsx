@@ -54,13 +54,6 @@ export function ProductCategoryField({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Focus the search box when dropdown opens
-  useEffect(() => {
-    if (isOpen) {
-      inputRef.current?.focus();
-    }
-  }, [isOpen]);
-
   const handleSelect = (categoryValue: string) => {
     onChange(categoryValue);
     setIsOpen(false);
@@ -72,6 +65,17 @@ export function ProductCategoryField({
     setFilter("");
   };
 
+  const toggleDropdown = () => {
+    if (isOpen) {
+      setIsOpen(false);
+      setFilter("");
+      return;
+    }
+
+    setIsOpen(true);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  };
+
   return (
     <div>
       <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
@@ -81,7 +85,23 @@ export function ProductCategoryField({
       <div className="relative" ref={dropdownRef}>
         <div
           className="flex w-full cursor-pointer items-center justify-between border-2 border-gray-400 px-4 py-3 transition-colors focus-within:border-slate-700 hover:border-gray-500"
-          onClick={() => setIsOpen((v) => !v)}
+          onClick={toggleDropdown}
+          role="button"
+          tabIndex={0}
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+          onKeyDown={(e) => {
+            if (e.target !== e.currentTarget) return;
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              toggleDropdown();
+            }
+            if (e.key === "Escape") {
+              e.preventDefault();
+              setIsOpen(false);
+              setFilter("");
+            }
+          }}
         >
           <span className={displayValue ? "text-gray-900" : "text-gray-400"}>
             {displayValue || "Select a category..."}
@@ -119,18 +139,19 @@ export function ProductCategoryField({
                 onClick={(e) => e.stopPropagation()}
               />
             </div>
-            <div className="max-h-60 overflow-y-auto">
+            <div className="max-h-60 overflow-y-auto" role="listbox">
               {filteredCategories.length > 0 ? (
                 filteredCategories.map((cat) => (
-                  <div
+                  <button
+                    type="button"
                     key={cat.category}
                     onClick={() => handleSelect(cat.category)}
-                    className={`cursor-pointer px-4 py-3 transition-colors hover:bg-gray-100 ${
+                    className={`block w-full cursor-pointer px-4 py-3 text-left transition-colors hover:bg-gray-100 ${
                       cat.category === value ? "bg-slate-100 font-semibold" : ""
                     }`}
                   >
                     {cat.name || cat.category}
-                  </div>
+                  </button>
                 ))
               ) : (
                 <div className="px-4 py-3 text-gray-400">

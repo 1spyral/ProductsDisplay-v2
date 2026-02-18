@@ -47,12 +47,12 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {showClearance && (
-              <CategoryButton category={null} isClearance={true} />
-            )}
             {categories.map((category) => (
               <CategoryButton key={category.category} category={category} />
             ))}
+            {showClearance && (
+              <CategoryButton category={null} isClearance={true} />
+            )}
             <CategoryButton category={null} />
           </div>
         </div>

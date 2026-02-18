@@ -4,6 +4,7 @@ export {
     createAdminCategory,
     deleteAdminCategory,
     getAdminCategoriesForManagement,
+    moveAdminCategory,
     updateAdminCategory,
 } from "./category";
 export {

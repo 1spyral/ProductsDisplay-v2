@@ -3,6 +3,7 @@
 import {
   deleteAdminCategory,
   getAdminCategoriesForManagement,
+  moveAdminCategory,
 } from "@/actions/admin";
 import AddCategoryModal from "@/components/AddCategoryModal";
 import CategoriesTable from "@/components/CategoriesTable";
@@ -11,19 +12,12 @@ import EditCategoryModal from "@/components/EditCategoryModal";
 import Category from "@/types/Category";
 import { useEffect, useState } from "react";
 
-type SortField = "category" | "name";
-type SortOrder = "asc" | "desc";
-
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
-
-  // Sorting
-  const [sortField, setSortField] = useState<SortField>("category");
-  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
   // Edit modal
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -35,6 +29,9 @@ export default function CategoriesPage() {
   // Delete confirmation modal
   const [deleteCategory, setDeleteCategory] = useState<Category | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // Reorder state
+  const [movingCategoryId, setMovingCategoryId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -51,43 +48,16 @@ export default function CategoriesPage() {
     }
   };
 
-  // Filter and sort categories
-  const filteredAndSortedCategories = categories
-    .filter((category) => {
-      // Search filter
-      if (searchQuery) {
-        const search = searchQuery.toLowerCase();
-        const matchesId = category.category.toLowerCase().includes(search);
-        const matchesName = category.name?.toLowerCase().includes(search);
-        return matchesId || matchesName;
-      }
-
-      return true;
-    })
-    .sort((a, b) => {
-      let aValue: string;
-      let bValue: string;
-
-      if (sortField === "name") {
-        aValue = a.name || "";
-        bValue = b.name || "";
-      } else {
-        aValue = a.category;
-        bValue = b.category;
-      }
-
-      const comparison = aValue.localeCompare(bValue);
-      return sortOrder === "asc" ? comparison : -comparison;
-    });
-
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortOrder("asc");
+  const filteredCategories = categories.filter((category) => {
+    if (searchQuery) {
+      const search = searchQuery.toLowerCase();
+      const matchesId = category.category.toLowerCase().includes(search);
+      const matchesName = category.name?.toLowerCase().includes(search);
+      return matchesId || matchesName;
     }
-  };
+
+    return true;
+  });
 
   const handleEditCategory = (category: Category) => {
     setEditingCategory(category);
@@ -138,6 +108,55 @@ export default function CategoriesPage() {
     }
   };
 
+  const moveCategoryLocally = (
+    categoryId: string,
+    direction: "up" | "down"
+  ) => {
+    setCategories((previous) => {
+      const currentIndex = previous.findIndex(
+        (category) => category.category === categoryId
+      );
+      if (currentIndex === -1) return previous;
+
+      const targetIndex =
+        direction === "up" ? currentIndex - 1 : currentIndex + 1;
+      if (targetIndex < 0 || targetIndex >= previous.length) return previous;
+
+      const reordered = [...previous];
+      [reordered[currentIndex], reordered[targetIndex]] = [
+        reordered[targetIndex],
+        reordered[currentIndex],
+      ];
+
+      return reordered.map((category, index) => ({
+        ...category,
+        displayOrder: index,
+      }));
+    });
+  };
+
+  const handleMoveCategory = async (
+    categoryId: string,
+    direction: "up" | "down"
+  ) => {
+    if (movingCategoryId) return;
+
+    const previousCategories = categories;
+    setMovingCategoryId(categoryId);
+    moveCategoryLocally(categoryId, direction);
+
+    try {
+      await moveAdminCategory(categoryId, direction);
+    } catch (error) {
+      setCategories(previousCategories);
+      console.error("Failed to reorder category:", error);
+    } finally {
+      setMovingCategoryId(null);
+    }
+  };
+
+  const isReorderEnabled = !searchQuery.trim();
+
   if (loading) {
     return (
       <div className="p-4 sm:p-6 md:p-8">
@@ -160,7 +179,7 @@ export default function CategoriesPage() {
               Categories
             </h1>
             <p className="text-sm text-gray-700 sm:text-base">
-              {filteredAndSortedCategories.length} categories found
+              {filteredCategories.length} categories found
             </p>
           </div>
           <button
@@ -172,62 +191,31 @@ export default function CategoriesPage() {
         </div>
       </div>
 
-      {/* Filters & Sort */}
+      {/* Search */}
       <div className="mb-4 border-3 border-gray-400 bg-white p-4 sm:mb-6 sm:p-6">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {/* Search */}
-          <div>
-            <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
-              Search
-            </label>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by ID or name..."
-              className="h-[42px] w-full border-2 border-gray-400 px-4 transition-colors focus:border-slate-700 focus:outline-none"
-            />
-          </div>
-
-          {/* Sort */}
-          <div>
-            <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
-              Sort By
-            </label>
-            <div className="flex h-[42px] gap-2">
-              <div className="relative flex-1">
-                <select
-                  value={sortField}
-                  onChange={(e) => setSortField(e.target.value as SortField)}
-                  className="h-full w-full appearance-none border-2 border-gray-400 pr-10 pl-4 transition-colors focus:border-slate-700 focus:outline-none"
-                >
-                  <option value="category">ID</option>
-                  <option value="name">Name</option>
-                </select>
-                <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 font-bold text-gray-600">
-                  ▼
-                </div>
-              </div>
-              <button
-                onClick={() =>
-                  setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-                }
-                className="flex w-[42px] items-center justify-center border-2 border-gray-400 font-bold transition-colors hover:border-slate-700"
-                title={sortOrder === "asc" ? "Ascending" : "Descending"}
-              >
-                {sortOrder === "asc" ? "↑" : "↓"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <label className="mb-2 block text-sm font-bold tracking-wide text-gray-900 uppercase">
+          Search
+        </label>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search by ID or name..."
+          className="h-[42px] w-full border-2 border-gray-400 px-4 transition-colors focus:border-slate-700 focus:outline-none"
+        />
+        {!isReorderEnabled && (
+          <p className="mt-2 text-xs text-gray-600 sm:text-sm">
+            Clear search to enable reordering.
+          </p>
+        )}
       </div>
 
       {/* Categories Table */}
       <CategoriesTable
-        categories={filteredAndSortedCategories}
-        sortField={sortField}
-        sortOrder={sortOrder}
-        onSort={handleSort}
+        categories={filteredCategories}
+        onMoveCategory={handleMoveCategory}
+        isReorderEnabled={isReorderEnabled}
+        movingCategoryId={movingCategoryId}
         onEdit={handleEditCategory}
         onDelete={handleDeleteCategory}
       />

@@ -5,6 +5,7 @@ import {
     createCategory,
     deleteCategory,
     getCategories,
+    moveCategory,
     updateCategory,
 } from "@/db/queries/categoryQueries";
 import logger from "@/lib/logger";
@@ -108,6 +109,25 @@ export async function deleteAdminCategory(categoryId: string) {
             throw new Error(error.message);
         }
         throw new Error("Failed to delete category");
+    }
+}
+
+export async function moveAdminCategory(
+    categoryId: string,
+    direction: "up" | "down"
+) {
+    await requireAdminAuth();
+    await checkRateLimit("moveAdminCategory", 80, 15 * 60 * 1000);
+
+    try {
+        await moveCategory(categoryId, direction);
+        return { success: true };
+    } catch (error) {
+        logger.error({ error }, "Failed to move category");
+        if (error instanceof Error) {
+            throw new Error(error.message);
+        }
+        throw new Error("Failed to move category");
     }
 }
 

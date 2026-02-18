@@ -3,7 +3,7 @@
 import { db } from "@/db/drizzle";
 import { productImages } from "@/db/schema";
 import { ProductImage } from "@/types/Product";
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, inArray } from "drizzle-orm";
 
 export async function getProductImages(
     productId: string
@@ -31,5 +31,8 @@ export async function getProductImagesByIds(
 ): Promise<ProductImage[]> {
     if (ids.length === 0) return [];
 
-    return db.select().from(productImages).where(eq(productImages.id, ids[0])); // Use proper array handling if needed
+    return db
+        .select()
+        .from(productImages)
+        .where(inArray(productImages.id, ids));
 }

@@ -17,7 +17,7 @@ export default defineConfig({
     webServer: process.env.PLAYWRIGHT_BASE_URL
         ? undefined
         : {
-              command: `bun --bun next dev --port ${PORT}`,
+              command: `node ./node_modules/next/dist/bin/next dev --port ${PORT}`,
               url: BASE_URL,
               reuseExistingServer: !process.env.CI,
               timeout: 120_000,

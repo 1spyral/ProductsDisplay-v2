@@ -8,7 +8,7 @@ let data = await getProducts();
 
 // Configure Fuse.js
 const options = {
-    keys: ["name", "description", "category"],
+    keys: ["id", "name", "description", "category"],
     threshold: 0.3,
 };
 

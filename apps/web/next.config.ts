@@ -13,6 +13,7 @@ const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
 
 const nextConfig: NextConfig = {
     output: "standalone",
+    transpilePackages: ["@productsdisplay/contracts"],
     turbopack: {
         root: repoRoot,
     },

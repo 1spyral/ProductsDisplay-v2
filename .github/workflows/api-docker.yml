@@ -4,12 +4,14 @@ on:
   push:
     paths:
       - "apps/api/**"
+      - "packages/contracts/**"
       - "bun.lock"
       - "package.json"
       - ".github/workflows/api-docker.yml"
   pull_request:
     paths:
       - "apps/api/**"
+      - "packages/contracts/**"
       - "bun.lock"
       - "package.json"
       - ".github/workflows/api-docker.yml"

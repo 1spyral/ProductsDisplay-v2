@@ -15,11 +15,9 @@ import {
     uploadProductImage,
 } from "@/lib/imageService";
 import logger from "@/lib/logger";
-import { requireAdminAuth } from "./auth";
 import { checkRateLimit } from "./rateLimit";
 
 export async function getAdminProducts() {
-    await requireAdminAuth();
     await checkRateLimit("getAdminProducts", 100, 15 * 60 * 1000);
 
     try {
@@ -31,7 +29,6 @@ export async function getAdminProducts() {
 }
 
 export async function getAdminCategories() {
-    await requireAdminAuth();
     await checkRateLimit("getAdminCategories", 100, 15 * 60 * 1000);
 
     try {
@@ -52,7 +49,6 @@ export async function createAdminProduct(data: {
     soldOut?: boolean;
     hidden?: boolean;
 }) {
-    await requireAdminAuth();
     await checkRateLimit("createAdminProduct", 30, 15 * 60 * 1000);
 
     try {
@@ -81,7 +77,6 @@ export async function createAdminProduct(data: {
 }
 
 export async function deleteAdminProduct(id: string) {
-    await requireAdminAuth();
     await checkRateLimit("deleteAdminProduct", 20, 15 * 60 * 1000);
 
     try {
@@ -109,7 +104,6 @@ export async function updateAdminProduct(
         hidden?: boolean;
     }
 ) {
-    await requireAdminAuth();
     await checkRateLimit("updateAdminProduct", 50, 15 * 60 * 1000);
 
     try {
@@ -139,8 +133,6 @@ export async function updateAdminProduct(
 }
 
 export async function checkAdminProductIdExists(id: string) {
-    await requireAdminAuth();
-
     try {
         return await checkProductIdExists(id);
     } catch (error) {
@@ -153,7 +145,6 @@ export async function toggleAdminProductClearance(
     id: string,
     clearance: boolean
 ) {
-    await requireAdminAuth();
     await checkRateLimit("toggleAdminProductClearance", 100, 15 * 60 * 1000);
 
     try {
@@ -169,7 +160,6 @@ export async function toggleAdminProductClearance(
 }
 
 export async function toggleAdminProductHidden(id: string, hidden: boolean) {
-    await requireAdminAuth();
     await checkRateLimit("toggleAdminProductHidden", 100, 15 * 60 * 1000);
 
     try {
@@ -185,7 +175,6 @@ export async function toggleAdminProductHidden(id: string, hidden: boolean) {
 }
 
 export async function uploadAdminProductImage(formData: FormData) {
-    await requireAdminAuth();
     await checkRateLimit("uploadAdminProductImage", 20, 15 * 60 * 1000);
 
     try {
@@ -219,7 +208,6 @@ export async function uploadAdminProductImage(formData: FormData) {
 }
 
 export async function deleteAdminProductImage(imageId: string) {
-    await requireAdminAuth();
     await checkRateLimit("deleteAdminProductImage", 50, 15 * 60 * 1000);
 
     try {
@@ -242,7 +230,6 @@ export async function updateAdminImagePosition(
     imageId: string,
     position: number
 ) {
-    await requireAdminAuth();
     await checkRateLimit("updateAdminImagePosition", 100, 15 * 60 * 1000);
 
     try {
@@ -267,7 +254,6 @@ export async function reorderAdminProductImages(
     productId: string,
     imageIds: string[]
 ) {
-    await requireAdminAuth();
     await checkRateLimit("reorderAdminProductImages", 50, 15 * 60 * 1000);
 
     try {

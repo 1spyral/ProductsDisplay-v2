@@ -2,17 +2,17 @@ import { afterAll, beforeEach, describe, expect, mock, test } from "bun:test";
 
 const mockFindFirst = mock(async () => undefined as unknown);
 const mockUpdateWhere = mock(async () => undefined as unknown);
-const mockUpdateSet = mock((_values: unknown) => ({
+const mockUpdateSet = mock(() => ({
     where: mockUpdateWhere,
 }));
-const mockUpdate = mock((_table: unknown) => ({
+const mockUpdate = mock(() => ({
     set: mockUpdateSet,
 }));
 const mockDeleteWhere = mock(async () => undefined as unknown);
-const mockDelete = mock((_table: unknown) => ({
+const mockDelete = mock(() => ({
     where: mockDeleteWhere,
 }));
-const mockDeleteProductImage = mock(async (_id: string) => ({
+const mockDeleteProductImage = mock(async () => ({
     success: true,
 }));
 

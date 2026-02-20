@@ -1,5 +1,11 @@
 import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
-import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  waitFor,
+} from "@testing-library/react";
 import {
   afterAll,
   afterEach,
@@ -71,10 +77,11 @@ describe("ConfirmDeleteModal", () => {
     expect(onConfirm).toHaveBeenCalledTimes(1);
     expect(getByRole("button", { name: "Deleting..." })).toBeDefined();
 
-    deferred.resolve();
-
-    await waitFor(() => {
-      expect(onCancel).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      deferred.resolve();
+      await waitFor(() => {
+        expect(onCancel).toHaveBeenCalledTimes(1);
+      });
     });
   });
 
@@ -94,10 +101,11 @@ describe("ConfirmDeleteModal", () => {
       />
     );
 
-    fireEvent.click(getByRole("button", { name: "Delete" }));
-
-    await waitFor(() => {
-      expect(onConfirm).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      fireEvent.click(getByRole("button", { name: "Delete" }));
+      await waitFor(() => {
+        expect(onConfirm).toHaveBeenCalledTimes(1);
+      });
     });
 
     expect(onCancel).not.toHaveBeenCalled();
@@ -129,10 +137,11 @@ describe("ConfirmDeleteModal", () => {
     expect(cancelButton.getAttribute("disabled")).not.toBeNull();
     expect(deletingButton.getAttribute("disabled")).not.toBeNull();
 
-    deferred.resolve();
-
-    await waitFor(() => {
-      expect(onCancel).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      deferred.resolve();
+      await waitFor(() => {
+        expect(onCancel).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });

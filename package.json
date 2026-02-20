@@ -6,10 +6,16 @@
     "apps/*"
   ],
   "scripts": {
+    "db:drop": "drizzle-kit drop",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "drizzle-kit": "^0.31.9",
     "prettier": "^3.8.1",
     "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-tailwindcss": "^0.7.1"

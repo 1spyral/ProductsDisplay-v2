@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "bun --watch src/server.ts",
+        "lint": "eslint .",
         "start": "bun src/server.ts"
     },
     "engines": {
@@ -14,7 +15,10 @@
         "fastify": "^5.6.1"
     },
     "devDependencies": {
+        "@eslint/js": "^10.0.1",
         "@types/node": "^25",
+        "eslint": "^9.39.1",
+        "typescript-eslint": "^8.46.3",
         "typescript": "^5.9.3"
     }
 }

@@ -16,6 +16,8 @@ import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 const getAdminProducts = mock(async () => [] as Product[]);
 const getAdminCategories = mock(async () => [] as Category[]);
+const checkAdminProductIdExists = mock(async (_id: string) => false);
+const checkAdminCategoryIdExists = mock(async (_id: string) => false);
 const deleteAdminProduct = mock(async (_id: string) => undefined);
 const toggleAdminProductClearance = mock(
   async (_id: string, _next: boolean) => undefined
@@ -32,6 +34,8 @@ const createAdminSavedSelection = mock(
 const getAdminSavedSelectionProductIds = mock(async () => [] as string[]);
 
 mock.module("@/actions/admin", () => ({
+  checkAdminProductIdExists,
+  checkAdminCategoryIdExists,
   getAdminProducts,
   getAdminCategories,
   deleteAdminProduct,

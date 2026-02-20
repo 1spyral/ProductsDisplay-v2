@@ -6,7 +6,11 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+  - package-ecosystem: "bun"
+    directory: "/apps/web"
+    schedule:
+      interval: "daily"
   - package-ecosystem: "docker"
-    directory: "/"
+    directory: "/apps/web"
     schedule:
       interval: "weekly"

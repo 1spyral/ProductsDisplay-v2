@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { fileURLToPath } from "node:url";
 
 const allowedImageRemotePatterns = process.env
     .NEXT_ALLOWED_IMAGE_REMOTE_PATTERNS
@@ -8,8 +9,13 @@ const allowedImageRemotePatterns = process.env
           .map((pattern) => new URL(pattern))
     : undefined;
 
+const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
+
 const nextConfig: NextConfig = {
     output: "standalone",
+    turbopack: {
+        root: repoRoot,
+    },
     allowedDevOrigins: ["http://localhost:3000"],
     images: {
         qualities: [100, 75],

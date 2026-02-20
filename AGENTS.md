@@ -37,6 +37,7 @@
 
 ## Testing Guidelines
 
+- Update or add tests when code changes affect behavior, business logic, integrations, or bug-prone paths.
 - Unit tests use Bun: `bun run test:unit`.
 - Integration tests use Bun + Postgres: `bun run test:integration` (run `bun run db:migrate` first).
 - Preferred local integration flow: `bun run test:integration:local` (Docker required).
@@ -51,6 +52,8 @@
 ## Commit & Pull Request Guidelines
 
 - Follow existing commit style: short imperative summaries (for example `Add category filter in PDF editor`).
+- Before committing, run formatting, linting, and relevant tests for your changes (`bun run format`, `bun run lint`, and applicable `bun run test:*` commands).
+- Commits must include a descriptive title and a body that explains what changed and why.
 - Use scoped prefixes when appropriate (for example `[Migration] Add backgroundImageUrl to storeInfo`).
 - PRs should include: purpose, key changes, migration/environment impacts, and screenshots for UI changes.
 - Link related issues and list manual verification steps performed.

@@ -24,14 +24,14 @@ describe("ProductSortContainer", () => {
   });
 
   test("renders title/subtitle and defaults to default sort mode", () => {
-    const { container, getByText } = render(
+    const { container, getByRole, getByText } = render(
       <ProductSortContainer title="Chairs" subtitle="3 products available">
         <div>Body</div>
       </ProductSortContainer>
     );
 
-    expect(getByText("Chairs")).toBeDefined();
-    expect(getByText("3 products available")).toBeDefined();
+    expect(getByRole("heading", { name: "Chairs" })).toBeTruthy();
+    expect(getByText("3 products available")).toBeTruthy();
     expect(
       container.querySelector("[data-product-sort='default']")
     ).toBeTruthy();

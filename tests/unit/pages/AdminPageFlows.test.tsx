@@ -302,17 +302,17 @@ describe("Admin page flows", () => {
     deleteAdminProduct.mockResolvedValue(undefined);
     toggleAdminProductClearance.mockRejectedValueOnce(new Error("boom"));
 
-    const { getByRole, getByText, getByTestId } = render(<ProductsPage />);
+    const { findByRole, findByText, getByText, getByTestId } = render(
+      <ProductsPage />
+    );
 
-    await waitFor(() => {
-      expect(getByText("2 products found")).toBeDefined();
-    });
+    await findByText("2 products found");
 
     fireEvent.click(getByText("Add Product"));
-    expect(getByTestId("add-product-modal")).toBeDefined();
+    expect(getByTestId("add-product-modal")).toBeTruthy();
 
     fireEvent.click(getByText("Trigger Delete"));
-    fireEvent.click(getByRole("button", { name: "Delete Product" }));
+    fireEvent.click(await findByRole("button", { name: "Delete Product" }));
     await waitFor(() => {
       expect(deleteAdminProduct).toHaveBeenCalledWith("sku-1");
     });
@@ -332,11 +332,11 @@ describe("Admin page flows", () => {
     reorderAdminCategories.mockResolvedValue(undefined);
     deleteAdminCategory.mockResolvedValue(undefined);
 
-    const { getByRole, getByText, getByTestId } = render(<CategoriesPage />);
+    const { findByRole, findByText, getByText, getByTestId } = render(
+      <CategoriesPage />
+    );
 
-    await waitFor(() => {
-      expect(getByText("2 categories found")).toBeDefined();
-    });
+    await findByText("2 categories found");
     expect(getByTestId("reorder-enabled").textContent).toBe("true");
     fireEvent.click(getByText("Trigger Reorder"));
     await waitFor(() => {
@@ -344,7 +344,7 @@ describe("Admin page flows", () => {
     });
 
     fireEvent.click(getByText("Trigger Category Delete"));
-    fireEvent.click(getByRole("button", { name: "Delete Category" }));
+    fireEvent.click(await findByRole("button", { name: "Delete Category" }));
     await waitFor(() => {
       expect(deleteAdminCategory).toHaveBeenCalledWith("tables");
     });
@@ -353,24 +353,20 @@ describe("Admin page flows", () => {
   test("editor pane: select product and open save modal", async () => {
     getAdminProducts.mockResolvedValue(products);
 
-    const { getByText, getByLabelText, getAllByRole } = render(
+    const { findByLabelText, findByText, getByText, getAllByRole } = render(
       <PdfEditorProvider>
         <EditorPane />
       </PdfEditorProvider>
     );
 
-    await waitFor(() => {
-      expect(getByText("Apple Chair")).toBeDefined();
-      expect(getByText("Blue Table")).toBeDefined();
-    });
+    await findByText("Apple Chair");
+    await findByText("Blue Table");
 
     fireEvent.click(getByText("Blue Table"));
-    await waitFor(() => {
-      expect(getByText("Selected Products (1)")).toBeDefined();
-    });
+    await findByText("Selected Products (1)");
 
     fireEvent.click(getByText("Save"));
-    expect(getByLabelText("Name")).toBeDefined();
+    expect(await findByLabelText("Name")).toBeTruthy();
     const saveButtons = getAllByRole("button", { name: "Save" });
     expect(saveButtons[saveButtons.length - 1].hasAttribute("disabled")).toBe(
       true

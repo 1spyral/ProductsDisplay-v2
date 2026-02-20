@@ -17,7 +17,10 @@ ENV PORT=3001
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY apps/api ./apps/api
+COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
 
 EXPOSE 3001
 
-CMD ["bun", "apps/api/src/server.ts"]
+WORKDIR /app/apps/api
+
+CMD ["bun", "run", "start"]

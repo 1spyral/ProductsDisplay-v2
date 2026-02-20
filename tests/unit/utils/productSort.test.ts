@@ -2,10 +2,7 @@ import type Product from "@/types/Product";
 import { sortProductsByOption } from "@/utils/productSort";
 import { describe, expect, test } from "bun:test";
 
-function createProduct(
-    id: string,
-    price: string | null
-): Product {
+function createProduct(id: string, price: string | null): Product {
     return {
         id,
         name: null,
@@ -55,10 +52,7 @@ describe("productSort", () => {
     });
 
     test("returns a new array for price sort without mutating input", () => {
-        const products = [
-            createProduct("z", "$30"),
-            createProduct("x", "$10"),
-        ];
+        const products = [createProduct("z", "$30"), createProduct("x", "$10")];
 
         const sorted = sortProductsByOption(products, "price");
 

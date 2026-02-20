@@ -3,8 +3,8 @@ import Product from "@/types/Product";
 export type ProductSortOption = "default" | "price";
 
 export function sortProductsByOption(
-  products: Product[],
-  sortOption: ProductSortOption
+    products: Product[],
+    sortOption: ProductSortOption
 ): Product[] {
     if (sortOption === "default") {
         return products;

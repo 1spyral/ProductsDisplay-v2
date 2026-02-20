@@ -44,11 +44,7 @@ export default async function SearchResultsPage({
       } for "${query}"`}
       products={products}
       emptyTitle="No Results Found"
-      emptySubtitle={
-        <>
-          No products found for &quot;{query}&quot;
-        </>
-      }
+      emptySubtitle={<>No products found for &quot;{query}&quot;</>}
     />
   );
 }

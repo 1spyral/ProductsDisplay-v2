@@ -26,7 +26,9 @@ export default function ProductListingPage({
             <h1 className="text-2xl font-bold text-gray-900 uppercase">
               {emptyTitle ?? "No products found"}
             </h1>
-            {emptySubtitle && <p className="mt-2 text-gray-700">{emptySubtitle}</p>}
+            {emptySubtitle && (
+              <p className="mt-2 text-gray-700">{emptySubtitle}</p>
+            )}
           </div>
         </div>
       </div>

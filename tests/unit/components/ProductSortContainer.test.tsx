@@ -32,7 +32,9 @@ describe("ProductSortContainer", () => {
 
     expect(getByText("Chairs")).toBeDefined();
     expect(getByText("3 products available")).toBeDefined();
-    expect(container.querySelector("[data-product-sort='default']")).toBeTruthy();
+    expect(
+      container.querySelector("[data-product-sort='default']")
+    ).toBeTruthy();
   });
 
   test("switches sort mode to price when price button is clicked", () => {

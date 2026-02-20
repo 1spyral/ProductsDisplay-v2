@@ -1,9 +1,9 @@
 import Product from "@/types/Product";
-import { sortProductsByOption } from "@/utils/productSort";
 import getPhotos from "@/utils/photo";
+import { sortProductsByOption } from "@/utils/productSort";
 import type { CSSProperties } from "react";
-import styles from "./ProductList.module.css";
 import ProductBox from "./ProductBox";
+import styles from "./ProductList.module.css";
 
 export default async function ProductList({
   products,

@@ -9,6 +9,9 @@ WORKDIR /app
 
 # Install dependencies with Bun
 COPY package.json bun.lock* .npmrc* ./
+COPY apps/web/package.json ./apps/web/package.json
+COPY apps/api/package.json ./apps/api/package.json
+COPY packages/contracts/package.json ./packages/contracts/package.json
 RUN bun install --frozen-lockfile
 
 # Install Chromium for Playwright
@@ -19,6 +22,7 @@ RUN bunx playwright install chromium
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 COPY . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
@@ -26,15 +30,12 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED=1
 
-# Database URL needed at build time for Next.js page pre-rendering
-ARG DATABASE_URL
-ENV DATABASE_URL=${DATABASE_URL}
-
+WORKDIR /app/apps/web
 RUN bun run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
-WORKDIR /app
+WORKDIR /app/apps/web
 
 ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
@@ -43,7 +44,7 @@ ENV NODE_ENV=production
 RUN groupadd --system --gid 1001 nodejs \
  && useradd  --system --uid 1001 --gid nodejs --create-home nextjs
 
-COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/apps/web/.next/standalone /app
 
 # Install OS-level Playwright dependencies
 RUN bunx playwright install-deps chromium
@@ -53,14 +54,14 @@ ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 COPY --from=deps /ms-playwright /ms-playwright
 RUN chown -R nextjs:nodejs /ms-playwright
 
-COPY --from=builder /app/public ./public
+COPY --from=builder /app/apps/web/public /app/apps/web/public
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static /app/apps/web/.next/static
 
 # Ensure the runtime user can write Next.js prerender cache and related files.
-RUN chown -R nextjs:nodejs /app/.next
+RUN chown -R nextjs:nodejs /app/apps/web/.next /app/apps/web/public
 
 USER nextjs
 

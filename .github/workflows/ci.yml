@@ -28,9 +28,16 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: web
+            working-directory: apps/web
+          - name: api
+            working-directory: apps/api
     defaults:
       run:
-        working-directory: apps/web
+        working-directory: ${{ matrix.working-directory }}
 
     steps:
       - name: Checkout
@@ -44,14 +51,23 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Lint
+      - name: Lint ${{ matrix.name }}
         run: bun run lint
 
   unit-tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: web
+            working-directory: apps/web
+            command: bun run test:coverage
+          - name: api
+            working-directory: apps/api
+            command: bun run test:unit
     defaults:
       run:
-        working-directory: apps/web
+        working-directory: ${{ matrix.working-directory }}
 
     steps:
       - name: Checkout
@@ -65,14 +81,14 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Run unit tests with coverage
-        run: bun run test:coverage
+      - name: Run ${{ matrix.name }} unit tests
+        run: ${{ matrix.command }}
 
-  integration-tests:
+  integration-tests-api:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: apps/web
+        working-directory: apps/api
 
     services:
       postgres:
@@ -91,17 +107,9 @@ jobs:
 
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/productsdisplay_test
-      DB_HOST: localhost
-      DB_PORT: "5432"
-      DB_DATABASE: productsdisplay_test
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      NEXT_PUBLIC_IMAGE_PATH: ""
-      GOOGLE_CLOUD_PROJECT_ID: test-project
-      GOOGLE_CLOUD_STORAGE_BUCKET: test-bucket
-      ADMIN_PASSWORD: test-admin-password
       ADMIN_TOKEN_SECRET: test-admin-token-secret-1234567890
       LOG_LEVEL: info
+      NODE_ENV: test
 
     steps:
       - name: Checkout
@@ -121,7 +129,7 @@ jobs:
       - name: Run integration tests
         run: bun run test:integration
 
-  e2e-tests:
+  e2e-tests-web:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -144,14 +152,8 @@ jobs:
 
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/productsdisplay_test
-      DB_HOST: localhost
-      DB_PORT: "5432"
-      DB_DATABASE: productsdisplay_test
-      DB_USER: postgres
-      DB_PASSWORD: postgres
+      API_BASE_URL: http://127.0.0.1:3001
       NEXT_PUBLIC_IMAGE_PATH: ""
-      GOOGLE_CLOUD_PROJECT_ID: test-project
-      GOOGLE_CLOUD_STORAGE_BUCKET: test-bucket
       ADMIN_PASSWORD: test-admin-password
       ADMIN_TOKEN_SECRET: test-admin-token-secret-1234567890
       LOG_LEVEL: info
@@ -172,7 +174,7 @@ jobs:
         run: bunx playwright install --with-deps chromium
 
       - name: Apply database migrations
-        run: bun run db:migrate
+        run: cd ../api && bun run db:migrate
 
       - name: Run e2e tests
         run: bun run test:e2e

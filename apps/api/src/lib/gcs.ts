@@ -29,7 +29,9 @@ try {
     }
 } catch (error) {
     logger.error({ error }, "Failed to initialize Google Cloud Storage");
-    throw new Error("Google Cloud Storage initialization failed");
+    throw new Error("Google Cloud Storage initialization failed", {
+        cause: error,
+    });
 }
 
 const bucketName = env.GOOGLE_CLOUD_STORAGE_BUCKET;

@@ -1,16 +1,22 @@
-import { db } from "@/db/drizzle";
-import { storeInfo } from "@/db/schema";
+import postgres from "postgres";
 
-// Keep this script as the single e2e DB seeding entrypoint.
-// Add additional inserts/upserts here as future e2e seed data is needed.
-await db
-    .insert(storeInfo)
-    .values({
-        id: 1,
-        name: "Products Display",
-        headline: "Product Catalog",
-        description: "Browse our inventory.",
-        copyright: "Products Display",
-        backgroundImageUrl: null,
-    })
-    .onConflictDoNothing({ target: storeInfo.id });
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+    throw new Error("Missing DATABASE_URL");
+}
+
+const sql = postgres(connectionString, {
+    prepare: false,
+    max: 1,
+});
+
+try {
+    await sql`
+        insert into store_info (id, name, headline, description, copyright, background_image_url)
+        values (1, 'Products Display', 'Product Catalog', 'Browse our inventory.', 'Products Display', null)
+        on conflict (id) do nothing
+    `;
+} finally {
+    await sql.end();
+}

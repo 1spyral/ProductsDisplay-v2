@@ -44,23 +44,17 @@ if ! docker compose -f "${COMPOSE_FILE}" exec -T "${SERVICE_NAME}" \
 fi
 
 export DATABASE_URL="postgresql://${TEST_DB_USER}:${TEST_DB_PASSWORD}@${TEST_DB_HOST}:${TEST_DB_PORT}/${TEST_DB_NAME}"
-export DB_HOST="${TEST_DB_HOST}"
-export DB_PORT="${TEST_DB_PORT}"
-export DB_DATABASE="${TEST_DB_NAME}"
-export DB_USER="${TEST_DB_USER}"
-export DB_PASSWORD="${TEST_DB_PASSWORD}"
-
 # Test-safe defaults for runtime env checks
+export API_BASE_URL="${API_BASE_URL:-http://127.0.0.1:3001}"
 export NEXT_PUBLIC_IMAGE_PATH="${NEXT_PUBLIC_IMAGE_PATH:-}"
 export NEXT_ALLOWED_IMAGE_REMOTE_PATTERNS="${NEXT_ALLOWED_IMAGE_REMOTE_PATTERNS:-}"
-export GOOGLE_CLOUD_PROJECT_ID="${GOOGLE_CLOUD_PROJECT_ID:-test-project}"
-export GOOGLE_CLOUD_STORAGE_BUCKET="${GOOGLE_CLOUD_STORAGE_BUCKET:-test-bucket}"
 export ADMIN_PASSWORD="${ADMIN_PASSWORD:-test-admin-password}"
 export ADMIN_TOKEN_SECRET="${ADMIN_TOKEN_SECRET:-test-admin-token-secret-1234567890}"
 export LOG_LEVEL="${LOG_LEVEL:-info}"
 
 echo "Running migrations against local test database..."
-bun run db:migrate
+cd ../api && bun run db:migrate
+cd ../web
 
 echo "Running integration tests..."
 bun run test:integration

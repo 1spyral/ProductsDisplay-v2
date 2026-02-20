@@ -1,5 +1,5 @@
 import { requireAdminAuth } from "@/actions/admin/auth";
-import { getProductsByIds } from "@/db/queries/productQueries";
+import { getAdminProducts } from "@/db/queries/productQueries";
 import { compilePdfFromHtml } from "@/lib/pdf/compilePdf";
 import type Product from "@/types/Product";
 import { buildImageUrl } from "@/utils/photo";
@@ -208,7 +208,7 @@ export async function POST(request: Request) {
         );
     }
 
-    const products = await getProductsByIds(normalizedIds, true);
+    const products = await getAdminProducts(normalizedIds);
     const productsById = new Map(
         products.map((product) => [product.id, product])
     );

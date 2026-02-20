@@ -16,10 +16,18 @@ export default defineConfig({
     },
     webServer: process.env.PLAYWRIGHT_BASE_URL
         ? undefined
-        : {
-              command: `bun scripts/e2e-database-seed.ts && node ./node_modules/next/dist/bin/next dev --port ${PORT}`,
-              url: BASE_URL,
-              reuseExistingServer: !process.env.CI,
-              timeout: 120_000,
-          },
+        : [
+              {
+                  command: "cd ../api && bun run start",
+                  url: "http://127.0.0.1:3001/livez",
+                  reuseExistingServer: !process.env.CI,
+                  timeout: 120_000,
+              },
+              {
+                  command: `bun scripts/e2e-database-seed.ts && node ./node_modules/next/dist/bin/next dev --port ${PORT}`,
+                  url: BASE_URL,
+                  reuseExistingServer: !process.env.CI,
+                  timeout: 120_000,
+              },
+          ],
 });

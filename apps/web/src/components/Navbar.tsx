@@ -1,6 +1,8 @@
 import { getStoreInfo } from "@/db/queries/storeInfoQueries";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import NavbarCart from "./NavbarCart";
+
+const NavbarCart = dynamic(() => import("./NavbarCart"), { ssr: false });
 
 export default async function Navbar() {
   const store = await getStoreInfo();

@@ -4,7 +4,7 @@ import {
     getSavedSelectionProductIds,
     getSavedSelections,
 } from "@/db/queries/savedSelectionQueries";
-import { beforeEach, describe, expect, mock, test } from "bun:test";
+import { afterAll, beforeEach, describe, expect, mock, test } from "bun:test";
 import { resetTestDatabase } from "../db/helpers";
 
 const requireAdminAuth = mock(async () => undefined);
@@ -47,6 +47,10 @@ async function seedProducts() {
 }
 
 describe("savedSelection admin actions (integration)", () => {
+    afterAll(() => {
+        mock.restore();
+    });
+
     beforeEach(async () => {
         await resetTestDatabase();
         await seedProducts();

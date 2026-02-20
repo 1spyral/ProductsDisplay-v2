@@ -6,13 +6,27 @@ import {
     reorderCategories,
     updateCategory,
 } from "@/db/queries/categoryQueries";
+import { createRateLimitPreHandler } from "@/lib/rateLimit";
 import { requireAdmin } from "@/routes/admin/auth";
 import type { FastifyInstance } from "fastify";
 
 export async function adminCategoryRoutes(app: FastifyInstance): Promise<void> {
-    app.get("/categories", { preHandler: requireAdmin }, async () => {
-        return getCategories();
-    });
+    app.get(
+        "/categories",
+        {
+            preHandler: [
+                requireAdmin,
+                createRateLimitPreHandler({
+                    action: "getAdminCategories",
+                    maxRequests: 100,
+                    windowMs: 15 * 60 * 1000,
+                }),
+            ],
+        },
+        async () => {
+            return getCategories();
+        }
+    );
 
     app.get(
         "/categories/:id/exists",
@@ -25,7 +39,16 @@ export async function adminCategoryRoutes(app: FastifyInstance): Promise<void> {
 
     app.post(
         "/categories",
-        { preHandler: requireAdmin },
+        {
+            preHandler: [
+                requireAdmin,
+                createRateLimitPreHandler({
+                    action: "createAdminCategory",
+                    maxRequests: 30,
+                    windowMs: 15 * 60 * 1000,
+                }),
+            ],
+        },
         async (request, reply) => {
             const body = request.body as {
                 category?: string;
@@ -47,7 +70,16 @@ export async function adminCategoryRoutes(app: FastifyInstance): Promise<void> {
 
     app.patch(
         "/categories/:id",
-        { preHandler: requireAdmin },
+        {
+            preHandler: [
+                requireAdmin,
+                createRateLimitPreHandler({
+                    action: "updateAdminCategory",
+                    maxRequests: 50,
+                    windowMs: 15 * 60 * 1000,
+                }),
+            ],
+        },
         async (request) => {
             const params = request.params as { id: string };
             const body = request.body as {
@@ -61,7 +93,16 @@ export async function adminCategoryRoutes(app: FastifyInstance): Promise<void> {
 
     app.delete(
         "/categories/:id",
-        { preHandler: requireAdmin },
+        {
+            preHandler: [
+                requireAdmin,
+                createRateLimitPreHandler({
+                    action: "deleteAdminCategory",
+                    maxRequests: 20,
+                    windowMs: 15 * 60 * 1000,
+                }),
+            ],
+        },
         async (request) => {
             const params = request.params as { id: string };
             await deleteCategory(params.id);
@@ -71,7 +112,16 @@ export async function adminCategoryRoutes(app: FastifyInstance): Promise<void> {
 
     app.post(
         "/categories/reorder",
-        { preHandler: requireAdmin },
+        {
+            preHandler: [
+                requireAdmin,
+                createRateLimitPreHandler({
+                    action: "reorderAdminCategories",
+                    maxRequests: 80,
+                    windowMs: 15 * 60 * 1000,
+                }),
+            ],
+        },
         async (request, reply) => {
             const body = request.body as { categoryIds?: string[] };
             if (!Array.isArray(body.categoryIds)) {

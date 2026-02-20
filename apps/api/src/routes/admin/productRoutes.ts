@@ -6,19 +6,33 @@ import {
     getProductsByIds,
     updateProduct,
 } from "@/db/queries/productQueries";
+import { createRateLimitPreHandler } from "@/lib/rateLimit";
 import { requireAdmin } from "@/routes/admin/auth";
 import { parseCsvIds } from "@/routes/shared/queryParsers";
 import type { FastifyInstance } from "fastify";
 
 export async function adminProductRoutes(app: FastifyInstance): Promise<void> {
-    app.get("/products", { preHandler: requireAdmin }, async (request) => {
-        const query = request.query as { ids?: string };
-        if (query.ids) {
-            return getProductsByIds(parseCsvIds(query.ids), true);
-        }
+    app.get(
+        "/products",
+        {
+            preHandler: [
+                requireAdmin,
+                createRateLimitPreHandler({
+                    action: "getAdminProducts",
+                    maxRequests: 100,
+                    windowMs: 15 * 60 * 1000,
+                }),
+            ],
+        },
+        async (request) => {
+            const query = request.query as { ids?: string };
+            if (query.ids) {
+                return getProductsByIds(parseCsvIds(query.ids), true);
+            }
 
-        return getProducts(true);
-    });
+            return getProducts(true);
+        }
+    );
 
     app.get(
         "/products/:id/exists",
@@ -31,7 +45,16 @@ export async function adminProductRoutes(app: FastifyInstance): Promise<void> {
 
     app.post(
         "/products",
-        { preHandler: requireAdmin },
+        {
+            preHandler: [
+                requireAdmin,
+                createRateLimitPreHandler({
+                    action: "createAdminProduct",
+                    maxRequests: 30,
+                    windowMs: 15 * 60 * 1000,
+                }),
+            ],
+        },
         async (request, reply) => {
             const body = request.body as {
                 id?: string;
@@ -67,7 +90,16 @@ export async function adminProductRoutes(app: FastifyInstance): Promise<void> {
 
     app.patch(
         "/products/:id",
-        { preHandler: requireAdmin },
+        {
+            preHandler: [
+                requireAdmin,
+                createRateLimitPreHandler({
+                    action: "updateAdminProduct",
+                    maxRequests: 50,
+                    windowMs: 15 * 60 * 1000,
+                }),
+            ],
+        },
         async (request) => {
             const params = request.params as { id: string };
             const body = request.body as {
@@ -88,7 +120,16 @@ export async function adminProductRoutes(app: FastifyInstance): Promise<void> {
 
     app.delete(
         "/products/:id",
-        { preHandler: requireAdmin },
+        {
+            preHandler: [
+                requireAdmin,
+                createRateLimitPreHandler({
+                    action: "deleteAdminProduct",
+                    maxRequests: 20,
+                    windowMs: 15 * 60 * 1000,
+                }),
+            ],
+        },
         async (request) => {
             const params = request.params as { id: string };
             await deleteProduct(params.id);
@@ -98,7 +139,16 @@ export async function adminProductRoutes(app: FastifyInstance): Promise<void> {
 
     app.patch(
         "/products/:id/toggle-clearance",
-        { preHandler: requireAdmin },
+        {
+            preHandler: [
+                requireAdmin,
+                createRateLimitPreHandler({
+                    action: "toggleAdminProductClearance",
+                    maxRequests: 100,
+                    windowMs: 15 * 60 * 1000,
+                }),
+            ],
+        },
         async (request) => {
             const params = request.params as { id: string };
             const body = request.body as { clearance: boolean };
@@ -109,7 +159,16 @@ export async function adminProductRoutes(app: FastifyInstance): Promise<void> {
 
     app.patch(
         "/products/:id/toggle-hidden",
-        { preHandler: requireAdmin },
+        {
+            preHandler: [
+                requireAdmin,
+                createRateLimitPreHandler({
+                    action: "toggleAdminProductHidden",
+                    maxRequests: 100,
+                    windowMs: 15 * 60 * 1000,
+                }),
+            ],
+        },
         async (request) => {
             const params = request.params as { id: string };
             const body = request.body as { hidden: boolean };

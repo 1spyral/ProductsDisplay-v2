@@ -282,6 +282,7 @@ describe("Admin page flows", () => {
   });
 
   afterAll(() => {
+    mock.restore();
     unregisterHappyDom();
   });
 

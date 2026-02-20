@@ -16,7 +16,14 @@ const envSchema = z.object({
     PORT: z.coerce.number().int().positive().default(3001),
     LOG_LEVEL: z.enum(logLevels).default("info"),
     LOG_PRETTY: z.coerce.boolean().default(false),
+    CI: optionalString,
     DATABASE_URL: optionalString,
+    ADMIN_TOKEN_SECRET: optionalString,
+    GOOGLE_CLOUD_PROJECT_ID: optionalString,
+    GOOGLE_CLOUD_STORAGE_BUCKET: optionalString,
+    GOOGLE_APPLICATION_CREDENTIALS: optionalString,
+    GOOGLE_CLOUD_CLIENT_EMAIL: optionalString,
+    GOOGLE_CLOUD_PRIVATE_KEY: optionalString,
 });
 
 export const env = envSchema.parse(process.env);

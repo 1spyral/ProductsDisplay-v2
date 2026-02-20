@@ -5,20 +5,30 @@
     "type": "module",
     "scripts": {
         "dev": "bun --watch src/server.ts",
-        "db:drop": "drizzle-kit drop --config ../../drizzle.config.ts",
-        "db:generate": "drizzle-kit generate --config ../../drizzle.config.ts",
-        "db:migrate": "drizzle-kit migrate --config ../../drizzle.config.ts",
-        "db:push": "drizzle-kit push --config ../../drizzle.config.ts",
-        "db:studio": "drizzle-kit studio --config ../../drizzle.config.ts",
+        "db:drop": "drizzle-kit drop --config drizzle.config.ts",
+        "db:generate": "drizzle-kit generate --config drizzle.config.ts",
+        "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
+        "db:push": "drizzle-kit push --config drizzle.config.ts",
+        "db:studio": "drizzle-kit studio --config drizzle.config.ts",
         "lint": "eslint .",
-        "start": "bun src/server.ts"
+        "start": "bun src/server.ts",
+        "test:unit": "bun test tests/unit --max-concurrency 4",
+        "test:integration": "bun --env-file=.env.test test tests/integration --max-concurrency 1",
+        "test:integration:db:up": "docker compose -f docker-compose.test.yml up -d postgres",
+        "test:integration:db:down": "docker compose -f docker-compose.test.yml down -v",
+        "test:integration:local": "bash ./scripts/test-integration-local.sh"
     },
     "engines": {
         "bun": ">=1.3.9"
     },
     "dependencies": {
+        "@fastify/cookie": "^11.0.2",
+        "@fastify/multipart": "^9.3.0",
+        "@google-cloud/storage": "^7.19.0",
+        "@productsdisplay/contracts": "workspace:*",
         "drizzle-orm": "^0.45.1",
         "fastify": "^5.6.1",
+        "jose": "^6.1.3",
         "pino": "^10.3.1",
         "postgres": "^3.4.8",
         "zod": "^4.3.4"

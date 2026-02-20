@@ -13,6 +13,7 @@ export default defineConfig([
             sourceType: "module",
         },
         rules: {
+            "no-undef": "off",
             "no-console": "off",
         },
     },

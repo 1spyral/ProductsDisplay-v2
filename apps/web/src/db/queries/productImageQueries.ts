@@ -1,29 +1,28 @@
 "use server";
 
-import { db } from "@/db/drizzle";
-import { productImages } from "@/db/schema";
-import { ProductImage } from "@/types/Product";
-import { asc, eq, inArray } from "drizzle-orm";
+import { apiJsonRequest } from "@/lib/api/client";
+import type { ProductImage } from "@/types/Product";
 
 export async function getProductImages(
     productId: string
 ): Promise<ProductImage[]> {
-    return db
-        .select()
-        .from(productImages)
-        .where(eq(productImages.productId, productId))
-        .orderBy(asc(productImages.position));
+    return apiJsonRequest<ProductImage[]>(
+        `/admin/product-images?productId=${encodeURIComponent(productId)}`,
+        {
+            forwardCookies: true,
+        }
+    );
 }
 
 export async function getProductImageById(
     id: string
 ): Promise<ProductImage | null> {
-    return db
-        .select()
-        .from(productImages)
-        .where(eq(productImages.id, id))
-        .limit(1)
-        .then((rows) => rows[0] || null);
+    return apiJsonRequest<ProductImage | null>(
+        `/admin/product-images/${encodeURIComponent(id)}`,
+        {
+            forwardCookies: true,
+        }
+    );
 }
 
 export async function getProductImagesByIds(
@@ -31,8 +30,11 @@ export async function getProductImagesByIds(
 ): Promise<ProductImage[]> {
     if (ids.length === 0) return [];
 
-    return db
-        .select()
-        .from(productImages)
-        .where(inArray(productImages.id, ids));
+    const query = ids.map((id) => encodeURIComponent(id)).join(",");
+    return apiJsonRequest<ProductImage[]>(
+        `/admin/product-images/by-ids?ids=${query}`,
+        {
+            forwardCookies: true,
+        }
+    );
 }

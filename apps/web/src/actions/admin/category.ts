@@ -9,11 +9,9 @@ import {
     updateCategory,
 } from "@/db/queries/categoryQueries";
 import logger from "@/lib/logger";
-import { requireAdminAuth } from "./auth";
 import { checkRateLimit } from "./rateLimit";
 
 export async function getAdminCategoriesForManagement() {
-    await requireAdminAuth();
     await checkRateLimit(
         "getAdminCategoriesForManagement",
         100,
@@ -32,7 +30,6 @@ export async function createAdminCategory(data: {
     category: string;
     name?: string | null;
 }) {
-    await requireAdminAuth();
     await checkRateLimit("createAdminCategory", 30, 15 * 60 * 1000);
 
     try {
@@ -67,7 +64,6 @@ export async function updateAdminCategory(
         name?: string | null;
     }
 ) {
-    await requireAdminAuth();
     await checkRateLimit("updateAdminCategory", 50, 15 * 60 * 1000);
 
     try {
@@ -97,7 +93,6 @@ export async function updateAdminCategory(
 }
 
 export async function deleteAdminCategory(categoryId: string) {
-    await requireAdminAuth();
     await checkRateLimit("deleteAdminCategory", 20, 15 * 60 * 1000);
 
     try {
@@ -113,7 +108,6 @@ export async function deleteAdminCategory(categoryId: string) {
 }
 
 export async function reorderAdminCategories(categoryIds: string[]) {
-    await requireAdminAuth();
     await checkRateLimit("reorderAdminCategories", 80, 15 * 60 * 1000);
 
     try {
@@ -133,8 +127,6 @@ export async function reorderAdminCategories(categoryIds: string[]) {
 }
 
 export async function checkAdminCategoryIdExists(categoryId: string) {
-    await requireAdminAuth();
-
     try {
         return await checkCategoryIdExists(categoryId);
     } catch (error) {

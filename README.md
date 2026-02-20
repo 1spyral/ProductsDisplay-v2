@@ -4,7 +4,7 @@ Full-stack Next.js eCommerce system with a customer storefront and admin tooling
 
 ## Overview
 
-- Storefront: category browsing, search, clearance view, and product detail pages backed by PostgreSQL via Drizzle ORM.
+- Storefront: category browsing, search, clearance view, and product detail pages backed by the API service.
 - Admin: password-protected `/admin` area for managing products and images (dashboard plus product tooling in `apps/web/src/components/ProductForm` and `apps/web/src/actions`).
 - Images: product images stored in Google Cloud Storage, served via a configurable public path.
 - Search: client-side fuzzy search using Fuse.js over the product catalog.
@@ -13,8 +13,8 @@ Full-stack Next.js eCommerce system with a customer storefront and admin tooling
 
 - Framework: Next.js (App Router) with server components and server actions.
 - Runtime: Bun (see `package.json` engines) for dev/build/start scripts.
-- Database: PostgreSQL with `drizzle-orm` and `drizzle-kit` migrations (`apps/web/drizzle/` and `apps/web/src/db/schema`).
-- Storage: Google Cloud Storage via `@google-cloud/storage` (`apps/web/src/lib/gcs.ts`).
+- Database: PostgreSQL with `drizzle-orm` and `drizzle-kit` migrations (`apps/api/drizzle/` and `apps/api/src/db/schema`).
+- Storage: Google Cloud Storage via `@google-cloud/storage` in API (`apps/api/src/lib/gcs.ts`).
 - UI: React and Tailwind CSS v4 (see `globals.css`, `postcss.config.mjs`).
 - Auth: simple admin password stored in `ADMIN_PASSWORD`, cookie-based session in `apps/web/src/proxies/auth.ts` plus `apps/web/src/actions/admin.ts`.
 - Search: Fuse.js helpers in `apps/web/src/utils/search.ts`.
@@ -22,28 +22,27 @@ Full-stack Next.js eCommerce system with a customer storefront and admin tooling
 ## Architecture
 
 - App routes: `apps/web/src/app` (for example `/`, `/category/[category]`, `/product/[id]`, `/search`, `/clearance`, `/admin/*`).
-- Database layer: `apps/web/src/db/drizzle.ts` (connection pooling, schema + relations) and `apps/web/src/db/queries/*` (encapsulated queries).
-- Images & GCS: `apps/web/src/lib/gcs.ts` for upload/delete/copy/list/signed URLs; `apps/web/src/lib/imageService.ts` and `apps/web/src/lib/imageKey.ts` for mapping product IDs to image keys.
-- Server actions: `apps/web/src/actions/admin.ts` for admin login and product/image mutations.
+- API service: `apps/api/src/server.ts` and `apps/api/src/db/**` own all DB access and admin/public data endpoints.
+- Web data access: `apps/web/src/db/queries/*` are thin API clients.
+- Images & GCS: API owns upload/delete logic in `apps/api/src/lib/imageService.ts` and `apps/api/src/lib/gcs.ts`.
+- Server actions: `apps/web/src/actions/admin.ts` call API for product/category/image/saved-selection mutations.
 - Middleware/proxies: `apps/web/src/proxies/auth.ts` for admin route protection; `apps/web/src/proxies/rate-limit.ts` for basic API rate limiting.
 - Components: storefront and admin UI in `apps/web/src/components/**` (product list, product form, image manager, modals, navbar, etc.).
 
 ## Environment Configuration
 
-Copy `apps/web/env.example` to `apps/web/.env` and fill in values:
+Copy `apps/web/env.example` to `apps/web/.env` and `apps/api/env.example` to `apps/api/.env`, then fill in values:
 
     cp apps/web/env.example apps/web/.env
+    cp apps/api/env.example apps/api/.env
 
 Key variables (see `apps/web/env.example` for the full list):
 
-- `DATABASE_URL` – Postgres connection string used at runtime by the app.
-- `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USER`, `DB_PASSWORD` – Postgres credentials for Drizzle migrations.
+- `API_BASE_URL` – backend API base URL consumed by web server components/actions.
 - `NEXT_PUBLIC_IMAGE_PATH` – Base URL from which product images are served (CDN or GCS URL).
-- `GOOGLE_CLOUD_PROJECT_ID` – GCP project ID.
-- `GOOGLE_CLOUD_STORAGE_BUCKET` – GCS bucket name for product images.
-- `GOOGLE_APPLICATION_CREDENTIALS` – Path to a service account JSON key file (local dev), or
-- `GOOGLE_CLOUD_CLIENT_EMAIL` / `GOOGLE_CLOUD_PRIVATE_KEY` – Service account credentials via env (prod-friendly).
 - `ADMIN_PASSWORD` – password required to log into `/admin`.
+- `DATABASE_URL` (API env) – Postgres connection string for API runtime/migrations.
+- `GOOGLE_CLOUD_*` (API env) – GCS configuration for image operations.
 
 ## Installing Dependencies
 
@@ -61,17 +60,20 @@ This project expects Bun version 1.3.4 or newer.
 Ensure Postgres is running and `.env` DB values are correct.
 
     # Generate migrations from the schema (optional during dev)
-    cd apps/web && bun run db:generate
+    cd apps/api && bun run db:generate
 
     # Apply migrations
-    cd apps/web && bun run db:migrate
+    cd apps/api && bun run db:migrate
 
     # Alternatively, push schema directly
-    cd apps/web && bun run db:push
+    cd apps/api && bun run db:push
 
 ## Running in Development
 
-    # Start the Next.js dev server
+    # Start the API service (terminal 1)
+    cd apps/api && bun run dev
+
+    # Start the Next.js dev server (terminal 2)
     cd apps/web && bun run dev
 
 The app will be available at http://localhost:3000.
@@ -105,20 +107,17 @@ The build uses a standalone Next.js output and the `cp` script in `apps/web/pack
 
 ## Testing
 
-    # Run all tests (unit + integration)
-    cd apps/web && bun run test
-
-    # Run unit tests only
+    # Run web unit tests
     cd apps/web && bun run test:unit
 
-    # Run unit tests with coverage output (text + lcov)
+    # Run web unit tests with coverage output (text + lcov)
     cd apps/web && bun run test:coverage
 
-    # Run integration tests only
-    cd apps/web && bun run test:integration
+    # Run API integration tests
+    cd apps/api && bun run test:integration
 
-    # Standard local integration flow (starts Docker Postgres, migrates, tests, tears down)
-    cd apps/web && bun run test:integration:local
+    # Standard local API integration flow (starts Docker Postgres, migrates, tests, tears down)
+    cd apps/api && bun run test:integration:local
 
     # Run end-to-end tests (Playwright)
     cd apps/web && bun run test:e2e
@@ -136,13 +135,11 @@ globals).
 
 Integration tests require PostgreSQL. Standard local method is Docker:
 
-- `cd apps/web && bun run test:integration:local` uses `apps/web/docker-compose.test.yml`, waits for DB
-  readiness, exports test DB env vars, runs `cd apps/web && bun run db:migrate`, runs
-  integration tests, then tears down the test DB.
+- `cd apps/api && bun run test:integration:local` uses `apps/api/docker-compose.test.yml`, waits for DB
+  readiness, exports test DB env vars, runs `cd apps/api && bun run db:migrate`, runs
+  API integration tests, then tears down the test DB.
 - To keep the DB running after tests for debugging:
-  `cd apps/web && KEEP_TEST_DB_RUNNING=1 bun run test:integration:local`.
-- Manual DB lifecycle commands are available:
-  `cd apps/web && bun run test:integration:db:up` and `cd apps/web && bun run test:integration:db:down`.
+  `cd apps/api && KEEP_TEST_DB_RUNNING=1 bun run test:integration:local`.
 
 E2E tests use Playwright (`apps/web/playwright.config.ts`) and by default start a local
 Next dev server on `http://127.0.0.1:3100`. To point at an already-running
@@ -150,6 +147,6 @@ environment, set `PLAYWRIGHT_BASE_URL` before running `cd apps/web && bun run te
 
 ## Deployment Notes
 
-- Ensure all required env vars (DB, GCS, `ADMIN_PASSWORD`) are set in the target environment.
+- Ensure all required env vars (`apps/web` + `apps/api`) are set in the target environment.
 - Deploy using the standalone output (`cd apps/web && bun run build` then `cd apps/web && bun run start`, or the provided `apps/web/Dockerfile`).
 - Prefer service account credentials via environment variables for production.

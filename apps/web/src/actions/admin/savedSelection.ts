@@ -8,11 +8,9 @@ import {
     updateSavedSelection,
 } from "@/db/queries/savedSelectionQueries";
 import logger from "@/lib/logger";
-import { requireAdminAuth } from "./auth";
 import { checkRateLimit } from "./rateLimit";
 
 export async function getAdminSavedSelections() {
-    await requireAdminAuth();
     await checkRateLimit("getAdminSavedSelections", 100, 15 * 60 * 1000);
 
     try {
@@ -24,7 +22,6 @@ export async function getAdminSavedSelections() {
 }
 
 export async function getAdminSavedSelectionProductIds(selectionId: string) {
-    await requireAdminAuth();
     await checkRateLimit(
         "getAdminSavedSelectionProductIds",
         100,
@@ -43,7 +40,6 @@ export async function createAdminSavedSelection(
     name: string,
     productIds: string[]
 ) {
-    await requireAdminAuth();
     await checkRateLimit("createAdminSavedSelection", 30, 15 * 60 * 1000);
 
     try {
@@ -70,7 +66,6 @@ export async function updateAdminSavedSelection(
     name: string,
     productIds: string[]
 ) {
-    await requireAdminAuth();
     await checkRateLimit("updateAdminSavedSelection", 30, 15 * 60 * 1000);
 
     try {
@@ -93,7 +88,6 @@ export async function updateAdminSavedSelection(
 }
 
 export async function deleteAdminSavedSelection(selectionId: string) {
-    await requireAdminAuth();
     await checkRateLimit("deleteAdminSavedSelection", 30, 15 * 60 * 1000);
 
     try {

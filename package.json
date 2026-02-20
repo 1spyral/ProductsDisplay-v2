@@ -6,7 +6,12 @@
     "apps/*"
   ],
   "scripts": {
-    "format": "bun run format",
-    "format:check": "bun run format:check"
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.8.1",
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "prettier-plugin-tailwindcss": "^0.7.1"
   }
 }

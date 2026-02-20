@@ -28,7 +28,9 @@ type ProductsTableProps = {
   };
 };
 
-const DEFAULT_VISIBLE_COLUMNS: ProductsTableProps["visibleColumns"] = {};
+const DEFAULT_VISIBLE_COLUMNS: NonNullable<
+  ProductsTableProps["visibleColumns"]
+> = {};
 
 function getProductThumbnailUrl(product: Product): string | null {
   if (!product.images || product.images.length === 0) {

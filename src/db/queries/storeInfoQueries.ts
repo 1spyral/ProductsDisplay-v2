@@ -6,7 +6,14 @@ import StoreInfo from "@/types/StoreInfo";
 import { eq } from "drizzle-orm";
 import { cache } from "react";
 
-export const getStoreInfo = cache(async (): Promise<StoreInfo> => {
+type CompleteStoreInfo = StoreInfo & {
+    name: string;
+    headline: string;
+    description: string;
+    copyright: string;
+};
+
+export const getStoreInfo = cache(async (): Promise<CompleteStoreInfo> => {
     const row = await db
         .select({
             id: storeInfo.id,
@@ -21,28 +28,21 @@ export const getStoreInfo = cache(async (): Promise<StoreInfo> => {
         .limit(1)
         .then((rows) => rows[0] || null);
 
-    if (row) return row;
+    if (!row) {
+        throw new Error("Store info not found (expected row id=1 in store_info).");
+    }
 
-    const seeded: StoreInfo = {
-        id: 1,
-        name: "Store",
-        headline: null,
-        description: null,
-        copyright: "© 2026 Store",
-        backgroundImageUrl: null,
+    if (!row.name || !row.headline || !row.description || !row.copyright) {
+        throw new Error(
+            "Store info is incomplete (name, headline, description, and copyright are required)."
+        );
+    }
+
+    return {
+        ...row,
+        name: row.name,
+        headline: row.headline,
+        description: row.description,
+        copyright: row.copyright,
     };
-
-    await db
-        .insert(storeInfo)
-        .values({
-            id: seeded.id,
-            name: seeded.name,
-            headline: seeded.headline,
-            description: seeded.description,
-            copyright: seeded.copyright,
-            backgroundImageUrl: seeded.backgroundImageUrl,
-        })
-        .onConflictDoNothing();
-
-    return seeded;
 });

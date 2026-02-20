@@ -5,8 +5,8 @@ import {
     getSavedSelections,
     updateSavedSelection,
 } from "@/db/queries/savedSelectionQueries";
-import { createRateLimitPreHandler } from "@/lib/rateLimit";
 import { requireAdmin } from "@/routes/admin/auth";
+import { adminRateLimitConfig } from "@/routes/shared/rateLimit";
 import type { FastifyInstance } from "fastify";
 
 export async function adminSavedSelectionRoutes(
@@ -15,14 +15,8 @@ export async function adminSavedSelectionRoutes(
     app.get(
         "/saved-selections",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "getAdminSavedSelections",
-                    maxRequests: 100,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("getAdminSavedSelections", 100),
         },
         async () => {
             return getSavedSelections();
@@ -32,14 +26,11 @@ export async function adminSavedSelectionRoutes(
     app.get(
         "/saved-selections/:id/product-ids",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "getAdminSavedSelectionProductIds",
-                    maxRequests: 100,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig(
+                "getAdminSavedSelectionProductIds",
+                100
+            ),
         },
         async (request) => {
             const params = request.params as { id: string };
@@ -52,14 +43,8 @@ export async function adminSavedSelectionRoutes(
     app.post(
         "/saved-selections",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "createAdminSavedSelection",
-                    maxRequests: 30,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("createAdminSavedSelection", 30),
         },
         async (request, reply) => {
             const body = request.body as {
@@ -80,14 +65,8 @@ export async function adminSavedSelectionRoutes(
     app.patch(
         "/saved-selections/:id",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "updateAdminSavedSelection",
-                    maxRequests: 30,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("updateAdminSavedSelection", 30),
         },
         async (request, reply) => {
             const params = request.params as { id: string };
@@ -109,14 +88,8 @@ export async function adminSavedSelectionRoutes(
     app.delete(
         "/saved-selections/:id",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "deleteAdminSavedSelection",
-                    maxRequests: 30,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("deleteAdminSavedSelection", 30),
         },
         async (request) => {
             const params = request.params as { id: string };

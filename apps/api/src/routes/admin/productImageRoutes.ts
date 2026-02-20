@@ -3,9 +3,9 @@ import {
     getProductImages,
     getProductImagesByIds,
 } from "@/db/queries/productImageQueries";
-import { createRateLimitPreHandler } from "@/lib/rateLimit";
 import { requireAdmin } from "@/routes/admin/auth";
 import { parseCsvIds } from "@/routes/shared/queryParsers";
+import { adminRateLimitConfig } from "@/routes/shared/rateLimit";
 import type { FastifyInstance } from "fastify";
 
 export async function adminProductImageRoutes(
@@ -14,14 +14,8 @@ export async function adminProductImageRoutes(
     app.post(
         "/product-images/upload",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "uploadAdminProductImage",
-                    maxRequests: 20,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("uploadAdminProductImage", 20),
         },
         async (request, reply) => {
             const parts = request.parts();
@@ -103,14 +97,8 @@ export async function adminProductImageRoutes(
     app.delete(
         "/product-images/:imageId",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "deleteAdminProductImage",
-                    maxRequests: 50,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("deleteAdminProductImage", 50),
         },
         async (request, reply) => {
             const params = request.params as { imageId: string };
@@ -128,14 +116,8 @@ export async function adminProductImageRoutes(
     app.patch(
         "/product-images/:imageId/position",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "updateAdminImagePosition",
-                    maxRequests: 100,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("updateAdminImagePosition", 100),
         },
         async (request, reply) => {
             const params = request.params as { imageId: string };
@@ -160,14 +142,8 @@ export async function adminProductImageRoutes(
     app.post(
         "/product-images/reorder",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "reorderAdminProductImages",
-                    maxRequests: 50,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("reorderAdminProductImages", 50),
         },
         async (request, reply) => {
             const body = request.body as {

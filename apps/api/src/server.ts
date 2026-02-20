@@ -4,6 +4,7 @@ import { healthRoutes } from "@/routes/healthRoutes";
 import { publicRoutes } from "@/routes/public";
 import cookie from "@fastify/cookie";
 import multipart from "@fastify/multipart";
+import rateLimit from "@fastify/rate-limit";
 import Fastify, { type FastifyServerOptions } from "fastify";
 
 const loggerConfig: FastifyServerOptions["logger"] =
@@ -28,6 +29,7 @@ const app = Fastify({
 
 await app.register(cookie);
 await app.register(multipart);
+await app.register(rateLimit, { global: false });
 
 await app.register(healthRoutes);
 await app.register(publicRoutes);

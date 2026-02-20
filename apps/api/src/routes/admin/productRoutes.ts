@@ -6,23 +6,17 @@ import {
     getProductsByIds,
     updateProduct,
 } from "@/db/queries/productQueries";
-import { createRateLimitPreHandler } from "@/lib/rateLimit";
 import { requireAdmin } from "@/routes/admin/auth";
 import { parseCsvIds } from "@/routes/shared/queryParsers";
+import { adminRateLimitConfig } from "@/routes/shared/rateLimit";
 import type { FastifyInstance } from "fastify";
 
 export async function adminProductRoutes(app: FastifyInstance): Promise<void> {
     app.get(
         "/products",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "getAdminProducts",
-                    maxRequests: 100,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("getAdminProducts", 100),
         },
         async (request) => {
             const query = request.query as { ids?: string };
@@ -46,14 +40,8 @@ export async function adminProductRoutes(app: FastifyInstance): Promise<void> {
     app.post(
         "/products",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "createAdminProduct",
-                    maxRequests: 30,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("createAdminProduct", 30),
         },
         async (request, reply) => {
             const body = request.body as {
@@ -91,14 +79,8 @@ export async function adminProductRoutes(app: FastifyInstance): Promise<void> {
     app.patch(
         "/products/:id",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "updateAdminProduct",
-                    maxRequests: 50,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("updateAdminProduct", 50),
         },
         async (request) => {
             const params = request.params as { id: string };
@@ -121,14 +103,8 @@ export async function adminProductRoutes(app: FastifyInstance): Promise<void> {
     app.delete(
         "/products/:id",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "deleteAdminProduct",
-                    maxRequests: 20,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("deleteAdminProduct", 20),
         },
         async (request) => {
             const params = request.params as { id: string };
@@ -140,14 +116,8 @@ export async function adminProductRoutes(app: FastifyInstance): Promise<void> {
     app.patch(
         "/products/:id/toggle-clearance",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "toggleAdminProductClearance",
-                    maxRequests: 100,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("toggleAdminProductClearance", 100),
         },
         async (request) => {
             const params = request.params as { id: string };
@@ -160,14 +130,8 @@ export async function adminProductRoutes(app: FastifyInstance): Promise<void> {
     app.patch(
         "/products/:id/toggle-hidden",
         {
-            preHandler: [
-                requireAdmin,
-                createRateLimitPreHandler({
-                    action: "toggleAdminProductHidden",
-                    maxRequests: 100,
-                    windowMs: 15 * 60 * 1000,
-                }),
-            ],
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("toggleAdminProductHidden", 100),
         },
         async (request) => {
             const params = request.params as { id: string };

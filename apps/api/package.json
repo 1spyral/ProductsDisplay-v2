@@ -24,6 +24,7 @@
     "dependencies": {
         "@fastify/cookie": "^11.0.2",
         "@fastify/multipart": "^9.3.0",
+        "@fastify/rate-limit": "^10.3.0",
         "@google-cloud/storage": "^7.19.0",
         "@productsdisplay/contracts": "workspace:*",
         "drizzle-orm": "^0.45.1",

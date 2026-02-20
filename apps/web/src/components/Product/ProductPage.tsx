@@ -4,7 +4,7 @@ import { getCategoryByCategory } from "@/db/queries/categoryQueries";
 import { getProductById } from "@/db/queries/productQueries";
 import { getCategoryName } from "@/types/Category";
 import Product from "@/types/Product";
-import getPhotos from "@/utils/photo";
+import getPhotos, { buildImageUrl } from "@/utils/photo";
 
 export default async function ProductPage({ id }: { id: string }) {
   const product: Product | null = await getProductById(id);

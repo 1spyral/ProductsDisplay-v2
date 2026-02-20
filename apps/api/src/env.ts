@@ -19,6 +19,7 @@ const envSchema = z.object({
     CI: optionalString,
     DATABASE_URL: optionalString,
     ADMIN_TOKEN_SECRET: optionalString,
+    CORS_ALLOWED_ORIGINS: optionalString,
     GOOGLE_CLOUD_PROJECT_ID: optionalString,
     GOOGLE_CLOUD_STORAGE_BUCKET: optionalString,
     GOOGLE_APPLICATION_CREDENTIALS: optionalString,

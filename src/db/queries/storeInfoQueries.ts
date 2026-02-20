@@ -13,7 +13,7 @@ type CompleteStoreInfo = StoreInfo & {
     copyright: string;
 };
 
-export const getStoreInfo = cache(async (): Promise<CompleteStoreInfo> => {
+export async function getStoreInfoUncached(): Promise<CompleteStoreInfo> {
     const row = await db
         .select({
             id: storeInfo.id,
@@ -47,4 +47,6 @@ export const getStoreInfo = cache(async (): Promise<CompleteStoreInfo> => {
         description: row.description,
         copyright: row.copyright,
     };
-});
+}
+
+export const getStoreInfo = cache(getStoreInfoUncached);

@@ -1,5 +1,5 @@
 import { db } from "@/db/drizzle";
-import { getStoreInfo } from "@/db/queries/storeInfoQueries";
+import { getStoreInfoUncached } from "@/db/queries/storeInfoQueries";
 import { storeInfo } from "@/db/schema";
 import { describe, expect, test } from "bun:test";
 import { resetTestDatabase } from "./helpers";
@@ -8,7 +8,7 @@ describe("storeInfoQueries (integration)", () => {
     test("getStoreInfo throws when store_info is empty", async () => {
         await resetTestDatabase();
 
-        await expect(getStoreInfo()).rejects.toThrow(
+        await expect(getStoreInfoUncached()).rejects.toThrow(
             "Store info not found (expected row id=1 in store_info)."
         );
 
@@ -28,7 +28,7 @@ describe("storeInfoQueries (integration)", () => {
             backgroundImageUrl: null,
         });
 
-        await expect(getStoreInfo()).rejects.toThrow(
+        await expect(getStoreInfoUncached()).rejects.toThrow(
             "Store info is incomplete (name, headline, description, and copyright are required)."
         );
     });

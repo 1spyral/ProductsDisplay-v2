@@ -48,37 +48,6 @@ mock.module("@/actions/admin", () => ({
   getAdminSavedSelectionProductIds,
 }));
 
-mock.module("@/components/ProductsTable", () => ({
-  default: ({
-    products,
-    onDelete,
-    onToggleClearance,
-  }: {
-    products: Product[];
-    onDelete: (product: Product) => void;
-    onToggleClearance: (productId: string, current: boolean) => void;
-  }) => (
-    <div>
-      <div data-testid="products-table-count">{products.length}</div>
-      {products[0] && (
-        <>
-          <button type="button" onClick={() => onDelete(products[0])}>
-            Trigger Delete
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              onToggleClearance(products[0].id, !!products[0].clearance)
-            }
-          >
-            Toggle Clearance
-          </button>
-        </>
-      )}
-    </div>
-  ),
-}));
-
 mock.module("@/components/CategoriesTable", () => ({
   default: ({
     categories,
@@ -302,22 +271,25 @@ describe("Admin page flows", () => {
     deleteAdminProduct.mockResolvedValue(undefined);
     toggleAdminProductClearance.mockRejectedValueOnce(new Error("boom"));
 
-    const { findByRole, findByText, getByText, getByTestId } = render(
-      <ProductsPage />
-    );
+    const { findByRole, findByText, getAllByRole, getByText, getByTestId } =
+      render(<ProductsPage />);
 
     await findByText("2 products found");
 
     fireEvent.click(getByText("Add Product"));
     expect(getByTestId("add-product-modal")).toBeTruthy();
 
-    fireEvent.click(getByText("Trigger Delete"));
+    const deleteButtons = getAllByRole("button", { name: "Delete" });
+    fireEvent.click(deleteButtons[0]);
     fireEvent.click(await findByRole("button", { name: "Delete Product" }));
     await waitFor(() => {
       expect(deleteAdminProduct).toHaveBeenCalledWith("sku-1");
     });
 
-    fireEvent.click(getByText("Toggle Clearance"));
+    const clearanceButtons = getAllByRole("button", {
+      name: "Clearance: Off",
+    });
+    fireEvent.click(clearanceButtons[0]);
     await waitFor(() => {
       expect(toggleAdminProductClearance).toHaveBeenCalledWith("sku-1", true);
       expect(window.alert).toHaveBeenCalled();

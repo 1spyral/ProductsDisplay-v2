@@ -2,8 +2,6 @@ name: API Docker Build
 
 on:
   push:
-    branches:
-      - main
     paths:
       - "apps/api/**"
       - "bun.lock"
@@ -48,7 +46,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to GHCR
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -61,7 +59,7 @@ jobs:
           context: .
           file: apps/api/Dockerfile
           platforms: linux/amd64
-          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha

@@ -1,0 +1,188 @@
+"use client";
+
+import Photo from "@/types/Photo";
+import Image from "next/image";
+import React, { useEffect, useRef, useState } from "react";
+
+export default function ZoomImageWheel({
+  photos,
+  index,
+  setIndex,
+}: {
+  photos: Photo[];
+  index: number;
+  setIndex?: (index: number) => void;
+}) {
+  const [zoom, setZoom] = useState(false);
+  const [position, setPosition] = useState({ x: "50%", y: "50%" });
+  const [isTouchDevice] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      ("ontouchstart" in window || navigator.maxTouchPoints > 0)
+  );
+  const [showFullscreen, setShowFullscreen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number>(0);
+  const touchStartY = useRef<number>(0);
+  const fullscreenRef = useRef<HTMLDivElement>(null);
+
+  // Prevent body scroll when fullscreen is open
+  useEffect(() => {
+    if (showFullscreen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showFullscreen]);
+
+  // Desktop: hover to zoom, mouse move to pan
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isTouchDevice) return;
+    const { left, top, width, height } =
+      e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setPosition({ x: `${x}%`, y: `${y}%` });
+  };
+
+  // Mobile: tap to open fullscreen
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!isTouchDevice) return;
+    e.preventDefault();
+    setShowFullscreen(true);
+  };
+
+  const handleCloseFullscreen = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowFullscreen(false);
+  };
+
+  // Swipe handlers for fullscreen
+  const handleFullscreenTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleFullscreenTouchEnd = (e: React.TouchEvent) => {
+    if (!setIndex) return;
+
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaX = touchEndX - touchStartX.current;
+    const deltaY = touchEndY - touchStartY.current;
+
+    // Only trigger swipe if horizontal movement is greater than vertical
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+      if (deltaX > 0) {
+        // Swipe right - go to previous
+        setIndex(index > 0 ? index - 1 : photos.length - 1);
+      } else {
+        // Swipe left - go to next
+        setIndex(index < photos.length - 1 ? index + 1 : 0);
+      }
+    }
+  };
+
+  return (
+    <>
+      <div
+        ref={containerRef}
+        className="relative h-full w-full cursor-zoom-in overflow-hidden"
+        onMouseEnter={() => !isTouchDevice && setZoom(true)}
+        onMouseLeave={() => !isTouchDevice && setZoom(false)}
+        onMouseMove={handleMouseMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Zoom indicator for mobile */}
+        {isTouchDevice && (
+          <div className="pointer-events-none absolute top-4 left-1/2 z-10 -translate-x-1/2 transform rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white">
+            Tap to view full screen
+          </div>
+        )}
+
+        {photos.map((photo, i) => (
+          <Image
+            key={photo.alt}
+            className={`${!isTouchDevice && zoom ? "scale-200" : "scale-100"} absolute top-0 left-0 h-full w-full object-contain transition-opacity duration-500 ease-in-out ${i === index ? "opacity-100" : "opacity-0"} `}
+            style={
+              !isTouchDevice
+                ? { transformOrigin: `${position.x} ${position.y}` }
+                : undefined
+            }
+            src={photo.path}
+            alt={photo.alt}
+            fill={true}
+            sizes="100vw"
+            quality={100}
+            unoptimized
+          />
+        ))}
+      </div>
+
+      {/* Fullscreen overlay for mobile */}
+      {showFullscreen && isTouchDevice && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+          {/* Close button */}
+          <button
+            onClick={handleCloseFullscreen}
+            className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-black shadow-lg transition-all hover:bg-white active:scale-95"
+            aria-label="Close fullscreen"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+
+          {/* Image counter indicator */}
+          {photos.length > 1 && (
+            <div className="pointer-events-none absolute top-4 left-1/2 z-10 -translate-x-1/2 transform rounded-full bg-white/90 px-3 py-1 text-sm font-medium text-black">
+              {index + 1} / {photos.length}
+            </div>
+          )}
+
+          {/* Fullscreen image with swipe */}
+          <div
+            ref={fullscreenRef}
+            className="relative h-full w-full p-4"
+            onTouchStart={handleFullscreenTouchStart}
+            onTouchEnd={handleFullscreenTouchEnd}
+          >
+            {photos.map((photo, i) => (
+              <Image
+                key={photo.alt}
+                className={`absolute top-0 left-0 h-full w-full object-contain transition-opacity duration-300 ${i === index ? "opacity-100" : "opacity-0"}`}
+                src={photo.path}
+                alt={photo.alt}
+                fill={true}
+                sizes="100vw"
+                quality={100}
+                unoptimized
+              />
+            ))}
+          </div>
+
+          {/* Swipe hint indicator - only show if multiple photos */}
+          {photos.length > 1 && (
+            <div className="pointer-events-none absolute bottom-4 left-1/2 z-10 -translate-x-1/2 transform rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white">
+              Swipe to navigate
+            </div>
+          )}
+        </div>
+      )}
+    </>
+  );
+}

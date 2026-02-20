@@ -1,0 +1,7 @@
+.item {
+    order: var(--product-order-default);
+}
+
+:global([data-product-sort="price"]) .item {
+    order: var(--product-order-price);
+}

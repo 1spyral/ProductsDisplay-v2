@@ -1,0 +1,56 @@
+name: API Docker Build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/api/**"
+      - "bun.lock"
+      - "package.json"
+      - ".github/workflows/api-docker.yml"
+  pull_request:
+    paths:
+      - "apps/api/**"
+      - "bun.lock"
+      - "package.json"
+      - ".github/workflows/api-docker.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api-docker-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-api-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute image tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: productsdisplay-api
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            type=sha,prefix=sha-
+            type=ref,event=branch,prefix=ref-
+            type=ref,event=pr,prefix=pr-
+
+      - name: Build API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          platforms: linux/amd64
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

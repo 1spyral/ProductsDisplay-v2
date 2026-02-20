@@ -8,29 +8,83 @@ import type { SavedSelectionOverview } from "@/db/queries/savedSelectionQueries"
 import { buildImageUrl } from "@/utils/photo";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
+
+type State = {
+  selections: SavedSelectionOverview[];
+  isLoading: boolean;
+  errorMessage: string | null;
+  expandedId: string | null;
+  deletingId: string | null;
+};
+
+type Action =
+  | { type: "load:start" }
+  | { type: "load:success"; selections: SavedSelectionOverview[] }
+  | { type: "load:error"; message: string }
+  | { type: "expanded:toggle"; selectionId: string }
+  | { type: "delete:start"; selectionId: string }
+  | { type: "delete:success"; selectionId: string }
+  | { type: "delete:error"; message: string };
+
+const initialState: State = {
+  selections: [],
+  isLoading: true,
+  errorMessage: null,
+  expandedId: null,
+  deletingId: null,
+};
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "load:start":
+      return { ...state, isLoading: true, errorMessage: null };
+    case "load:success":
+      return { ...state, isLoading: false, selections: action.selections };
+    case "load:error":
+      return { ...state, isLoading: false, errorMessage: action.message };
+    case "expanded:toggle":
+      return {
+        ...state,
+        expandedId:
+          state.expandedId === action.selectionId ? null : action.selectionId,
+      };
+    case "delete:start":
+      return { ...state, deletingId: action.selectionId };
+    case "delete:success":
+      return {
+        ...state,
+        deletingId: null,
+        selections: state.selections.filter(
+          (selection) => selection.id !== action.selectionId
+        ),
+        expandedId:
+          state.expandedId === action.selectionId ? null : state.expandedId,
+      };
+    case "delete:error":
+      return { ...state, deletingId: null, errorMessage: action.message };
+    default:
+      return state;
+  }
+}
 
 export default function SavedSelectionsPage() {
-  const [selections, setSelections] = useState<SavedSelectionOverview[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [{ selections, isLoading, errorMessage, expandedId, deletingId }, dispatch] =
+    useReducer(reducer, initialState);
 
   const loadSelections = async () => {
-    setIsLoading(true);
-    setErrorMessage(null);
+    dispatch({ type: "load:start" });
     try {
       const data = await getAdminSavedSelections();
-      setSelections(data);
+      dispatch({ type: "load:success", selections: data });
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Failed to load saved selections"
-      );
-    } finally {
-      setIsLoading(false);
+      dispatch({
+        type: "load:error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to load saved selections",
+      });
     }
   };
 
@@ -39,23 +93,18 @@ export default function SavedSelectionsPage() {
   }, []);
 
   const handleDelete = async (selectionId: string) => {
-    setDeletingId(selectionId);
+    dispatch({ type: "delete:start", selectionId });
     try {
       await deleteAdminSavedSelection(selectionId);
-      setSelections((current) =>
-        current.filter((selection) => selection.id !== selectionId)
-      );
-      if (expandedId === selectionId) {
-        setExpandedId(null);
-      }
+      dispatch({ type: "delete:success", selectionId });
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Failed to delete saved selection"
-      );
-    } finally {
-      setDeletingId(null);
+      dispatch({
+        type: "delete:error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Failed to delete saved selection",
+      });
     }
   };
 
@@ -96,7 +145,10 @@ export default function SavedSelectionsPage() {
                   <button
                     type="button"
                     onClick={() =>
-                      setExpandedId(isExpanded ? null : selection.id)
+                      dispatch({
+                        type: "expanded:toggle",
+                        selectionId: selection.id,
+                      })
                     }
                     className="flex min-w-0 flex-1 items-center gap-3 text-left"
                   >

@@ -43,6 +43,9 @@ jobs:
             type=ref,event=branch,prefix=ref-
             type=ref,event=pr,prefix=pr-
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build API image
         uses: docker/build-push-action@v6
         with:

@@ -84,6 +84,21 @@ export async function searchProducts(query: string): Promise<Product[]> {
     );
 }
 
+export async function getAdminProducts(ids?: string[]): Promise<Product[]> {
+    if (ids && ids.length > 0) {
+        return apiJsonRequest<Product[]>(
+            `/admin/products?ids=${encodeIds(ids)}`,
+            {
+                forwardCookies: true,
+            }
+        );
+    }
+
+    return apiJsonRequest<Product[]>("/admin/products", {
+        forwardCookies: true,
+    });
+}
+
 export async function updateProduct(
     id: string,
     data: {

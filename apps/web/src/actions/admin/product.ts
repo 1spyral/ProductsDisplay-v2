@@ -5,7 +5,7 @@ import {
     checkProductIdExists,
     createProduct,
     deleteProduct,
-    getProducts,
+    getAdminProducts as getAdminProductsQuery,
     updateProduct,
 } from "@/db/queries/productQueries";
 import {
@@ -21,7 +21,7 @@ export async function getAdminProducts() {
     await checkRateLimit("getAdminProducts", 100, 15 * 60 * 1000);
 
     try {
-        return await getProducts(true);
+        return await getAdminProductsQuery();
     } catch (error) {
         logger.error({ error }, "Failed to fetch products");
         throw new Error("Failed to fetch products");

@@ -7,66 +7,47 @@ import {
     hasClearanceProducts,
     searchProducts,
 } from "@/db/queries/productQueries";
-import { isAdminAuthenticated } from "@/routes/admin/auth";
 import { parseBoolean, parseCsvIds } from "@/routes/shared/queryParsers";
 import type { FastifyInstance } from "fastify";
 
 export async function publicProductRoutes(app: FastifyInstance): Promise<void> {
-    app.get("/products", async (request, reply) => {
+    app.get("/products", async (request) => {
         const query = request.query as {
-            includeHidden?: string;
             category?: string;
             clearance?: string;
             q?: string;
             ids?: string;
         };
 
-        const includeHidden = parseBoolean(query.includeHidden);
-        if (includeHidden && !(await isAdminAuthenticated(request))) {
-            return reply.code(401).send({ error: "Unauthorized" });
-        }
-
         if (query.q) {
             return searchProducts(query.q);
         }
 
         if (query.ids) {
-            return getProductsByIds(parseCsvIds(query.ids), includeHidden);
+            return getProductsByIds(parseCsvIds(query.ids), false);
         }
 
         if (query.category) {
-            return getProductsByCategory(query.category, includeHidden);
+            return getProductsByCategory(query.category, false);
         }
 
         if (parseBoolean(query.clearance)) {
-            return getClearanceProducts(includeHidden);
+            return getClearanceProducts(false);
         }
 
-        return getProducts(includeHidden);
+        return getProducts(false);
     });
 
-    app.get("/products/has-clearance", async (request, reply) => {
-        const query = request.query as { includeHidden?: string };
-        const includeHidden = parseBoolean(query.includeHidden);
-        if (includeHidden && !(await isAdminAuthenticated(request))) {
-            return reply.code(401).send({ error: "Unauthorized" });
-        }
-
-        return { hasClearance: await hasClearanceProducts(includeHidden) };
+    app.get("/products/has-clearance", async () => {
+        return { hasClearance: await hasClearanceProducts(false) };
     });
 
-    app.get("/products/:id", async (request, reply) => {
+    app.get("/products/:id", async (request) => {
         const params = request.params as { id: string };
-        const query = request.query as { includeHidden?: string };
-        const includeHidden = parseBoolean(query.includeHidden);
-
-        if (includeHidden && !(await isAdminAuthenticated(request))) {
-            return reply.code(401).send({ error: "Unauthorized" });
-        }
 
         const product = await getProductById(params.id);
         if (!product) return null;
-        if (!includeHidden && product.hidden) return null;
+        if (product.hidden) return null;
         return product;
     });
 }

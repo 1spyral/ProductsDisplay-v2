@@ -28,6 +28,9 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
 
     steps:
       - name: Checkout
@@ -46,6 +49,9 @@ jobs:
 
   unit-tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
 
     steps:
       - name: Checkout
@@ -64,6 +70,9 @@ jobs:
 
   integration-tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
 
     services:
       postgres:
@@ -114,6 +123,9 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
 
     services:
       postgres:

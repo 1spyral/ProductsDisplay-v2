@@ -9,8 +9,6 @@
     "start": "bun .next/standalone/server.js",
     "test": "bun run test:unit",
     "test:unit": "bun test tests/unit --max-concurrency 4",
-    "test:integration": "echo \"Integration tests moved to apps/api\"",
-    "test:integration:local": "echo \"Integration tests moved to apps/api\"",
     "test:e2e": "playwright test",
     "test:e2e:local": "bash ./scripts/test-e2e-local.sh",
     "test:e2e:headed:local": "bash ./scripts/test-e2e-local.sh --headed",

@@ -52,6 +52,7 @@
 ## Commit & Pull Request Guidelines
 
 - Follow existing commit style: short imperative summaries (for example `Add category filter in PDF editor`).
+- AI agents should create commits for their own completed changes unless the user explicitly asks not to commit.
 - Before committing, run formatting, linting, and relevant tests for your changes (`bun run format`, `bun run lint`, and applicable `bun run test:*` commands).
 - Commits must include a descriptive title and a body that explains what changed and why.
 - Use scoped prefixes when appropriate (for example `[Migration] Add backgroundImageUrl to storeInfo`).

@@ -140,28 +140,6 @@ mock.module("@/components/EditCategoryModal", () => ({
     ) : null,
 }));
 
-mock.module("@/components/ConfirmDeleteModal", () => ({
-  default: ({
-    isOpen,
-    onConfirm,
-    onCancel,
-  }: {
-    isOpen: boolean;
-    onConfirm: () => Promise<void>;
-    onCancel: () => void;
-  }) =>
-    isOpen ? (
-      <div data-testid="confirm-delete-modal">
-        <button type="button" onClick={() => void onConfirm()}>
-          Confirm Delete
-        </button>
-        <button type="button" onClick={onCancel}>
-          Cancel Delete
-        </button>
-      </div>
-    ) : null,
-}));
-
 mock.module("next/image", () => ({
   default: ({ alt = "" }: Record<string, unknown>) => (
     <span role="img" aria-label={String(alt)} />
@@ -320,7 +298,7 @@ describe("Admin page flows", () => {
     deleteAdminProduct.mockResolvedValue(undefined);
     toggleAdminProductClearance.mockRejectedValueOnce(new Error("boom"));
 
-    const { getByText, getByTestId } = render(<ProductsPage />);
+    const { getByRole, getByText, getByTestId } = render(<ProductsPage />);
 
     await waitFor(() => {
       expect(getByText("2 products found")).toBeDefined();
@@ -330,7 +308,7 @@ describe("Admin page flows", () => {
     expect(getByTestId("add-product-modal")).toBeDefined();
 
     fireEvent.click(getByText("Trigger Delete"));
-    fireEvent.click(getByText("Confirm Delete"));
+    fireEvent.click(getByRole("button", { name: "Delete Product" }));
     await waitFor(() => {
       expect(deleteAdminProduct).toHaveBeenCalledWith("sku-1");
     });
@@ -350,7 +328,7 @@ describe("Admin page flows", () => {
     reorderAdminCategories.mockResolvedValue(undefined);
     deleteAdminCategory.mockResolvedValue(undefined);
 
-    const { getByText, getByTestId } = render(<CategoriesPage />);
+    const { getByRole, getByText, getByTestId } = render(<CategoriesPage />);
 
     await waitFor(() => {
       expect(getByText("2 categories found")).toBeDefined();
@@ -362,7 +340,7 @@ describe("Admin page flows", () => {
     });
 
     fireEvent.click(getByText("Trigger Category Delete"));
-    fireEvent.click(getByText("Confirm Delete"));
+    fireEvent.click(getByRole("button", { name: "Delete Category" }));
     await waitFor(() => {
       expect(deleteAdminCategory).toHaveBeenCalledWith("tables");
     });

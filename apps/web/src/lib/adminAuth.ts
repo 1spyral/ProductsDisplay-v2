@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import {
     createAdminAccessToken,
     getAdminCookieNames,
@@ -49,7 +50,7 @@ export function setAdminAccessCookie(response: NextResponse, token: string) {
     const { access } = getAdminCookieNames();
     response.cookies.set(access, token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: env.NODE_ENV === "production",
         sameSite: "strict",
         maxAge: accessSeconds,
         path: "/",

@@ -1,9 +1,14 @@
+import { env } from "@/env";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as relations from "./relations";
 import * as schema from "./schema";
 
-const connectionString = process.env.DATABASE_URL as string;
+const connectionString = env.DATABASE_URL;
+
+if (!connectionString) {
+    throw new Error("Missing DATABASE_URL");
+}
 
 declare global {
     var postgresClient: ReturnType<typeof postgres> | undefined;
@@ -11,7 +16,7 @@ declare global {
 
 let client: ReturnType<typeof postgres>;
 
-if (process.env.NODE_ENV === "production") {
+if (env.NODE_ENV === "production") {
     client = postgres(connectionString, {
         prepare: false,
         max: 5,

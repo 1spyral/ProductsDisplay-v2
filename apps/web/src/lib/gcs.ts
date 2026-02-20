@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import logger from "@/lib/logger";
 import { GetFilesOptions, Storage } from "@google-cloud/storage";
 
@@ -5,31 +6,25 @@ import { GetFilesOptions, Storage } from "@google-cloud/storage";
 let storage: Storage;
 
 try {
-    if (
-        process.env.GOOGLE_CLOUD_PROJECT_ID &&
-        process.env.GOOGLE_CLOUD_PRIVATE_KEY
-    ) {
+    if (env.GOOGLE_CLOUD_PROJECT_ID && env.GOOGLE_CLOUD_PRIVATE_KEY) {
         // Production: Use service account key from environment variables
         storage = new Storage({
-            projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
+            projectId: env.GOOGLE_CLOUD_PROJECT_ID,
             credentials: {
-                client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
-                private_key: process.env.GOOGLE_CLOUD_PRIVATE_KEY.replace(
-                    /\\n/g,
-                    "\n"
-                ),
+                client_email: env.GOOGLE_CLOUD_CLIENT_EMAIL,
+                private_key: env.GOOGLE_CLOUD_PRIVATE_KEY.replace(/\\n/g, "\n"),
             },
         });
-    } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    } else if (env.GOOGLE_APPLICATION_CREDENTIALS) {
         // Development: Use service account key file
         storage = new Storage({
-            projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
-            keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+            projectId: env.GOOGLE_CLOUD_PROJECT_ID,
+            keyFilename: env.GOOGLE_APPLICATION_CREDENTIALS,
         });
     } else {
         // Fallback for local development or cloud environments with default credentials
         storage = new Storage({
-            projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
+            projectId: env.GOOGLE_CLOUD_PROJECT_ID,
         });
     }
 } catch (error) {
@@ -37,7 +32,7 @@ try {
     throw new Error("Google Cloud Storage initialization failed");
 }
 
-const bucketName = process.env.GOOGLE_CLOUD_STORAGE_BUCKET;
+const bucketName = env.GOOGLE_CLOUD_STORAGE_BUCKET;
 
 if (!bucketName) {
     throw new Error(

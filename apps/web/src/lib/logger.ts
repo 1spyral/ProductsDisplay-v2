@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import pino from "pino";
 
 const validLogLevels = [
@@ -12,7 +13,7 @@ const validLogLevels = [
 type LogLevel = (typeof validLogLevels)[number];
 
 function getLogLevel(): LogLevel {
-    const envLevel = process.env.LOG_LEVEL?.toLowerCase();
+    const envLevel = env.LOG_LEVEL?.toLowerCase();
     if (envLevel && validLogLevels.includes(envLevel as LogLevel)) {
         return envLevel as LogLevel;
     }
@@ -20,13 +21,13 @@ function getLogLevel(): LogLevel {
 }
 
 function shouldUsePrettyTransport(): boolean {
-    const explicitPretty = process.env.LOG_PRETTY?.toLowerCase();
+    const explicitPretty = env.LOG_PRETTY?.toLowerCase();
     if (explicitPretty === "1" || explicitPretty === "true") return true;
     if (explicitPretty === "0" || explicitPretty === "false") return false;
 
     return (
-        process.env.NODE_ENV !== "production" &&
-        process.env.CI !== "true" &&
+        env.NODE_ENV !== "production" &&
+        env.CI !== "true" &&
         !!process.stdout?.isTTY
     );
 }

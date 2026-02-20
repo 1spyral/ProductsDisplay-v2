@@ -1,5 +1,6 @@
 "use server";
 
+import { env } from "@/env";
 import {
     createAdminAccessToken,
     createAdminRefreshToken,
@@ -51,7 +52,7 @@ export async function requireAdminAuth() {
     const { accessSeconds } = getAdminTokenTtls();
     cookieStore.set(access, newAccessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: env.NODE_ENV === "production",
         sameSite: "strict",
         maxAge: accessSeconds,
         path: "/",
@@ -63,7 +64,7 @@ export async function loginAdmin(password: string) {
     await checkRateLimit("loginAdmin", 5, 15 * 60 * 1000);
 
     // Check against environment variable
-    if (password === process.env.ADMIN_PASSWORD) {
+    if (password === env.ADMIN_PASSWORD) {
         const cookieStore = await cookies();
         const { access, refresh } = getAdminCookieNames();
         const { accessSeconds, refreshSeconds } = getAdminTokenTtls();
@@ -75,7 +76,7 @@ export async function loginAdmin(password: string) {
 
         cookieStore.set(access, accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: env.NODE_ENV === "production",
             sameSite: "strict",
             maxAge: accessSeconds,
             path: "/",
@@ -83,7 +84,7 @@ export async function loginAdmin(password: string) {
 
         cookieStore.set(refresh, refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: env.NODE_ENV === "production",
             sameSite: "strict",
             maxAge: refreshSeconds,
             path: "/admin",

@@ -69,8 +69,10 @@ function reducer(state: State, action: Action): State {
 }
 
 export default function SavedSelectionsPage() {
-  const [{ selections, isLoading, errorMessage, expandedId, deletingId }, dispatch] =
-    useReducer(reducer, initialState);
+  const [
+    { selections, isLoading, errorMessage, expandedId, deletingId },
+    dispatch,
+  ] = useReducer(reducer, initialState);
 
   const loadSelections = async () => {
     dispatch({ type: "load:start" });

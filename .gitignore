@@ -49,4 +49,3 @@ next-env.d.ts
 env.yaml
 credentials.json
 .idea/
-package-lock.json

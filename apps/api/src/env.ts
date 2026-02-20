@@ -25,6 +25,7 @@ const envSchema = z.object({
     GOOGLE_APPLICATION_CREDENTIALS: optionalString,
     GOOGLE_CLOUD_CLIENT_EMAIL: optionalString,
     GOOGLE_CLOUD_PRIVATE_KEY: optionalString,
+    IMAGE_BASE_URL: z.string().default(""),
 });
 
 export const env = envSchema.parse(process.env);

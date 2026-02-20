@@ -7,6 +7,7 @@ export {
     reorderAdminCategories,
     updateAdminCategory,
 } from "./category";
+export { compilePdf } from "./pdf";
 export {
     checkAdminProductIdExists,
     createAdminProduct,

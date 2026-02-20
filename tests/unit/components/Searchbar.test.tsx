@@ -26,6 +26,7 @@ describe("Searchbar", () => {
   });
 
   afterAll(() => {
+    mock.restore();
     unregisterHappyDom();
   });
 

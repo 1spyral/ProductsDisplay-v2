@@ -58,6 +58,7 @@ describe("useProductFormValidation", () => {
     });
 
     afterAll(() => {
+        mock.restore();
         unregisterHappyDom();
     });
 

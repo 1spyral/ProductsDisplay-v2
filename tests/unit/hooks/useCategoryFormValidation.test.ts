@@ -58,6 +58,7 @@ describe("useCategoryFormValidation", () => {
     });
 
     afterAll(() => {
+        mock.restore();
         unregisterHappyDom();
     });
 

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, mock, test } from "bun:test";
+import { afterAll, beforeEach, describe, expect, mock, test } from "bun:test";
 
 const mockFindFirst = mock(async () => undefined as unknown);
 const mockUpdateWhere = mock(async () => undefined as unknown);
@@ -48,6 +48,10 @@ const { deleteProduct, updateProduct } =
     await import("@/db/queries/productQueries");
 
 describe("productQueries (unit, mocked db)", () => {
+    afterAll(() => {
+        mock.restore();
+    });
+
     beforeEach(() => {
         mockFindFirst.mockClear();
         mockUpdateWhere.mockClear();

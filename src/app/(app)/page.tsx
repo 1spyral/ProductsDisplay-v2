@@ -4,8 +4,6 @@ import { getCategories } from "@/db/queries/categoryQueries";
 import { hasClearanceProducts } from "@/db/queries/productQueries";
 import { getStoreInfo } from "@/db/queries/storeInfoQueries";
 
-export const revalidate = 60;
-
 export default async function HomePage() {
   const [categories, showClearance, store] = await Promise.all([
     getCategories(),
@@ -13,10 +11,8 @@ export default async function HomePage() {
     getStoreInfo(),
   ]);
 
-  const headline = store.headline || store.name || "Welcome to Our Store";
-  const description =
-    store.description ||
-    "Browse products by category or search for what you need";
+  const headline = store.headline;
+  const description = store.description;
 
   return (
     <div

@@ -2,7 +2,7 @@ import { getStoreInfo } from "@/db/queries/storeInfoQueries";
 
 export default async function Footer() {
   const store = await getStoreInfo();
-  const copyright = store.copyright || process.env.COPYRIGHT;
+  const copyright = store.copyright;
 
   return (
     <footer className="mt-auto border-t-4 border-slate-900 bg-slate-800 text-white">

@@ -5,9 +5,11 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { getStoreInfo } from "@/db/queries/storeInfoQueries";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata(): Promise<Metadata> {
   const store = await getStoreInfo();
-  const siteName = store.name || "Store";
+  const siteName = store.name;
 
   return {
     title: {

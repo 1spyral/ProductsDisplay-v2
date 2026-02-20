@@ -29,7 +29,9 @@ export const getStoreInfo = cache(async (): Promise<CompleteStoreInfo> => {
         .then((rows) => rows[0] || null);
 
     if (!row) {
-        throw new Error("Store info not found (expected row id=1 in store_info).");
+        throw new Error(
+            "Store info not found (expected row id=1 in store_info)."
+        );
     }
 
     if (!row.name || !row.headline || !row.description || !row.copyright) {

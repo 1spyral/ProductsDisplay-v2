@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default async function Navbar() {
   const store = await getStoreInfo();
-  const name = store.name || "Store";
+  const name = store.name;
 
   return (
     <header className="border-b-4 border-slate-900 bg-slate-800">

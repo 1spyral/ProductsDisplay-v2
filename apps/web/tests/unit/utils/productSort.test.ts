@@ -60,4 +60,20 @@ describe("productSort", () => {
         expect(products.map((product) => product.id)).toEqual(["z", "x"]);
         expect(sorted.map((product) => product.id)).toEqual(["x", "z"]);
     });
+
+    test("uses lexicographically smallest numeric token for multi-number price strings", () => {
+        const products = [
+            createProduct("regular", "$20.00"),
+            createProduct("clearance", "100% OFF $2.99"),
+            createProduct("missing", null),
+        ];
+
+        const sorted = sortProductsByOption(products, "price");
+
+        expect(sorted.map((product) => product.id)).toEqual([
+            "regular",
+            "clearance",
+            "missing",
+        ]);
+    });
 });

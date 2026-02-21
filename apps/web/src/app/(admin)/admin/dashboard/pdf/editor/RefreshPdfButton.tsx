@@ -35,7 +35,10 @@ export default function RefreshPdfButton({
         return;
       }
       const pdfBytes = await compilePdf(selectedProductIds);
-      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      const normalizedPdfBytes = new Uint8Array(pdfBytes);
+      const blob = new Blob([normalizedPdfBytes], {
+        type: "application/pdf",
+      });
       await setPdfFromBlob(blob);
     } catch (error) {
       console.error("Error compiling PDF", error);

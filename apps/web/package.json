@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@happy-dom/global-registrator": "^20.6.3",
+    "@happy-dom/global-registrator": "^20.7.0",
     "@tailwindcss/postcss": "^4.2.0",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^25",

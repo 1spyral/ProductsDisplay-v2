@@ -1,5 +1,6 @@
 "use client";
 
+import { compilePdf } from "@/actions/admin/pdf";
 import { useEffect, useRef, useState } from "react";
 import { usePdfEditor } from "./PdfEditorContext";
 
@@ -33,20 +34,11 @@ export default function RefreshPdfButton({
         console.warn("No products selected for PDF compile.");
         return;
       }
-      const response = await fetch("/api/admin/compile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ productIds: selectedProductIds }),
+      const pdfBytes = await compilePdf(selectedProductIds);
+      const normalizedPdfBytes = new Uint8Array(pdfBytes);
+      const blob = new Blob([normalizedPdfBytes], {
+        type: "application/pdf",
       });
-
-      if (!response.ok) {
-        console.error("Failed to compile PDF", await response.text());
-        return;
-      }
-
-      const blob = await response.blob();
       await setPdfFromBlob(blob);
     } catch (error) {
       console.error("Error compiling PDF", error);

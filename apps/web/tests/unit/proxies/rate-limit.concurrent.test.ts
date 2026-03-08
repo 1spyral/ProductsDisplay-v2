@@ -1,5 +1,4 @@
 import {
-    handleAdminCompileRateLimit,
     handleAuthRateLimit,
     handlePublicRateLimit,
     rateLimit,
@@ -56,36 +55,6 @@ describe("rate-limit proxy", () => {
         };
         expect(body.error).toBe("Too many requests. Please try again later.");
         expect(body.retryAfter).toBeGreaterThan(0);
-    });
-
-    test("handleAdminCompileRateLimit enforces compile POST throttling", async () => {
-        const ip = crypto.randomUUID();
-
-        expect(
-            handleAdminCompileRateLimit(
-                buildRequest("/api/admin/compile", {
-                    method: "POST",
-                    ip,
-                })
-            )
-        ).toBeNull();
-
-        const blockedResponse = handleAdminCompileRateLimit(
-            buildRequest("/api/admin/compile", {
-                method: "POST",
-                ip,
-            })
-        );
-
-        expect(blockedResponse).not.toBeNull();
-        if (!blockedResponse) {
-            throw new Error("Expected compile endpoint to be rate limited");
-        }
-
-        const body = (await blockedResponse.json()) as { error: string };
-        expect(body.error).toBe(
-            "Too many compile requests. Please wait a second."
-        );
     });
 
     test("handleAuthRateLimit throttles repeated login attempts", () => {

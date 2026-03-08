@@ -27,11 +27,28 @@ function parseProductPrice(price: string | null): number {
         return Number.POSITIVE_INFINITY;
     }
 
-    const parsedPrice = Number.parseFloat(price.replace(/[^\d.-]/g, ""));
+    const numericMatches = price.replaceAll(",", "").match(/-?\d*\.?\d+/g);
 
-    if (!Number.isFinite(parsedPrice)) {
+    if (!numericMatches || numericMatches.length === 0) {
         return Number.POSITIVE_INFINITY;
     }
 
-    return parsedPrice;
+    const validNumericTokens = numericMatches.filter((value) => {
+        const parsedValue = Number.parseFloat(value);
+        return Number.isFinite(parsedValue) && parsedValue >= 0;
+    });
+
+    if (validNumericTokens.length === 0) {
+        return Number.POSITIVE_INFINITY;
+    }
+
+    const lexicographicallySmallestToken = validNumericTokens.reduce(
+        (smallest, current) =>
+            current.localeCompare(smallest) < 0 ? current : smallest
+    );
+    const parsedPrice = Number.parseFloat(lexicographicallySmallestToken);
+
+    return Number.isFinite(parsedPrice)
+        ? parsedPrice
+        : Number.POSITIVE_INFINITY;
 }

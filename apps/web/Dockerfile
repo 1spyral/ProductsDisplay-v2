@@ -14,10 +14,6 @@ COPY apps/api/package.json ./apps/api/package.json
 COPY packages/contracts/package.json ./packages/contracts/package.json
 RUN bun install --frozen-lockfile
 
-# Install Chromium for Playwright
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-RUN bunx playwright install chromium
-
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
@@ -45,14 +41,6 @@ RUN groupadd --system --gid 1001 nodejs \
  && useradd  --system --uid 1001 --gid nodejs --create-home nextjs
 
 COPY --from=builder /app/apps/web/.next/standalone /app
-
-# Install OS-level Playwright dependencies
-RUN bunx playwright install-deps chromium
-
-# Copy Playwright browsers into the runtime image.
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-COPY --from=deps /ms-playwright /ms-playwright
-RUN chown -R nextjs:nodejs /ms-playwright
 
 COPY --from=builder /app/apps/web/public /app/apps/web/public
 

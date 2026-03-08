@@ -1,16 +1,18 @@
-import { requireAdminAuth } from "@/actions/admin/auth";
-import { getAdminProducts } from "@/db/queries/productQueries";
+import { getProductsByIds } from "@/db/queries/productQueries";
+import { env } from "@/env";
 import { compilePdfFromHtml } from "@/lib/pdf/compilePdf";
-import type Product from "@/types/Product";
-import { buildImageUrl } from "@/utils/photo";
-import { NextResponse } from "next/server";
+import { requireAdmin } from "@/routes/admin/auth";
+import { adminRateLimitConfig } from "@/routes/shared/rateLimit";
+import type { ProductDto } from "@productsdisplay/contracts";
+import type { FastifyInstance } from "fastify";
 import sharp from "sharp";
 
-export const runtime = "nodejs";
-
-type CompileRequestBody = {
-    productIds?: unknown;
-};
+function buildImageUrl(objectKey: string): string {
+    const base = env.IMAGE_BASE_URL.endsWith("/")
+        ? env.IMAGE_BASE_URL
+        : `${env.IMAGE_BASE_URL}/`;
+    return `${base}${objectKey}`;
+}
 
 function escapeHtml(value: string): string {
     return value
@@ -46,7 +48,7 @@ async function compressImageToDataUri(url: string): Promise<string | null> {
 }
 
 async function compressProductImages(
-    products: Product[]
+    products: ProductDto[]
 ): Promise<Map<string, string>> {
     const imageMap = new Map<string, string>();
     const entries: { key: string; url: string }[] = [];
@@ -79,7 +81,7 @@ async function compressProductImages(
 }
 
 function renderProductCard(
-    product: Product,
+    product: ProductDto,
     imageMap: Map<string, string>
 ): string {
     const name = product.name?.trim() || product.id;
@@ -131,7 +133,7 @@ function renderProductCard(
 }
 
 function buildPdfHtml(
-    products: Product[],
+    products: ProductDto[],
     missingIds: string[],
     imageMap: Map<string, string>
 ): string {
@@ -175,73 +177,67 @@ function buildPdfHtml(
 </html>`;
 }
 
-export async function POST(request: Request) {
-    await requireAdminAuth();
+export async function adminPdfRoutes(app: FastifyInstance): Promise<void> {
+    // Per-IP burst protection at the service boundary (10 req / 15 min).
+    // A tighter per-second limit is enforced by the web server action before
+    // this endpoint is ever reached.
+    app.post(
+        "/pdf/compile",
+        {
+            preHandler: requireAdmin,
+            config: adminRateLimitConfig("compilePdf", 10),
+        },
+        async (request, reply) => {
+            const body = request.body as { productIds?: unknown };
 
-    let body: CompileRequestBody;
-    try {
-        body = await request.json();
-    } catch {
-        return NextResponse.json(
-            { error: "Invalid JSON body" },
-            { status: 400 }
-        );
-    }
+            const rawIds = body.productIds;
+            if (!Array.isArray(rawIds)) {
+                return reply
+                    .code(400)
+                    .send({ error: "productIds must be an array" });
+            }
 
-    const rawIds = body.productIds;
-    if (!Array.isArray(rawIds)) {
-        return NextResponse.json(
-            { error: "productIds must be an array" },
-            { status: 400 }
-        );
-    }
+            const normalizedIds = rawIds
+                .filter((id): id is string => typeof id === "string")
+                .map((id) => id.trim())
+                .filter((id) => id.length > 0);
 
-    const normalizedIds = rawIds
-        .filter((id): id is string => typeof id === "string")
-        .map((id) => id.trim())
-        .filter((id) => id.length > 0);
+            if (normalizedIds.length === 0) {
+                return reply
+                    .code(400)
+                    .send({ error: "No product IDs provided" });
+            }
 
-    if (normalizedIds.length === 0) {
-        return NextResponse.json(
-            { error: "No product IDs provided" },
-            { status: 400 }
-        );
-    }
+            const products = await getProductsByIds(normalizedIds, true);
+            const productsById = new Map(
+                products.map((product) => [product.id, product])
+            );
+            const orderedProducts = normalizedIds
+                .map((id) => productsById.get(id))
+                .filter((product): product is ProductDto => Boolean(product));
+            const missingIds = normalizedIds.filter(
+                (id) => !productsById.has(id)
+            );
 
-    const products = await getAdminProducts(normalizedIds);
-    const productsById = new Map(
-        products.map((product) => [product.id, product])
+            const imageMap = await compressProductImages(orderedProducts);
+            const html = buildPdfHtml(orderedProducts, missingIds, imageMap);
+
+            try {
+                const pdfBytes = await compilePdfFromHtml(html);
+                return reply
+                    .header("Content-Type", "application/octet-stream")
+                    .header(
+                        "Content-Disposition",
+                        'inline; filename="document.pdf"'
+                    )
+                    .header("Cache-Control", "no-store")
+                    .send(Buffer.from(pdfBytes));
+            } catch (err) {
+                return reply.code(500).send({
+                    error: "Failed to compile PDF",
+                    message: err instanceof Error ? err.message : String(err),
+                });
+            }
+        }
     );
-    const orderedProducts = normalizedIds
-        .map((id) => productsById.get(id))
-        .filter((product): product is Product => Boolean(product));
-    const missingIds = normalizedIds.filter((id) => !productsById.has(id));
-
-    const imageMap = await compressProductImages(orderedProducts);
-    const html = buildPdfHtml(orderedProducts, missingIds, imageMap);
-
-    try {
-        const pdfBytes = await compilePdfFromHtml(html);
-        const pdfArrayBuffer = pdfBytes.buffer.slice(
-            pdfBytes.byteOffset,
-            pdfBytes.byteOffset + pdfBytes.byteLength
-        ) as ArrayBuffer;
-        const pdfBlob = new Blob([pdfArrayBuffer], { type: "application/pdf" });
-
-        return new NextResponse(pdfBlob, {
-            headers: {
-                "Content-Type": "application/pdf",
-                "Content-Disposition": 'inline; filename="document.pdf"',
-                "Cache-Control": "no-store",
-            },
-        });
-    } catch (err) {
-        return NextResponse.json(
-            {
-                error: "Failed to compile PDF",
-                message: err instanceof Error ? err.message : String(err),
-            },
-            { status: 500 }
-        );
-    }
 }

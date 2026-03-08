@@ -11,6 +11,7 @@ import {
   mock,
   test,
 } from "bun:test";
+import type { AnchorHTMLAttributes, ReactNode } from "react";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 mock.module("next/image", () => ({
@@ -35,6 +36,21 @@ mock.module("next/image", () => ({
       height={height}
       className={className}
     />
+  ),
+}));
+
+mock.module("next/link", () => ({
+  default: ({
+    href,
+    children,
+    ...props
+  }: AnchorHTMLAttributes<HTMLAnchorElement> & {
+    href: string;
+    children: ReactNode;
+  }) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
   ),
 }));
 
@@ -196,6 +212,12 @@ describe("CartDrawer", () => {
     expect(queryByText("Chair")).toBeNull();
     expect(queryByText("Table")).toBeNull();
     expect(queryByText("Your cart is empty.")).toBeTruthy();
+  });
+
+  test("renders a checkout link when cart has items", async () => {
+    const { getByRole } = await setupOpen([item()]);
+    const link = getByRole("link", { name: "Checkout Cart" });
+    expect(link.getAttribute("href")).toBe("/checkout");
   });
 
   test("shows total item count in the header", async () => {

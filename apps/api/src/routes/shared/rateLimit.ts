@@ -24,3 +24,14 @@ export function adminRateLimitConfig(action: string, maxRequests: number) {
         },
     };
 }
+
+export function publicRateLimitConfig(action: string, maxRequests: number) {
+    return {
+        rateLimit: {
+            max: maxRequests,
+            timeWindow: 15 * 60 * 1000,
+            keyGenerator: (request: FastifyRequest) =>
+                `${getClientIdentifier(request)}:${action}`,
+        },
+    };
+}

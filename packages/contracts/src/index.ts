@@ -58,6 +58,24 @@ export interface SavedSelectionOverviewDto {
     }[];
 }
 
+export interface OrderItemDto {
+    productId: string;
+    quantity: number;
+}
+
+export interface CreateOrderRequestDto {
+    name: string;
+    email: string | null;
+    phone: string | null;
+    additionalComments: string | null;
+    items: OrderItemDto[];
+}
+
+export interface CreateOrderResponseDto {
+    success: boolean;
+    id: string;
+}
+
 export type ApiErrorDto = {
     error: string;
     message?: string;

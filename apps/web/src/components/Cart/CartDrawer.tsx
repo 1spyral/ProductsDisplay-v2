@@ -2,6 +2,7 @@
 
 import { useCart } from "@/contexts/CartContext";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function CartDrawer() {
   const {
@@ -130,6 +131,13 @@ export default function CartDrawer() {
             >
               Clear Cart
             </button>
+            <Link
+              href="/checkout"
+              onClick={() => setCartOpen(false)}
+              className="mt-3 block w-full bg-slate-700 py-2.5 text-center text-sm font-bold tracking-wide text-white uppercase transition-colors hover:bg-slate-900"
+            >
+              Checkout Cart
+            </Link>
           </div>
         )}
       </div>

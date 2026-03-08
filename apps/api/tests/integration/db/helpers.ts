@@ -3,6 +3,8 @@ import { sql } from "drizzle-orm";
 
 const resetSql = sql.raw(`
 TRUNCATE TABLE
+    order_products,
+    orders,
     saved_selection_products,
     saved_selections,
     product_images,

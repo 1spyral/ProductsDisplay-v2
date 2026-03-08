@@ -173,6 +173,51 @@ describe("CheckoutPage", () => {
     });
   });
 
+  test("rejects an invalid phone number", async () => {
+    const { getByLabelText, getByRole, findByText, user } = renderWithCart([
+      {
+        productId: "p1",
+        productName: "Chair",
+        imageUrl: null,
+        price: "$12.00",
+        quantity: 1,
+      },
+    ]);
+
+    await user.type(getByLabelText("Name"), "Alex Smith");
+    await user.type(getByLabelText("Phone Number"), "123");
+    await user.click(getByRole("button", { name: "Submit Order" }));
+
+    expect(await findByText("Please enter a valid phone number.")).toBeTruthy();
+    expect(submitOrder).not.toHaveBeenCalled();
+  });
+
+  test("normalizes a valid phone number before submit", async () => {
+    const { getByLabelText, getByRole, user } = renderWithCart([
+      {
+        productId: "p1",
+        productName: "Chair",
+        imageUrl: null,
+        price: "$12.00",
+        quantity: 1,
+      },
+    ]);
+
+    await user.type(getByLabelText("Name"), "Alex Smith");
+    await user.type(getByLabelText("Phone Number"), "5551234567");
+    await user.click(getByRole("button", { name: "Submit Order" }));
+
+    await waitFor(() => {
+      expect(submitOrder).toHaveBeenCalledWith({
+        name: "Alex Smith",
+        email: null,
+        phone: "(555) 123-4567",
+        additionalComments: null,
+        items: [{ productId: "p1", quantity: 1 }],
+      });
+    });
+  });
+
   test("shows an empty-cart state when there are no cart items", () => {
     const { getByText, getByRole } = render(
       <CartProvider>

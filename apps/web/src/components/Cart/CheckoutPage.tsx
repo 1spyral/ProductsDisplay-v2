@@ -2,6 +2,7 @@
 
 import { submitOrder } from "@/actions/order";
 import { useCart } from "@/contexts/CartContext";
+import { isValidPhoneNumber, normalizePhoneNumber } from "@/lib/phone";
 import type { CreateOrderRequestDto } from "@productsdisplay/contracts";
 import Image from "next/image";
 import Link from "next/link";
@@ -53,6 +54,7 @@ export default function CheckoutPage() {
     const email = form.email.trim();
     const phone = form.phone.trim();
     const additionalComments = form.additionalComments.trim();
+    const normalizedPhone = phone ? normalizePhoneNumber(phone) : "";
 
     if (items.length === 0) {
       setError("Your cart is empty.");
@@ -69,6 +71,11 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (phone && !isValidPhoneNumber(phone)) {
+      setError("Please enter a valid phone number.");
+      return;
+    }
+
     setError("");
     setIsSubmitting(true);
 
@@ -76,7 +83,7 @@ export default function CheckoutPage() {
       const payload: CreateOrderRequestDto = {
         name,
         email: email || null,
-        phone: phone || null,
+        phone: normalizedPhone || null,
         additionalComments: additionalComments || null,
         items: items.map((item) => ({
           productId: item.productId,
@@ -226,8 +233,14 @@ export default function CheckoutPage() {
                 type="tel"
                 value={form.phone}
                 onChange={handleFieldChange("phone")}
+                inputMode="tel"
+                autoComplete="tel"
+                placeholder="(555) 123-4567"
                 className="w-full border-2 border-gray-300 px-4 py-3 focus:border-slate-700 focus:outline-none"
               />
+              <p className="mt-2 text-xs text-gray-600">
+                Enter a 10-digit phone number, with optional country code.
+              </p>
             </div>
 
             <div>

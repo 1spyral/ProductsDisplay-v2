@@ -1,4 +1,5 @@
 import { createOrder } from "@/db/queries/orderQueries";
+import { isValidPhoneNumber, normalizePhoneNumber } from "@/lib/phone";
 import { publicRateLimitConfig } from "@/routes/shared/rateLimit";
 import type { ApiErrorDto, CreateOrderRequestDto } from "@productsdisplay/contracts";
 import type { FastifyInstance } from "fastify";
@@ -9,17 +10,32 @@ const orderItemSchema = z.object({
     quantity: z.coerce.number().int().positive(),
 });
 
+function nullableInputToString(value: unknown): unknown {
+    return value === null ? "" : value;
+}
+
 const createOrderSchema = z
     .object({
         name: z.string().trim().min(1, "Name is required"),
-        email: z
-            .string()
-            .trim()
-            .email("Enter a valid email address")
-            .optional()
-            .or(z.literal("")),
-        phone: z.string().trim().optional().or(z.literal("")),
-        additionalComments: z.string().trim().optional().or(z.literal("")),
+        email: z.preprocess(
+            nullableInputToString,
+            z.string().trim().email("Enter a valid email address").or(z.literal(""))
+        ),
+        phone: z.preprocess(
+            nullableInputToString,
+            z
+                .string()
+                .trim()
+                .refine(
+                    (value) => value === "" || isValidPhoneNumber(value),
+                    "Please enter a valid phone number"
+                )
+                .or(z.literal(""))
+        ),
+        additionalComments: z.preprocess(
+            nullableInputToString,
+            z.string().trim()
+        ),
         items: z.array(orderItemSchema).min(1, "Cart cannot be empty"),
     })
     .superRefine((value, ctx) => {
@@ -54,7 +70,9 @@ export async function publicOrderRoutes(app: FastifyInstance): Promise<void> {
             const id = await createOrder({
                 name: body.name.trim(),
                 email: body.email?.trim() || null,
-                phone: body.phone?.trim() || null,
+                phone: body.phone?.trim()
+                    ? normalizePhoneNumber(body.phone)
+                    : null,
                 additionalComments: body.additionalComments?.trim() || null,
                 items: body.items,
             } satisfies CreateOrderRequestDto);

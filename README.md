@@ -1,6 +1,6 @@
 # ProductsDisplay-v2
 
-Full-stack Next.js eCommerce system with a customer storefront and admin tooling for managing products and images.
+Monorepo eCommerce system with a Next.js web app (`apps/web`) and a Fastify API backend (`apps/api`) for managing storefront/admin data and images.
 
 ## Overview
 
@@ -11,12 +11,13 @@ Full-stack Next.js eCommerce system with a customer storefront and admin tooling
 
 ## Tech Stack
 
-- Framework: Next.js (App Router) with server components and server actions.
+- Framework: Next.js (App Router) in `apps/web` with server components and server actions.
+- Backend: Fastify API service in `apps/api`.
 - Runtime: Bun (see `package.json` engines) for dev/build/start scripts.
 - Database: PostgreSQL with `drizzle-orm` and `drizzle-kit` migrations (`apps/api/drizzle/` and `apps/api/src/db/schema`).
 - Storage: Google Cloud Storage via `@google-cloud/storage` in API (`apps/api/src/lib/gcs.ts`).
 - UI: React and Tailwind CSS v4 (see `globals.css`, `postcss.config.mjs`).
-- Auth: simple admin password stored in `ADMIN_PASSWORD`, cookie-based session in `apps/web/src/proxies/auth.ts` plus `apps/web/src/actions/admin.ts`.
+- Auth: shared admin token secret (`ADMIN_TOKEN_SECRET`) and login password (`ADMIN_PASSWORD`) configured via web/API envs; cookie-based admin session handled by web proxies/actions.
 - Search: Fuse.js helpers in `apps/web/src/utils/search.ts`.
 
 ## Architecture
@@ -36,7 +37,7 @@ Copy `apps/web/env.example` to `apps/web/.env` and `apps/api/env.example` to `ap
     cp apps/web/env.example apps/web/.env
     cp apps/api/env.example apps/api/.env
 
-Key variables (see `apps/web/env.example` for the full list):
+Key variables (see `apps/web/env.example` and `apps/api/env.example` for full lists):
 
 - `API_BASE_URL` – backend API base URL consumed by web server components/actions.
 - `NEXT_PUBLIC_IMAGE_PATH` – Base URL from which product images are served (CDN or GCS URL).

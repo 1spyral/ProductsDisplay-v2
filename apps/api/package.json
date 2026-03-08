@@ -19,7 +19,7 @@
         "test:integration:local": "bash ./scripts/test-integration-local.sh"
     },
     "engines": {
-        "bun": ">=1.3.9"
+        "bun": ">=1.3.10"
     },
     "dependencies": {
         "@fastify/cookie": "^11.0.2",

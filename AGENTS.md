@@ -14,7 +14,7 @@
 
 ## Build, Test, and Development Commands
 
-- `bun install`: install dependencies at the workspace root (Bun `>=1.3.9`).
+- `bun install`: install dependencies at the workspace root (Bun `>=1.3.10`).
 - `cd apps/api && bun run dev`: start backend API service (`http://localhost:3001` by default).
 - `cd apps/web && bun run dev`: start local development server (`http://localhost:3000`).
 - `cd apps/web && bun run build`: build standalone Next.js output and copy static assets.

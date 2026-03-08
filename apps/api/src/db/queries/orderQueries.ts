@@ -46,6 +46,17 @@ export async function getOrders(): Promise<OrderOverviewDto[]> {
                             id: true,
                             name: true,
                         },
+                        with: {
+                            images: {
+                                orderBy: (table, { asc }) => [
+                                    asc(table.position),
+                                ],
+                                columns: {
+                                    objectKey: true,
+                                },
+                                limit: 1,
+                            },
+                        },
                     },
                 },
             },
@@ -59,6 +70,13 @@ export async function getOrders(): Promise<OrderOverviewDto[]> {
         phone: row.phone,
         additionalComments: row.additionalComments,
         createdAt: row.createdAt,
-        items: row.products,
+        items: row.products.map((item) => ({
+            quantity: item.quantity,
+            product: {
+                id: item.product.id,
+                name: item.product.name,
+                imageObjectKey: item.product.images[0]?.objectKey || null,
+            },
+        })),
     }));
 }

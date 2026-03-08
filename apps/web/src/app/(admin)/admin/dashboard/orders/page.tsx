@@ -2,6 +2,8 @@
 
 import { getAdminOrders } from "@/actions/admin/order";
 import type { OrderOverview } from "@/db/queries/orderQueries";
+import { buildImageUrl } from "@/utils/photo";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useReducer } from "react";
 
@@ -167,14 +169,31 @@ export default function AdminOrdersPage() {
                               key={`${order.id}-${item.product.id}`}
                               className="border-2 border-gray-200 bg-white px-4 py-3"
                             >
-                              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                                <div>
-                                  <p className="font-semibold text-gray-900">
-                                    {item.product.name || item.product.id}
-                                  </p>
-                                  <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
-                                    Product ID: {item.product.id}
-                                  </p>
+                              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div className="flex items-center gap-3">
+                                  {item.product.imageObjectKey ? (
+                                    <Image
+                                      src={buildImageUrl(
+                                        item.product.imageObjectKey
+                                      )}
+                                      alt={item.product.name || item.product.id}
+                                      width={48}
+                                      height={48}
+                                      className="h-12 w-12 shrink-0 border border-gray-200 object-cover"
+                                    />
+                                  ) : (
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center border border-gray-200 bg-gray-100 text-[9px] font-bold tracking-wide text-gray-500 uppercase">
+                                      No Image
+                                    </div>
+                                  )}
+                                  <div>
+                                    <p className="font-semibold text-gray-900">
+                                      {item.product.name || item.product.id}
+                                    </p>
+                                    <p className="text-xs font-medium tracking-wide text-gray-500 uppercase">
+                                      Product ID: {item.product.id}
+                                    </p>
+                                  </div>
                                 </div>
                                 <p className="text-sm font-bold tracking-wide text-slate-700 uppercase">
                                   Qty {item.quantity}

@@ -1,7 +1,7 @@
 import { db } from "@/db/drizzle";
 import { createOrder, getOrders } from "@/db/queries/orderQueries";
 import { createProduct } from "@/db/queries/productQueries";
-import { orderProducts } from "@/db/schema";
+import { orderProducts, productImages } from "@/db/schema";
 import { beforeEach, describe, expect, test } from "bun:test";
 import { eq } from "drizzle-orm";
 import { resetTestDatabase } from "./helpers";
@@ -50,6 +50,25 @@ describe("orderQueries (integration)", () => {
     });
 
     test("getOrders returns newest orders with nested product details", async () => {
+        await db.insert(productImages).values([
+            {
+                productId: "product-a",
+                objectKey: "chair-primary.jpg",
+                mimeType: "image/jpeg",
+                width: 800,
+                height: 600,
+                position: 0,
+            },
+            {
+                productId: "product-a",
+                objectKey: "chair-secondary.jpg",
+                mimeType: "image/jpeg",
+                width: 800,
+                height: 600,
+                position: 1,
+            },
+        ]);
+
         await createOrder({
             name: "First Customer",
             email: "first@example.com",
@@ -81,6 +100,7 @@ describe("orderQueries (integration)", () => {
                 product: {
                     id: "product-a",
                     name: "Chair",
+                    imageObjectKey: "chair-primary.jpg",
                 },
             },
             {
@@ -88,6 +108,7 @@ describe("orderQueries (integration)", () => {
                 product: {
                     id: "product-b",
                     name: "Table",
+                    imageObjectKey: null,
                 },
             },
         ]);

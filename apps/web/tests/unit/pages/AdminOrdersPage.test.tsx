@@ -19,6 +19,31 @@ mock.module("@/actions/admin/order", () => ({
   getAdminOrders,
 }));
 
+mock.module("next/image", () => ({
+  default: ({
+    src,
+    alt,
+    width,
+    height,
+    className,
+  }: {
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
+    className?: string;
+  }) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      className={className}
+    />
+  ),
+}));
+
 mock.module("next/link", () => ({
   default: ({
     href,
@@ -65,6 +90,7 @@ describe("AdminOrdersPage", () => {
             product: {
               id: "chair-1",
               name: "Chair",
+              imageObjectKey: "chair-primary.jpg",
             },
           },
         ],
@@ -86,6 +112,7 @@ describe("AdminOrdersPage", () => {
       expect(getByText("Leave at front desk")).toBeTruthy();
       expect(getByText("Product ID: chair-1")).toBeTruthy();
       expect(getByText("Qty 2")).toBeTruthy();
+      expect(getByRole("img", { name: "Chair" })).toBeTruthy();
     });
   });
 

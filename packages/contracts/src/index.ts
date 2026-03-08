@@ -88,6 +88,7 @@ export interface OrderOverviewDto {
         product: {
             id: string;
             name: string | null;
+            imageObjectKey: string | null;
         };
     }[];
 }

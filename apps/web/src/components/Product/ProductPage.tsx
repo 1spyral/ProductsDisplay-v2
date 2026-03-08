@@ -1,9 +1,10 @@
+import { AddToCartButton } from "@/components/Cart";
 import ImageCarousel from "@/components/Image/ImageCarousel";
 import { getCategoryByCategory } from "@/db/queries/categoryQueries";
 import { getProductById } from "@/db/queries/productQueries";
 import { getCategoryName } from "@/types/Category";
 import Product from "@/types/Product";
-import getPhotos from "@/utils/photo";
+import getPhotos, { buildImageUrl } from "@/utils/photo";
 
 export default async function ProductPage({ id }: { id: string }) {
   const product: Product | null = await getProductById(id);
@@ -83,6 +84,21 @@ export default async function ProductPage({ id }: { id: string }) {
               </p>
             </div>
           )}
+
+          {/* Add to Cart */}
+          <div className="mt-6">
+            <AddToCartButton
+              productId={product.id}
+              productName={product.name || product.id}
+              imageUrl={
+                product.images?.[0]
+                  ? buildImageUrl(product.images[0].objectKey)
+                  : null
+              }
+              price={product.price}
+              soldOut={product.soldOut}
+            />
+          </div>
         </div>
       </div>
     </div>

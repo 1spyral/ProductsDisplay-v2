@@ -118,7 +118,7 @@ describe("CheckoutPage", () => {
     ]);
 
     await user.type(getByLabelText("Name"), "Alex Smith");
-    await user.click(getByRole("button", { name: "Submit Order" }));
+    await user.click(getByRole("button", { name: "Submit Quote" }));
 
     expect(
       await findByText("Please provide an email address or phone number.")
@@ -150,7 +150,7 @@ describe("CheckoutPage", () => {
       getByLabelText("Additional Comments"),
       " Leave at front desk. "
     );
-    await user.click(getByRole("button", { name: "Submit Order" }));
+    await user.click(getByRole("button", { name: "Submit Quote" }));
 
     await waitFor(() => {
       expect(submitOrder).toHaveBeenCalledWith({
@@ -186,7 +186,7 @@ describe("CheckoutPage", () => {
 
     await user.type(getByLabelText("Name"), "Alex Smith");
     await user.type(getByLabelText("Phone Number"), "123");
-    await user.click(getByRole("button", { name: "Submit Order" }));
+    await user.click(getByRole("button", { name: "Submit Quote" }));
 
     expect(await findByText("Please enter a valid phone number.")).toBeTruthy();
     expect(submitOrder).not.toHaveBeenCalled();
@@ -205,7 +205,7 @@ describe("CheckoutPage", () => {
 
     await user.type(getByLabelText("Name"), "Alex Smith");
     await user.type(getByLabelText("Phone Number"), "5551234567");
-    await user.click(getByRole("button", { name: "Submit Order" }));
+    await user.click(getByRole("button", { name: "Submit Quote" }));
 
     await waitFor(() => {
       expect(submitOrder).toHaveBeenCalledWith({
@@ -226,7 +226,7 @@ describe("CheckoutPage", () => {
     );
 
     expect(
-      getByText("Your cart is empty. Add products before checking out.")
+      getByText("Your cart is empty. Add products before requesting a quote.")
     ).toBeTruthy();
     expect(
       getByRole("link", { name: "Return to Shopping" }).getAttribute("href")

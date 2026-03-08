@@ -136,7 +136,7 @@ export default function CartDrawer() {
               onClick={() => setCartOpen(false)}
               className="mt-3 block w-full bg-slate-700 py-2.5 text-center text-sm font-bold tracking-wide text-white uppercase transition-colors hover:bg-slate-900"
             >
-              Checkout Cart
+              Get Quote
             </Link>
           </div>
         )}

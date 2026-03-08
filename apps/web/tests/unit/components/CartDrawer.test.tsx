@@ -214,9 +214,9 @@ describe("CartDrawer", () => {
     expect(queryByText("Your cart is empty.")).toBeTruthy();
   });
 
-  test("renders a checkout link when cart has items", async () => {
+  test("renders a get quote link when cart has items", async () => {
     const { getByRole } = await setupOpen([item()]);
-    const link = getByRole("link", { name: "Checkout Cart" });
+    const link = getByRole("link", { name: "Get Quote" });
     expect(link.getAttribute("href")).toBe("/checkout");
   });
 

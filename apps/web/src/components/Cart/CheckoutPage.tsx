@@ -28,7 +28,7 @@ function getErrorMessage(error: unknown): string {
     return error.message;
   }
 
-  return "Unable to submit order. Please try again.";
+  return "Unable to submit quote request. Please try again.";
 }
 
 export default function CheckoutPage() {
@@ -109,9 +109,9 @@ export default function CheckoutPage() {
     return (
       <div className="min-h-full bg-gray-50 px-4 py-12 sm:px-8">
         <div className="mx-auto max-w-3xl border-4 border-gray-300 bg-white p-8">
-          <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Get Quote</h1>
           <p className="mt-4 text-base text-gray-700">
-            Your cart is empty. Add products before checking out.
+            Your cart is empty. Add products before requesting a quote.
           </p>
           <Link
             href="/"
@@ -129,9 +129,9 @@ export default function CheckoutPage() {
       <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.1fr_0.9fr]">
         <section className="border-4 border-gray-300 bg-white p-6 sm:p-8">
           <div className="border-b-2 border-gray-300 pb-4">
-            <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Get Quote</h1>
             <p className="mt-2 text-sm font-medium tracking-wide text-gray-600 uppercase">
-              Review your cart before submitting
+              Review your cart before requesting a quote
             </p>
           </div>
 
@@ -187,7 +187,7 @@ export default function CheckoutPage() {
             Include at least one way for us to reach you.
           </p>
 
-          <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
               <label
                 htmlFor="checkout-name"
@@ -221,6 +221,8 @@ export default function CheckoutPage() {
               />
             </div>
 
+            <p className="-my-1 text-center text-xs text-gray-400">or</p>
+
             <div>
               <label
                 htmlFor="checkout-phone"
@@ -238,9 +240,6 @@ export default function CheckoutPage() {
                 placeholder="(555) 123-4567"
                 className="w-full border-2 border-gray-300 px-4 py-3 focus:border-slate-700 focus:outline-none"
               />
-              <p className="mt-2 text-xs text-gray-600">
-                Enter a 10-digit phone number, with optional country code.
-              </p>
             </div>
 
             <div>
@@ -270,8 +269,11 @@ export default function CheckoutPage() {
               disabled={isSubmitting}
               className="w-full bg-slate-700 px-6 py-3 text-sm font-bold tracking-wide text-white uppercase transition-colors hover:bg-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isSubmitting ? "Submitting..." : "Submit Order"}
+              {isSubmitting ? "Submitting..." : "Submit Quote"}
             </button>
+            <p className="text-center text-sm text-gray-600">
+              We&apos;ll follow up with you shortly.
+            </p>
           </form>
         </section>
       </div>

@@ -76,6 +76,22 @@ export interface CreateOrderResponseDto {
     id: string;
 }
 
+export interface OrderOverviewDto {
+    id: string;
+    name: string;
+    email: string | null;
+    phone: string | null;
+    additionalComments: string | null;
+    createdAt: Date;
+    items: {
+        quantity: number;
+        product: {
+            id: string;
+            name: string | null;
+        };
+    }[];
+}
+
 export type ApiErrorDto = {
     error: string;
     message?: string;

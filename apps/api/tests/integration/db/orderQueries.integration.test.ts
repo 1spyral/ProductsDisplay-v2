@@ -1,5 +1,5 @@
 import { db } from "@/db/drizzle";
-import { createOrder } from "@/db/queries/orderQueries";
+import { createOrder, getOrders } from "@/db/queries/orderQueries";
 import { createProduct } from "@/db/queries/productQueries";
 import { orderProducts } from "@/db/schema";
 import { beforeEach, describe, expect, test } from "bun:test";
@@ -47,5 +47,50 @@ describe("orderQueries (integration)", () => {
             { productId: "product-a", quantity: 2 },
             { productId: "product-b", quantity: 1 },
         ]);
+    });
+
+    test("getOrders returns newest orders with nested product details", async () => {
+        await createOrder({
+            name: "First Customer",
+            email: "first@example.com",
+            phone: null,
+            additionalComments: null,
+            items: [{ productId: "product-a", quantity: 1 }],
+        });
+
+        await createOrder({
+            name: "Second Customer",
+            email: null,
+            phone: "555-0100",
+            additionalComments: "Call after 5",
+            items: [
+                { productId: "product-b", quantity: 3 },
+                { productId: "product-a", quantity: 2 },
+            ],
+        });
+
+        const orders = await getOrders();
+
+        expect(orders).toHaveLength(2);
+        expect(orders[0]?.name).toBe("Second Customer");
+        expect(orders[0]?.phone).toBe("555-0100");
+        expect(orders[0]?.additionalComments).toBe("Call after 5");
+        expect(orders[0]?.items).toEqual([
+            {
+                quantity: 2,
+                product: {
+                    id: "product-a",
+                    name: "Chair",
+                },
+            },
+            {
+                quantity: 3,
+                product: {
+                    id: "product-b",
+                    name: "Table",
+                },
+            },
+        ]);
+        expect(orders[1]?.name).toBe("First Customer");
     });
 });

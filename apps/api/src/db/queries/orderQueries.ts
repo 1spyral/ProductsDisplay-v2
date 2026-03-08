@@ -1,6 +1,9 @@
 import { db } from "@/db/drizzle";
 import { orderProducts, orders } from "@/db/schema";
-import type { CreateOrderRequestDto } from "@productsdisplay/contracts";
+import type {
+    CreateOrderRequestDto,
+    OrderOverviewDto,
+} from "@productsdisplay/contracts";
 
 export async function createOrder(
     input: CreateOrderRequestDto
@@ -26,4 +29,36 @@ export async function createOrder(
 
         return order.id;
     });
+}
+
+export async function getOrders(): Promise<OrderOverviewDto[]> {
+    const rows = await db.query.orders.findMany({
+        orderBy: (table, { desc }) => [desc(table.createdAt)],
+        with: {
+            products: {
+                orderBy: (table, { asc }) => [asc(table.productId)],
+                columns: {
+                    quantity: true,
+                },
+                with: {
+                    product: {
+                        columns: {
+                            id: true,
+                            name: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+
+    return rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        email: row.email,
+        phone: row.phone,
+        additionalComments: row.additionalComments,
+        createdAt: row.createdAt,
+        items: row.products,
+    }));
 }

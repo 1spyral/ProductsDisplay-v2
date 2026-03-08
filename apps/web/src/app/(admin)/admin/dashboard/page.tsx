@@ -36,6 +36,12 @@ export default function AdminDashboard() {
           href="/admin/dashboard/categories"
           cta="View Categories →"
         />
+        <DashboardCard
+          title="Orders"
+          description="Review submitted customer orders"
+          href="/admin/dashboard/orders"
+          cta="View Orders →"
+        />
       </div>
     </div>
   );

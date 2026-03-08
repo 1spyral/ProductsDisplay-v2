@@ -1,6 +1,6 @@
+import type { Metadata } from "next";
 import ProductPage from "@/components/Product/ProductPage";
 import { getProductById } from "@/db/queries/productQueries";
-import type { Metadata } from "next";
 
 export const revalidate = 60;
 

@@ -1,7 +1,7 @@
-import { db } from "@/db/drizzle";
-import { savedSelectionProducts, savedSelections } from "@/db/schema";
 import type { SavedSelectionOverviewDto } from "@productsdisplay/contracts";
 import { eq } from "drizzle-orm";
+import { db } from "@/db/drizzle";
+import { savedSelectionProducts, savedSelections } from "@/db/schema";
 
 export type SavedSelectionOverview = SavedSelectionOverviewDto;
 

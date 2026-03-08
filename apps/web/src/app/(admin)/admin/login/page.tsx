@@ -1,8 +1,8 @@
 "use client";
 
-import { loginAdmin } from "@/actions/admin";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { loginAdmin } from "@/actions/admin";
 
 export default function AdminLoginPage() {
   const [password, setPassword] = useState("");

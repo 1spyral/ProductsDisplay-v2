@@ -77,12 +77,12 @@ Ensure Postgres is running and `.env` DB values are correct.
     # Start the Next.js dev server (terminal 2)
     cd apps/web && bun run dev
 
-The app will be available at http://localhost:3000.
+The app will be available at <http://localhost:3000>.
 
 ### Admin Access (Development)
 
 1. Set `ADMIN_PASSWORD` in `apps/web/.env`.
-2. Visit http://localhost:3000/admin (redirects to `/admin/login`).
+2. Visit <http://localhost:3000/admin> (redirects to `/admin/login`).
 3. Log in with the configured password to reach `/admin/dashboard`.
 
 ## Building and Running (Production Style)
@@ -97,14 +97,20 @@ The build uses a standalone Next.js output and the `cp` script in `apps/web/pack
 
 ## Linting and Formatting
 
-    # Lint with ESLint
-    cd apps/web && bun run lint
+    # Lint the whole repository from the workspace root
+    bun run lint
 
-    # Format the whole repository with Prettier
+    # Format supported files across the repository with Biome
     bun run format
 
-    # Check formatting only (whole repository)
+    # Check formatting and import organization only
     bun run format:check
+
+`bun run lint` is the canonical repo-wide lint command. It runs Biome across
+supported source and config files, lints Markdown documentation (for example
+`README.md` and `AGENTS.md`), validates YAML files (including
+`.github/workflows/*.yml`), and still runs the web app's temporary Next.js
+ESLint pass during the transition away from app-local linting.
 
 ## Testing
 

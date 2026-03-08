@@ -1,5 +1,3 @@
-import type { CategoryValidationState } from "@/hooks/useCategoryFormValidation";
-import { act, renderHook, waitFor } from "@testing-library/react";
 import {
     afterAll,
     afterEach,
@@ -9,6 +7,8 @@ import {
     mock,
     test,
 } from "bun:test";
+import { act, renderHook, waitFor } from "@testing-library/react";
+import type { CategoryValidationState } from "@/hooks/useCategoryFormValidation";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 const checkAdminCategoryIdExists = mock(async (_id: string) => false);
@@ -45,8 +45,9 @@ mock.module("@/actions/admin", () => ({
     getAdminSavedSelectionProductIds,
 }));
 
-const { useCategoryFormValidation, useCategoryIdValidation } =
-    await import("@/hooks/useCategoryFormValidation");
+const { useCategoryFormValidation, useCategoryIdValidation } = await import(
+    "@/hooks/useCategoryFormValidation"
+);
 
 type CategoryValidationWithCheck = CategoryValidationState & {
     checkForDuplicate: (id: string) => Promise<void>;

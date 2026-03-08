@@ -1,9 +1,4 @@
 import {
-  ProductFormActions,
-  ProductFormError,
-} from "@/components/ProductForm/ProductFormActions";
-import { cleanup, fireEvent, render } from "@testing-library/react";
-import {
   afterAll,
   afterEach,
   beforeAll,
@@ -12,6 +7,11 @@ import {
   mock,
   test,
 } from "bun:test";
+import { cleanup, fireEvent, render } from "@testing-library/react";
+import {
+  ProductFormActions,
+  ProductFormError,
+} from "@/components/ProductForm/ProductFormActions";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 describe("ProductFormError", () => {

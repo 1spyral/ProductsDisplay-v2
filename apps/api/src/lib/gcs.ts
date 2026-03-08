@@ -1,6 +1,6 @@
+import { type GetFilesOptions, Storage } from "@google-cloud/storage";
 import { env } from "@/env";
 import logger from "@/lib/logger";
-import { GetFilesOptions, Storage } from "@google-cloud/storage";
 
 // Initialize Google Cloud Storage
 let storage: Storage;

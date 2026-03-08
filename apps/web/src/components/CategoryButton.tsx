@@ -1,5 +1,5 @@
-import Category, { getCategoryName } from "@/types/Category";
 import Link from "next/link";
+import Category, { getCategoryName } from "@/types/Category";
 
 export default function CategoryButton({
   category,

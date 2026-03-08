@@ -1,5 +1,3 @@
-import ProductSortContainer from "@/components/Product/ProductSortContainer";
-import { cleanup, fireEvent, render } from "@testing-library/react";
 import {
   afterAll,
   afterEach,
@@ -8,6 +6,8 @@ import {
   expect,
   test,
 } from "bun:test";
+import { cleanup, fireEvent, render } from "@testing-library/react";
+import ProductSortContainer from "@/components/Product/ProductSortContainer";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 describe("ProductSortContainer", () => {

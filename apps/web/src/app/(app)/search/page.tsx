@@ -1,7 +1,7 @@
+import type { Metadata } from "next";
 import ProductListingPage from "@/components/Product/ProductListingPage";
 import { getProducts, searchProducts } from "@/db/queries/productQueries";
 import Product from "@/types/Product";
-import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 

@@ -1,7 +1,7 @@
+import { describe, expect, test } from "bun:test";
 import { db } from "@/db/drizzle";
 import { getStoreInfoUncached } from "@/db/queries/storeInfoQueries";
 import { storeInfo } from "@/db/schema";
-import { describe, expect, test } from "bun:test";
 import { resetTestDatabase } from "./helpers";
 
 describe("storeInfoQueries (integration)", () => {

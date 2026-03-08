@@ -1,5 +1,5 @@
-import { env } from "@/env";
 import pino from "pino";
+import { env } from "@/env";
 
 const validLogLevels = [
     "trace",

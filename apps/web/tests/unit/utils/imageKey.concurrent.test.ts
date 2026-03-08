@@ -1,9 +1,9 @@
+import { describe, expect, test } from "bun:test";
 import {
     buildGlobalGcsPath,
     isGlobalImageObjectKey,
     isUuidV4,
 } from "@/utils/imageKey";
-import { describe, expect, test } from "bun:test";
 
 describe("imageKey utilities", () => {
     test("validates UUID v4 values", () => {

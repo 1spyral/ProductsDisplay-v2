@@ -1,7 +1,7 @@
-import { db } from "@/db/drizzle";
-import { productImages } from "@/db/schema";
 import type { ProductImageDto } from "@productsdisplay/contracts";
 import { asc, eq, inArray } from "drizzle-orm";
+import { db } from "@/db/drizzle";
+import { productImages } from "@/db/schema";
 
 export async function getProductImages(
     productId: string

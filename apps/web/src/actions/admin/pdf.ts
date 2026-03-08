@@ -1,10 +1,10 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { requireAdminAuth } from "@/actions/admin/auth";
 import { checkRateLimit } from "@/actions/admin/rateLimit";
 import { env } from "@/env";
 import { getAdminCookieNames } from "@/lib/adminTokens";
-import { cookies } from "next/headers";
 
 export async function compilePdf(productIds: string[]): Promise<Uint8Array> {
     await requireAdminAuth();

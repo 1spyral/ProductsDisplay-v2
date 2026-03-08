@@ -1,9 +1,9 @@
+import { beforeEach, describe, expect, test } from "bun:test";
+import { eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { createOrder, getOrders } from "@/db/queries/orderQueries";
 import { createProduct } from "@/db/queries/productQueries";
 import { orderProducts, productImages } from "@/db/schema";
-import { beforeEach, describe, expect, test } from "bun:test";
-import { eq } from "drizzle-orm";
 import { resetTestDatabase } from "./helpers";
 
 describe("orderQueries (integration)", () => {

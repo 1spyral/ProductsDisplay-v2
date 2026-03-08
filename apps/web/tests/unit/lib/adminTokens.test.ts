@@ -1,3 +1,5 @@
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { SignJWT } from "jose";
 import {
     createAdminAccessToken,
     createAdminRefreshToken,
@@ -7,8 +9,6 @@ import {
     verifyAdminAccessToken,
     verifyAdminRefreshToken,
 } from "@/lib/adminTokens";
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { SignJWT } from "jose";
 
 const originalSecret = process.env.ADMIN_TOKEN_SECRET;
 

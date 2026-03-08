@@ -1,8 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import ZoomImageWheel from "@/components/Image/ZoomImageWheel";
 import Photo from "@/types/Photo";
-import { useState } from "react";
 import Arrows from "./Arrows";
 import Dots from "./Dots";
 import ImageWheel from "./ImageWheel";

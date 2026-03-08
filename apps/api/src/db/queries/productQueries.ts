@@ -1,8 +1,8 @@
+import type { ProductDto } from "@productsdisplay/contracts";
+import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { products } from "@/db/schema";
 import logger from "@/lib/logger";
-import type { ProductDto } from "@productsdisplay/contracts";
-import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 
 export async function getProducts(
     includeHidden: boolean = false

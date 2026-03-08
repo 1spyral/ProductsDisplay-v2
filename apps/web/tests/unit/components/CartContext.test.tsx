@@ -1,5 +1,3 @@
-import { CartProvider, useCart, type CartItem } from "@/contexts/CartContext";
-import { act, cleanup, renderHook } from "@testing-library/react";
 import {
   afterAll,
   afterEach,
@@ -9,7 +7,9 @@ import {
   expect,
   test,
 } from "bun:test";
+import { act, cleanup, renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
+import { type CartItem, CartProvider, useCart } from "@/contexts/CartContext";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 const wrapper = ({ children }: { children: ReactNode }) => (

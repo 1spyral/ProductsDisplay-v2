@@ -1,3 +1,4 @@
+import type { FastifyInstance } from "fastify";
 import {
     getProductImageById,
     getProductImages,
@@ -6,7 +7,6 @@ import {
 import { requireAdmin } from "@/routes/admin/auth";
 import { parseCsvIds } from "@/routes/shared/queryParsers";
 import { adminRateLimitConfig } from "@/routes/shared/rateLimit";
-import type { FastifyInstance } from "fastify";
 
 export async function adminProductImageRoutes(
     app: FastifyInstance

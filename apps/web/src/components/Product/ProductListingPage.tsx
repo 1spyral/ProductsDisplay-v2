@@ -1,5 +1,5 @@
-import type Product from "@/types/Product";
 import type { ReactNode } from "react";
+import type Product from "@/types/Product";
 import ProductList from "./ProductList";
 import ProductSortContainer from "./ProductSortContainer";
 

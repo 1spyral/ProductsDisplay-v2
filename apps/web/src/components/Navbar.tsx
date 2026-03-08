@@ -1,5 +1,5 @@
-import { getStoreInfo } from "@/db/queries/storeInfoQueries";
 import Link from "next/link";
+import { getStoreInfo } from "@/db/queries/storeInfoQueries";
 import NavbarCart from "./NavbarCart";
 
 export default async function Navbar() {

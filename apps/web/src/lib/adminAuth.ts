@@ -1,3 +1,4 @@
+import type { NextRequest, NextResponse } from "next/server";
 import { env } from "@/env";
 import {
     createAdminAccessToken,
@@ -6,7 +7,6 @@ import {
     verifyAdminAccessToken,
     verifyAdminRefreshToken,
 } from "@/lib/adminTokens";
-import type { NextRequest, NextResponse } from "next/server";
 
 export type AdminAuthStatus =
     | { status: "authenticated" }

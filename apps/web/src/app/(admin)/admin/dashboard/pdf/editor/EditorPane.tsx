@@ -1,21 +1,17 @@
 "use client";
 
-import { createAdminSavedSelection, getAdminProducts } from "@/actions/admin";
-import Modal from "@/components/Modal";
-import type Product from "@/types/Product";
-import { buildImageUrl } from "@/utils/photo";
 import {
+  closestCenter,
   DndContext,
   KeyboardSensor,
   PointerSensor,
-  closestCenter,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
-  SortableContext,
   arrayMove,
+  SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
@@ -24,12 +20,16 @@ import { CSS } from "@dnd-kit/utilities";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  type Dispatch,
+  type SetStateAction,
   useEffect,
   useMemo,
   useState,
-  type Dispatch,
-  type SetStateAction,
 } from "react";
+import { createAdminSavedSelection, getAdminProducts } from "@/actions/admin";
+import Modal from "@/components/Modal";
+import type Product from "@/types/Product";
+import { buildImageUrl } from "@/utils/photo";
 import { usePdfEditor } from "./PdfEditorContext";
 
 type EditorPaneProps = {

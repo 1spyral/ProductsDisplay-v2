@@ -1,5 +1,5 @@
-import { db } from "@/db/drizzle";
 import { sql } from "drizzle-orm";
+import { db } from "@/db/drizzle";
 
 const resetSql = sql.raw(`
 TRUNCATE TABLE

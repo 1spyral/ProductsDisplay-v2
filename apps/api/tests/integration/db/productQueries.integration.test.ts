@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test } from "bun:test";
 import {
     createProduct,
     getProductById,
@@ -5,7 +6,6 @@ import {
     searchProducts,
     updateProduct,
 } from "@/db/queries/productQueries";
-import { beforeEach, describe, expect, test } from "bun:test";
 import { resetTestDatabase } from "./helpers";
 
 describe("productQueries (integration)", () => {

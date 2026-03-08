@@ -1,3 +1,4 @@
+import type { FastifyInstance } from "fastify";
 import {
     checkCategoryIdExists,
     createCategory,
@@ -8,7 +9,6 @@ import {
 } from "@/db/queries/categoryQueries";
 import { requireAdmin } from "@/routes/admin/auth";
 import { adminRateLimitConfig } from "@/routes/shared/rateLimit";
-import type { FastifyInstance } from "fastify";
 
 export async function adminCategoryRoutes(app: FastifyInstance): Promise<void> {
     app.get(

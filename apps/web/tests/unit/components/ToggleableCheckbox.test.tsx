@@ -1,5 +1,3 @@
-import ToggleableCheckbox from "@/components/ToggleableCheckbox";
-import { cleanup, fireEvent, render } from "@testing-library/react";
 import {
   afterAll,
   afterEach,
@@ -9,6 +7,8 @@ import {
   mock,
   test,
 } from "bun:test";
+import { cleanup, fireEvent, render } from "@testing-library/react";
+import ToggleableCheckbox from "@/components/ToggleableCheckbox";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 describe("ToggleableCheckbox", () => {

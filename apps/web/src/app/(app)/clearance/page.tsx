@@ -1,6 +1,6 @@
+import type { Metadata } from "next";
 import ProductList from "@/components/Product/ProductList";
 import { getClearanceProducts } from "@/db/queries/productQueries";
-import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 

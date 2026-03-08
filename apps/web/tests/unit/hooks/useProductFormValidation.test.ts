@@ -1,5 +1,3 @@
-import type { ProductValidationState } from "@/hooks/useProductFormValidation";
-import { act, renderHook, waitFor } from "@testing-library/react";
 import {
     afterAll,
     afterEach,
@@ -9,6 +7,8 @@ import {
     mock,
     test,
 } from "bun:test";
+import { act, renderHook, waitFor } from "@testing-library/react";
+import type { ProductValidationState } from "@/hooks/useProductFormValidation";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 const checkAdminProductIdExists = mock(async (_id: string) => false);
@@ -45,8 +45,9 @@ mock.module("@/actions/admin", () => ({
     getAdminSavedSelectionProductIds,
 }));
 
-const { useProductFormValidation, useProductIdValidation } =
-    await import("@/hooks/useProductFormValidation");
+const { useProductFormValidation, useProductIdValidation } = await import(
+    "@/hooks/useProductFormValidation"
+);
 
 type ProductValidationWithCheck = ProductValidationState & {
     checkForDuplicate: (id: string) => Promise<void>;

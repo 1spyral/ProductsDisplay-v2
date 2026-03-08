@@ -1,3 +1,4 @@
+import type { FastifyInstance } from "fastify";
 import {
     getClearanceProducts,
     getProductById,
@@ -8,7 +9,6 @@ import {
     searchProducts,
 } from "@/db/queries/productQueries";
 import { parseBoolean, parseCsvIds } from "@/routes/shared/queryParsers";
-import type { FastifyInstance } from "fastify";
 
 export async function publicProductRoutes(app: FastifyInstance): Promise<void> {
     app.get("/products", async (request) => {

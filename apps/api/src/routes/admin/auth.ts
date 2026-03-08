@@ -1,9 +1,9 @@
+import type { FastifyReply, FastifyRequest } from "fastify";
 import {
     getAdminCookieNames,
     verifyAdminAccessToken,
     verifyAdminRefreshToken,
 } from "@/lib/adminTokens";
-import type { FastifyReply, FastifyRequest } from "fastify";
 
 export async function isAdminAuthenticated(
     request: FastifyRequest

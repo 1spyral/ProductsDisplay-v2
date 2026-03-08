@@ -1,7 +1,7 @@
-import { db } from "@/db/drizzle";
-import { storeInfo } from "@/db/schema";
 import type { StoreInfoDto } from "@productsdisplay/contracts";
 import { eq } from "drizzle-orm";
+import { db } from "@/db/drizzle";
+import { storeInfo } from "@/db/schema";
 
 type CompleteStoreInfo = StoreInfoDto & {
     name: string;

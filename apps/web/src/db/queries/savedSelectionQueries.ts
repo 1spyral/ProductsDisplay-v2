@@ -1,7 +1,7 @@
 "use server";
 
-import { apiJsonRequest } from "@/lib/api/client";
 import type { SavedSelectionOverviewDto } from "@productsdisplay/contracts";
+import { apiJsonRequest } from "@/lib/api/client";
 
 export type SavedSelectionOverview = SavedSelectionOverviewDto;
 

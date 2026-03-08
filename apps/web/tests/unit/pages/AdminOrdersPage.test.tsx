@@ -1,6 +1,3 @@
-import type { OrderOverview } from "@/db/queries/orderQueries";
-import { cleanup, render, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import {
   afterAll,
   afterEach,
@@ -10,7 +7,10 @@ import {
   mock,
   test,
 } from "bun:test";
+import { cleanup, render, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
+import type { OrderOverview } from "@/db/queries/orderQueries";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 const getAdminOrders = mock(async () => [] as OrderOverview[]);
@@ -59,8 +59,9 @@ mock.module("next/link", () => ({
   ),
 }));
 
-const { default: AdminOrdersPage } =
-  await import("@/app/(admin)/admin/dashboard/orders/page");
+const { default: AdminOrdersPage } = await import(
+  "@/app/(admin)/admin/dashboard/orders/page"
+);
 
 describe("AdminOrdersPage", () => {
   beforeAll(() => registerHappyDom());

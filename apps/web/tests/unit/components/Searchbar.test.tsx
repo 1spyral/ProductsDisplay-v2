@@ -1,4 +1,3 @@
-import { cleanup, fireEvent, render } from "@testing-library/react";
 import {
   afterAll,
   afterEach,
@@ -8,6 +7,7 @@ import {
   mock,
   test,
 } from "bun:test";
+import { cleanup, fireEvent, render } from "@testing-library/react";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 const routerPush = mock((_href: string) => undefined);

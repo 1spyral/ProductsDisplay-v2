@@ -44,8 +44,9 @@ mock.module("@/lib/logger", () => ({
     },
 }));
 
-const { deleteProduct, updateProduct } =
-    await import("@/db/queries/productQueries");
+const { deleteProduct, updateProduct } = await import(
+    "@/db/queries/productQueries"
+);
 
 describe("productQueries (unit, mocked db)", () => {
     afterAll(() => {

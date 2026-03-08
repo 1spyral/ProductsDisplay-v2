@@ -1,11 +1,3 @@
-import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
-import {
-  act,
-  cleanup,
-  fireEvent,
-  render,
-  waitFor,
-} from "@testing-library/react";
 import {
   afterAll,
   afterEach,
@@ -16,6 +8,14 @@ import {
   mock,
   test,
 } from "bun:test";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  waitFor,
+} from "@testing-library/react";
+import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 function createDeferredPromise() {

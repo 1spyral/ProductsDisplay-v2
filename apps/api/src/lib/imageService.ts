@@ -1,10 +1,10 @@
+import { randomUUID } from "node:crypto";
+import { eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { productImages } from "@/db/schema";
-import { deleteImage, ImageUploadResult, uploadImage } from "@/lib/gcs";
+import { deleteImage, type ImageUploadResult, uploadImage } from "@/lib/gcs";
 import logger from "@/lib/logger";
 import { buildGlobalGcsPath } from "@/utils/imageKey";
-import { randomUUID } from "crypto";
-import { eq } from "drizzle-orm";
 
 export interface ImageUploadData {
     file: File;
@@ -209,7 +209,7 @@ export async function updateImagePosition(
  * Reorder all images for a product
  */
 export async function reorderProductImages(
-    productId: string,
+    _productId: string,
     imageIds: string[]
 ): Promise<{ success: boolean; error?: string }> {
     try {

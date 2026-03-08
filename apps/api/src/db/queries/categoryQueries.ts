@@ -1,7 +1,7 @@
-import { db } from "@/db/drizzle";
-import { categories } from "@/db/schema";
 import type { CategoryDto } from "@productsdisplay/contracts";
 import { asc, eq, sql } from "drizzle-orm";
+import { db } from "@/db/drizzle";
+import { categories } from "@/db/schema";
 
 async function getOrderedCategoryIds(): Promise<string[]> {
     const rows = await db

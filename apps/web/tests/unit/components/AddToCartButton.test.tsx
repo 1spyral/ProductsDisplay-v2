@@ -1,7 +1,3 @@
-import AddToCartButton from "@/components/Cart/AddToCartButton";
-import { CartProvider, useCart, type CartItem } from "@/contexts/CartContext";
-import { cleanup, render } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import {
   afterAll,
   afterEach,
@@ -11,6 +7,10 @@ import {
   expect,
   test,
 } from "bun:test";
+import { cleanup, render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import AddToCartButton from "@/components/Cart/AddToCartButton";
+import { type CartItem, CartProvider, useCart } from "@/contexts/CartContext";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 const base = {

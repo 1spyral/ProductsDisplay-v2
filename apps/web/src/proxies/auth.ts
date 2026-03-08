@@ -1,5 +1,5 @@
-import { getAdminAuthStatus, setAdminAccessCookie } from "@/lib/adminAuth";
 import { NextRequest, NextResponse } from "next/server";
+import { getAdminAuthStatus, setAdminAccessCookie } from "@/lib/adminAuth";
 
 export async function handleAdminAuth(
     request: NextRequest

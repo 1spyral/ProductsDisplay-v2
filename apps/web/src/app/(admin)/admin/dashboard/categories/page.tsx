@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   deleteAdminCategory,
   getAdminCategoriesForManagement,
@@ -10,7 +11,6 @@ import CategoriesTable from "@/components/CategoriesTable";
 import ConfirmDeleteModal from "@/components/ConfirmDeleteModal";
 import EditCategoryModal from "@/components/EditCategoryModal";
 import Category from "@/types/Category";
-import { useEffect, useState } from "react";
 
 type CategoriesDataState = {
   categories: Category[];

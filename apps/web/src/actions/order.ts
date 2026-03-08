@@ -1,10 +1,10 @@
 "use server";
 
-import { apiJsonRequest } from "@/lib/api/client";
 import type {
     CreateOrderRequestDto,
     CreateOrderResponseDto,
 } from "@productsdisplay/contracts";
+import { apiJsonRequest } from "@/lib/api/client";
 
 export async function submitOrder(
     payload: CreateOrderRequestDto

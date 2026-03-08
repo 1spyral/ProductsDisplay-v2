@@ -1,10 +1,10 @@
+import { beforeEach, describe, expect, test } from "bun:test";
 import {
     createCategory,
     deleteCategory,
     getCategories,
     reorderCategories,
 } from "@/db/queries/categoryQueries";
-import { beforeEach, describe, expect, test } from "bun:test";
 import { resetTestDatabase } from "./helpers";
 
 describe("categoryQueries (integration)", () => {

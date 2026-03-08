@@ -1,10 +1,12 @@
+import type { FastifyInstance } from "fastify";
 import {
     getCategories,
     getCategoryByCategory,
 } from "@/db/queries/categoryQueries";
-import type { FastifyInstance } from "fastify";
 
-export async function publicCategoryRoutes(app: FastifyInstance): Promise<void> {
+export async function publicCategoryRoutes(
+    app: FastifyInstance
+): Promise<void> {
     app.get("/categories", async () => {
         return getCategories();
     });

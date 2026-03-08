@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, test } from "bun:test";
+import { eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { createProduct } from "@/db/queries/productQueries";
 import {
@@ -8,8 +10,6 @@ import {
     updateSavedSelection,
 } from "@/db/queries/savedSelectionQueries";
 import { productImages, savedSelectionProducts } from "@/db/schema";
-import { beforeEach, describe, expect, test } from "bun:test";
-import { eq } from "drizzle-orm";
 import { resetTestDatabase } from "./helpers";
 
 async function seedProducts() {

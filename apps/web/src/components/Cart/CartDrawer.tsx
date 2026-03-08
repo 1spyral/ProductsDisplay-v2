@@ -1,8 +1,8 @@
 "use client";
 
-import { useCart } from "@/contexts/CartContext";
 import Image from "next/image";
 import Link from "next/link";
+import { useCart } from "@/contexts/CartContext";
 
 export default function CartDrawer() {
   const {

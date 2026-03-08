@@ -1,6 +1,3 @@
-import { CartProvider, useCart, type CartItem } from "@/contexts/CartContext";
-import { cleanup, render } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import {
   afterAll,
   afterEach,
@@ -11,7 +8,10 @@ import {
   mock,
   test,
 } from "bun:test";
+import { cleanup, render } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { AnchorHTMLAttributes, ReactNode } from "react";
+import { type CartItem, CartProvider, useCart } from "@/contexts/CartContext";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 mock.module("next/image", () => ({

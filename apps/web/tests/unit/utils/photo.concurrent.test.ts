@@ -1,6 +1,6 @@
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import Product from "@/types/Product";
 import getPhotos, { buildImageUrl } from "@/utils/photo";
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 
 const originalImagePath = process.env.NEXT_PUBLIC_IMAGE_PATH;
 

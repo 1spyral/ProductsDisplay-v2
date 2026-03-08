@@ -1,8 +1,8 @@
 "use client";
 
-import Photo from "@/types/Photo";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
+import Photo from "@/types/Photo";
 
 export default function ZoomImageWheel({
   photos,

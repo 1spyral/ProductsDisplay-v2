@@ -1,8 +1,8 @@
 "use server";
 
+import { cache } from "react";
 import { apiJsonRequest } from "@/lib/api/client";
 import type StoreInfo from "@/types/StoreInfo";
-import { cache } from "react";
 
 type CompleteStoreInfo = StoreInfo & {
     name: string;

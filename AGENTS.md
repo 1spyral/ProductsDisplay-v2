@@ -20,9 +20,8 @@
 - `cd apps/web && bun run build`: build standalone Next.js output and copy static assets.
 - `cd apps/web && bun run start`: run the production-style standalone server.
 - `cd apps/api && bun run start`: run the API service in production style.
-- `cd apps/web && bun run lint`: run ESLint for web.
-- `cd apps/api && bun run lint`: run ESLint for API.
-- `bun run format` / `bun run format:check`: format or check formatting with Prettier for the whole repository.
+- `bun run lint`: run the repo-wide lint suite from the workspace root. This includes Biome for supported files, Markdown linting, YAML validation, and the temporary web Next.js ESLint pass.
+- `bun run format` / `bun run format:check`: format or check supported files for the whole repository with Biome from the workspace root.
 - `cd apps/web && bun run test:unit`: run web unit tests.
 - `cd apps/api && bun run test:unit`: run API unit tests.
 - `cd apps/api && bun run test:integration`: run API integration tests against configured Postgres.
@@ -35,9 +34,9 @@
 ## Coding Style & Naming Conventions
 
 - TypeScript is strict (`apps/web/tsconfig.json`), with `@/*` path alias to `src/*`.
-- Prettier rules: semicolons on, double quotes, trailing commas (`es5`), `printWidth: 80`.
-- Indentation: 4 spaces by default; 2 spaces for `*.tsx`, `*.jsx`, and YAML.
-- Keep imports clean; unused imports fail lint (`unused-imports/no-unused-imports`).
+- Biome formatting rules: semicolons on, double quotes, trailing commas (`es5`), `lineWidth: 80`.
+- Indentation: 4 spaces by default; 2 spaces for `*.tsx` and `*.jsx`.
+- Keep imports clean; Biome organizes imports at the repo root, and the temporary web ESLint pass still enforces web-specific import hygiene.
 - Naming: React components in PascalCase (`ProductModal.tsx`), hooks in camelCase with `use` prefix (`useProductForm.ts`), route folders in lowercase.
 
 ## Testing Guidelines
@@ -49,17 +48,17 @@
 - E2E tests use Playwright: `cd apps/web && bun run test:e2e`.
 - Coverage reports: `cd apps/web && bun run test:coverage`.
 - Opt-in concurrency is enabled through `bunfig.toml` with `concurrentTestGlob`.
-    - Name only concurrency-safe files as `*.concurrent.test.ts`.
-    - Keep files as `*.test.ts` when tests mutate shared state (`process.env`, global maps, module mocks, timers, or DOM globals).
-- Minimum validation for changes: `cd apps/web && bun run lint`, `cd apps/api && bun run lint`, `cd apps/web && bun run build`, and relevant test commands.
+  - Name only concurrency-safe files as `*.concurrent.test.ts`.
+  - Keep files as `*.test.ts` when tests mutate shared state (`process.env`, global maps, module mocks, timers, or DOM globals).
+- Minimum validation for changes: `bun run format:check`, `bun run lint`, `cd apps/web && bun run build`, and relevant test commands.
 - For DB changes, generate and commit a migration with `cd apps/api && bun run db:generate --name <name>`, then verify affected admin/storefront flows.
 
 ## Commit & Pull Request Guidelines
 
 - Follow existing commit style: short imperative summaries (for example `Add category filter in PDF editor`).
 - AI agents should create commits for their own completed changes unless the user explicitly asks not to commit.
-- Before committing, run formatting, linting, and relevant tests for your changes (`bun run format`, `cd apps/web && bun run lint`, `cd apps/api && bun run lint`, and applicable `cd apps/web && bun run test:*` / `cd apps/api && bun run test:*` commands).
-- Before committing, AI agents must run and pass all of the following commands in order: `bun run format:check`, `cd apps/web && bun run lint`, `cd apps/api && bun run lint`, `cd apps/web && bun run test:unit`, and `cd apps/api && bun run test:unit`.
+- Before committing, run formatting, linting, and relevant tests for your changes (`bun run format`, `bun run lint`, and applicable `cd apps/web && bun run test:*` / `cd apps/api && bun run test:*` commands).
+- Before committing, AI agents must run and pass all of the following commands in order: `bun run format:check`, `bun run lint`, `cd apps/web && bun run test:unit`, and `cd apps/api && bun run test:unit`.
 - AI agents must include the result of each required pre-commit command in their final response before any commit.
 - AI agents must not bypass checks with `--no-verify` or equivalent flags.
 - Commits must include a descriptive title and a body that explains what changed and why.

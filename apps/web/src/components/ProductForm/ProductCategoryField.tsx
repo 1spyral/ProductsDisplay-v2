@@ -1,7 +1,7 @@
 "use client";
 
-import Category from "@/types/Category";
 import { useEffect, useRef, useState } from "react";
+import Category from "@/types/Category";
 
 interface ProductCategoryFieldProps {
   value: string | null;

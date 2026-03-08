@@ -1,6 +1,3 @@
-import { ProductCategoryField } from "@/components/ProductForm/ProductCategoryField";
-import type Category from "@/types/Category";
-import { cleanup, fireEvent, render } from "@testing-library/react";
 import {
   afterAll,
   afterEach,
@@ -10,6 +7,9 @@ import {
   mock,
   test,
 } from "bun:test";
+import { cleanup, fireEvent, render } from "@testing-library/react";
+import { ProductCategoryField } from "@/components/ProductForm/ProductCategoryField";
+import type Category from "@/types/Category";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 const categories: Category[] = [

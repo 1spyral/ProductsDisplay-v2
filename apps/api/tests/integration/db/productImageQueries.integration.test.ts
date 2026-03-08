@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, test } from "bun:test";
 import { db } from "@/db/drizzle";
 import {
     getProductImageById,
@@ -6,7 +7,6 @@ import {
 } from "@/db/queries/productImageQueries";
 import { createProduct } from "@/db/queries/productQueries";
 import { productImages } from "@/db/schema";
-import { beforeEach, describe, expect, test } from "bun:test";
 import { resetTestDatabase } from "./helpers";
 
 async function seedProductWithImages() {

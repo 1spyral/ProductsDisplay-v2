@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   deleteAdminProduct,
   getAdminCategories,
@@ -13,7 +14,6 @@ import EditProductModal from "@/components/EditProductModal";
 import ProductsTable from "@/components/ProductsTable";
 import Category from "@/types/Category";
 import Product from "@/types/Product";
-import { useEffect, useState } from "react";
 
 type SortField = "id" | "name" | "category";
 type SortOrder = "asc" | "desc";

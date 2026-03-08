@@ -1,9 +1,12 @@
+import type {
+    ApiErrorDto,
+    CreateOrderRequestDto,
+} from "@productsdisplay/contracts";
+import type { FastifyInstance } from "fastify";
+import { z } from "zod";
 import { createOrder } from "@/db/queries/orderQueries";
 import { isValidPhoneNumber, normalizePhoneNumber } from "@/lib/phone";
 import { publicRateLimitConfig } from "@/routes/shared/rateLimit";
-import type { ApiErrorDto, CreateOrderRequestDto } from "@productsdisplay/contracts";
-import type { FastifyInstance } from "fastify";
-import { z } from "zod";
 
 const orderItemSchema = z.object({
     productId: z.string().trim().min(1),
@@ -19,7 +22,11 @@ const createOrderSchema = z
         name: z.string().trim().min(1, "Name is required"),
         email: z.preprocess(
             nullableInputToString,
-            z.string().trim().email("Enter a valid email address").or(z.literal(""))
+            z
+                .string()
+                .trim()
+                .email("Enter a valid email address")
+                .or(z.literal(""))
         ),
         phone: z.preprocess(
             nullableInputToString,

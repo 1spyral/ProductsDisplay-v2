@@ -1,9 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { createAdminProduct, uploadAdminProductImage } from "@/actions/admin";
 import { useProductForm } from "@/hooks/useProductForm";
 import Category from "@/types/Category";
-import { useState } from "react";
 import {
   ProductCategoryField,
   ProductClearanceField,

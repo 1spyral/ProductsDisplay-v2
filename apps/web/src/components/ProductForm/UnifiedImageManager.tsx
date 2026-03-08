@@ -1,13 +1,6 @@
 "use client";
 
 import {
-  deleteAdminProductImage,
-  reorderAdminProductImages,
-  uploadAdminProductImage,
-} from "@/actions/admin";
-import { ProductImage } from "@/types/Product";
-import { buildImageUrl } from "@/utils/photo";
-import {
   closestCenter,
   DndContext,
   DragEndEvent,
@@ -25,7 +18,14 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Image from "next/image";
-import { useRef, useState, type DragEvent, type RefObject } from "react";
+import { type DragEvent, type RefObject, useRef, useState } from "react";
+import {
+  deleteAdminProductImage,
+  reorderAdminProductImages,
+  uploadAdminProductImage,
+} from "@/actions/admin";
+import { ProductImage } from "@/types/Product";
+import { buildImageUrl } from "@/utils/photo";
 import Modal from "../Modal";
 
 // Types for the unified component

@@ -1,9 +1,9 @@
-import { db } from "@/db/drizzle";
-import { orderProducts, orders } from "@/db/schema";
 import type {
     CreateOrderRequestDto,
     OrderOverviewDto,
 } from "@productsdisplay/contracts";
+import { db } from "@/db/drizzle";
+import { orderProducts, orders } from "@/db/schema";
 
 export async function createOrder(
     input: CreateOrderRequestDto

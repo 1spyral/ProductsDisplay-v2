@@ -1,7 +1,7 @@
+import type { CSSProperties } from "react";
 import Product from "@/types/Product";
 import getPhotos from "@/utils/photo";
 import { sortProductsByOption } from "@/utils/productSort";
-import type { CSSProperties } from "react";
 import ProductBox from "./ProductBox";
 import styles from "./ProductList.module.css";
 

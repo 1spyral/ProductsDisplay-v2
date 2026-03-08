@@ -1,7 +1,7 @@
 "use client";
 
-import { useCart } from "@/contexts/CartContext";
 import { useSyncExternalStore } from "react";
+import { useCart } from "@/contexts/CartContext";
 
 export default function CartButton() {
   const { totalItems, setCartOpen } = useCart();

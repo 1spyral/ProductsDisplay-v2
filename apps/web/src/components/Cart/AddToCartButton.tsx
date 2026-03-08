@@ -1,7 +1,7 @@
 "use client";
 
-import { useCart } from "@/contexts/CartContext";
 import { useState } from "react";
+import { useCart } from "@/contexts/CartContext";
 
 interface AddToCartButtonProps {
   productId: string;

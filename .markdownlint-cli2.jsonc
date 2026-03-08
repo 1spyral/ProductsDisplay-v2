@@ -1,0 +1,17 @@
+{
+    "globs": [
+        "**/*.md",
+        "!**/node_modules/**",
+        "!**/.next/**",
+        "!**/build/**",
+        "!**/dist/**",
+        "!**/out/**",
+        "!**/coverage/**",
+        "!**/playwright-report/**",
+        "!**/test-results/**"
+    ],
+    "config": {
+        "default": true,
+        "MD013": false
+    }
+}

@@ -1,5 +1,5 @@
-import CheckoutPage from "@/components/Cart/CheckoutPage";
 import type { Metadata } from "next";
+import CheckoutPage from "@/components/Cart/CheckoutPage";
 
 export const metadata: Metadata = {
   title: "Get Quote",

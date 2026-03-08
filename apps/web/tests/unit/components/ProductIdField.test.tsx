@@ -1,6 +1,3 @@
-import ProductIdField from "@/components/ProductForm/ProductIdField";
-import type { ProductValidationState } from "@/hooks/useProductFormValidation";
-import { cleanup, fireEvent, render } from "@testing-library/react";
 import {
   afterAll,
   afterEach,
@@ -10,6 +7,9 @@ import {
   mock,
   test,
 } from "bun:test";
+import { cleanup, fireEvent, render } from "@testing-library/react";
+import ProductIdField from "@/components/ProductForm/ProductIdField";
+import type { ProductValidationState } from "@/hooks/useProductFormValidation";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 function createValidationState(

@@ -1,11 +1,11 @@
+import type { ProductDto } from "@productsdisplay/contracts";
+import type { FastifyInstance } from "fastify";
+import sharp from "sharp";
 import { getProductsByIds } from "@/db/queries/productQueries";
 import { env } from "@/env";
 import { compilePdfFromHtml } from "@/lib/pdf/compilePdf";
 import { requireAdmin } from "@/routes/admin/auth";
 import { adminRateLimitConfig } from "@/routes/shared/rateLimit";
-import type { ProductDto } from "@productsdisplay/contracts";
-import type { FastifyInstance } from "fastify";
-import sharp from "sharp";
 
 function buildImageUrl(objectKey: string): string {
     const base = env.IMAGE_BASE_URL.endsWith("/")

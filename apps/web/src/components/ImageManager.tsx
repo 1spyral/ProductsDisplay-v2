@@ -1,13 +1,6 @@
 "use client";
 
 import {
-  deleteAdminProductImage,
-  reorderAdminProductImages,
-  uploadAdminProductImage,
-} from "@/actions/admin";
-import { ProductImage } from "@/types/Product";
-import { buildImageUrl } from "@/utils/photo";
-import {
   closestCenter,
   DndContext,
   DragEndEvent,
@@ -26,6 +19,13 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import Image from "next/image";
 import { useMemo, useRef, useState } from "react";
+import {
+  deleteAdminProductImage,
+  reorderAdminProductImages,
+  uploadAdminProductImage,
+} from "@/actions/admin";
+import { ProductImage } from "@/types/Product";
+import { buildImageUrl } from "@/utils/photo";
 import Modal from "./Modal";
 
 interface ImageManagerProps {

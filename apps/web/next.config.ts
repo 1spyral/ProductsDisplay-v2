@@ -1,5 +1,5 @@
-import type { NextConfig } from "next";
 import { fileURLToPath } from "node:url";
+import type { NextConfig } from "next";
 
 const allowedImageRemotePatterns = process.env
     .NEXT_ALLOWED_IMAGE_REMOTE_PATTERNS

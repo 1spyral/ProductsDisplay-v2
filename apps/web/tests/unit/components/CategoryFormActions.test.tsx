@@ -1,9 +1,4 @@
 import {
-  CategoryFormActions,
-  CategoryFormError,
-} from "@/components/CategoryForm/CategoryFormActions";
-import { cleanup, fireEvent, render } from "@testing-library/react";
-import {
   afterAll,
   afterEach,
   beforeAll,
@@ -12,6 +7,11 @@ import {
   mock,
   test,
 } from "bun:test";
+import { cleanup, fireEvent, render } from "@testing-library/react";
+import {
+  CategoryFormActions,
+  CategoryFormError,
+} from "@/components/CategoryForm/CategoryFormActions";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 describe("CategoryFormError", () => {

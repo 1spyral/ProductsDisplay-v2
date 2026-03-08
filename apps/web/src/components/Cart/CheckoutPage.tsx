@@ -1,13 +1,13 @@
 "use client";
 
-import { submitOrder } from "@/actions/order";
-import { useCart } from "@/contexts/CartContext";
-import { isValidPhoneNumber, normalizePhoneNumber } from "@/lib/phone";
 import type { CreateOrderRequestDto } from "@productsdisplay/contracts";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { type ChangeEvent, type FormEvent, useState } from "react";
+import { submitOrder } from "@/actions/order";
+import { useCart } from "@/contexts/CartContext";
+import { isValidPhoneNumber, normalizePhoneNumber } from "@/lib/phone";
 
 type CheckoutFormState = {
   name: string;

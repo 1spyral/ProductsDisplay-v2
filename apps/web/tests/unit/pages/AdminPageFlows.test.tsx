@@ -1,6 +1,3 @@
-import type Category from "@/types/Category";
-import type Product from "@/types/Product";
-import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import {
   afterAll,
   afterEach,
@@ -11,7 +8,10 @@ import {
   mock,
   test,
 } from "bun:test";
+import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
+import type Category from "@/types/Category";
+import type Product from "@/types/Product";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 const getAdminProducts = mock(async () => [] as Product[]);
@@ -177,14 +177,18 @@ mock.module("@dnd-kit/utilities", () => ({
   },
 }));
 
-const { default: ProductsPage } =
-  await import("@/app/(admin)/admin/dashboard/products/page");
-const { default: CategoriesPage } =
-  await import("@/app/(admin)/admin/dashboard/categories/page");
-const { PdfEditorProvider } =
-  await import("@/app/(admin)/admin/dashboard/pdf/editor/PdfEditorContext");
-const { default: EditorPane } =
-  await import("@/app/(admin)/admin/dashboard/pdf/editor/EditorPane");
+const { default: ProductsPage } = await import(
+  "@/app/(admin)/admin/dashboard/products/page"
+);
+const { default: CategoriesPage } = await import(
+  "@/app/(admin)/admin/dashboard/categories/page"
+);
+const { PdfEditorProvider } = await import(
+  "@/app/(admin)/admin/dashboard/pdf/editor/PdfEditorContext"
+);
+const { default: EditorPane } = await import(
+  "@/app/(admin)/admin/dashboard/pdf/editor/EditorPane"
+);
 
 describe("Admin page flows", () => {
   const products: Product[] = [

@@ -1,5 +1,3 @@
-import Modal from "@/components/Modal";
-import { cleanup, fireEvent, render } from "@testing-library/react";
 import {
   afterAll,
   afterEach,
@@ -9,6 +7,8 @@ import {
   mock,
   test,
 } from "bun:test";
+import { cleanup, fireEvent, render } from "@testing-library/react";
+import Modal from "@/components/Modal";
 import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 describe("Modal", () => {

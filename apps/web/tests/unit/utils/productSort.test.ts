@@ -1,6 +1,6 @@
+import { describe, expect, test } from "bun:test";
 import type Product from "@/types/Product";
 import { sortProductsByOption } from "@/utils/productSort";
-import { describe, expect, test } from "bun:test";
 
 function createProduct(id: string, price: string | null): Product {
     return {

@@ -1,5 +1,5 @@
-import { getStoreInfoUncached } from "@/db/queries/storeInfoQueries";
 import type { FastifyInstance } from "fastify";
+import { getStoreInfoUncached } from "@/db/queries/storeInfoQueries";
 
 export async function publicStoreInfoRoutes(
     app: FastifyInstance

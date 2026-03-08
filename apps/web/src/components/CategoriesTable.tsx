@@ -1,6 +1,5 @@
 "use client";
 
-import Category from "@/types/Category";
 import {
   closestCenter,
   DndContext,
@@ -18,6 +17,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import Category from "@/types/Category";
 
 type CategoriesTableProps = {
   categories: Category[];

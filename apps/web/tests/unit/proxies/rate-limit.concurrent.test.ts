@@ -1,10 +1,10 @@
+import { describe, expect, test } from "bun:test";
+import { NextRequest } from "next/server";
 import {
     handleAuthRateLimit,
     handlePublicRateLimit,
     rateLimit,
 } from "@/proxies/rate-limit";
-import { describe, expect, test } from "bun:test";
-import { NextRequest } from "next/server";
 
 function buildRequest(
     pathname: string,

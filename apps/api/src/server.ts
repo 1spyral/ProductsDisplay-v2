@@ -1,13 +1,13 @@
-import { env } from "@/env";
-import { adminRoutes } from "@/routes/admin";
-import { healthRoutes } from "@/routes/healthRoutes";
-import { publicRoutes } from "@/routes/public";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
 import Fastify, { type FastifyServerOptions } from "fastify";
+import { env } from "@/env";
+import { adminRoutes } from "@/routes/admin";
+import { healthRoutes } from "@/routes/healthRoutes";
+import { publicRoutes } from "@/routes/public";
 
 const loggerConfig: FastifyServerOptions["logger"] =
     env.LOG_PRETTY || env.NODE_ENV === "development"

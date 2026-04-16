@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
     turbopack: {
         root: repoRoot,
     },
-    allowedDevOrigins: ["http://localhost:3000"],
+    allowedDevOrigins: ["127.0.0.1"],
     images: {
         qualities: [100, 75],
         remotePatterns: allowedImageRemotePatterns,

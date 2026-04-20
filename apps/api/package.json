@@ -29,7 +29,7 @@
         "@fastify/rate-limit": "^10.3.0",
         "@google-cloud/storage": "^7.19.0",
         "@productsdisplay/contracts": "workspace:*",
-        "drizzle-orm": "^0.45.1",
+        "drizzle-orm": "^0.45.2",
         "fastify": "^5.8.5",
         "jose": "^6.2.1",
         "pino": "^10.3.1",

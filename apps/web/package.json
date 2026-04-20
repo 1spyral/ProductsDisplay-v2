@@ -61,6 +61,6 @@
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.2.1",
     "tsx": "^4.19.2",
-    "typescript": "^5"
+    "typescript": "^6"
   }
 }

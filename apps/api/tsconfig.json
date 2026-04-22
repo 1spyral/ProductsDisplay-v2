@@ -1,15 +1,16 @@
 {
     "compilerOptions": {
         "target": "ESNext",
+        "lib": ["ESNext"],
         "module": "ESNext",
         "moduleResolution": "Bundler",
         "strict": true,
-        "esModuleInterop": true,
+        "noEmit": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "types": ["node"],
+        "types": ["bun"],
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": ["./src/*"]
         }
     },
     "include": ["src/**/*", "tests/**/*"]

@@ -1,6 +1,6 @@
 # syntax=docker.io/docker/dockerfile:1
 
-FROM oven/bun:1.3.12-slim AS deps
+FROM oven/bun:1.3.13-slim AS deps
 WORKDIR /app
 
 COPY package.json bun.lock ./
@@ -14,7 +14,7 @@ RUN bun install --frozen-lockfile
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 RUN bunx playwright install chromium
 
-FROM oven/bun:1.3.12-slim AS runner
+FROM oven/bun:1.3.13-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production

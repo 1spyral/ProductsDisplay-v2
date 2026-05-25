@@ -15,6 +15,10 @@ export async function getPlaywrightBrowser(): Promise<Browser> {
     try {
         globalThis.__playwrightBrowser =
             await globalThis.__playwrightBrowserPromise;
+        globalThis.__playwrightBrowser.on("disconnected", () => {
+            globalThis.__playwrightBrowser = undefined;
+            globalThis.__playwrightBrowserPromise = undefined;
+        });
         return globalThis.__playwrightBrowser;
     } catch (err) {
         globalThis.__playwrightBrowserPromise = undefined;

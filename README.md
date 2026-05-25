@@ -44,6 +44,7 @@ Key variables (see `apps/web/env.example` and `apps/api/env.example` for full li
 - `ADMIN_PASSWORD` – password required to log into `/admin`.
 - `DATABASE_URL` (API env) – Postgres connection string for API runtime/migrations.
 - `GOOGLE_CLOUD_*` (API env) – GCS configuration for image operations.
+- `PDF_BROWSER_CDP_URL` (API env) – optional CDP endpoint used for PDF rendering.
 
 ## Installing Dependencies
 
@@ -150,4 +151,7 @@ environment, set `PLAYWRIGHT_BASE_URL` before running `cd apps/web && bun run te
 
 - Ensure all required env vars (`apps/web` + `apps/api`) are set in the target environment.
 - Deploy using the standalone output (`cd apps/web && bun run build` then `cd apps/web && bun run start`, or the provided `apps/web/Dockerfile`).
+- API Docker builds skip bundled Playwright Chromium by default. Set
+  `PDF_BROWSER_CDP_URL` at runtime for CDP PDF rendering, or build with
+  `--build-arg INSTALL_PLAYWRIGHT_CHROMIUM=true` to include builtin Chromium.
 - Prefer service account credentials via environment variables for production.

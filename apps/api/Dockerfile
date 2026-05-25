@@ -2,6 +2,7 @@
 
 FROM oven/bun:1.3.12-slim AS deps
 WORKDIR /app
+ARG INSTALL_PLAYWRIGHT_CHROMIUM=false
 
 COPY package.json bun.lock ./
 COPY apps/api/package.json ./apps/api/package.json
@@ -12,10 +13,15 @@ RUN bun install --frozen-lockfile
 
 # Install Chromium for Playwright
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-RUN bunx playwright install chromium
+RUN if [ "$INSTALL_PLAYWRIGHT_CHROMIUM" = "true" ]; then \
+        bunx playwright install chromium; \
+    else \
+        mkdir -p /ms-playwright; \
+    fi
 
 FROM oven/bun:1.3.12-slim AS runner
 WORKDIR /app
+ARG INSTALL_PLAYWRIGHT_CHROMIUM=false
 
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
@@ -27,7 +33,9 @@ COPY apps/api ./apps/api
 COPY packages/contracts ./packages/contracts
 
 # Install OS-level Playwright dependencies
-RUN bunx playwright install-deps chromium
+RUN if [ "$INSTALL_PLAYWRIGHT_CHROMIUM" = "true" ]; then \
+        bunx playwright install-deps chromium; \
+    fi
 
 # Copy Playwright browsers into the runtime image
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright

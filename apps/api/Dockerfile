@@ -1,6 +1,6 @@
 # syntax=docker.io/docker/dockerfile:1
 
-FROM oven/bun:1.3.12-slim AS deps
+FROM oven/bun:1.3.14-slim AS deps
 WORKDIR /app
 ARG INSTALL_PLAYWRIGHT_CHROMIUM=false
 
@@ -19,7 +19,7 @@ RUN if [ "$INSTALL_PLAYWRIGHT_CHROMIUM" = "true" ]; then \
         mkdir -p /ms-playwright; \
     fi
 
-FROM oven/bun:1.3.12-slim AS runner
+FROM oven/bun:1.3.14-slim AS runner
 WORKDIR /app
 ARG INSTALL_PLAYWRIGHT_CHROMIUM=false
 

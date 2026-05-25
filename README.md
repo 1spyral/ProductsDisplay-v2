@@ -151,4 +151,7 @@ environment, set `PLAYWRIGHT_BASE_URL` before running `cd apps/web && bun run te
 
 - Ensure all required env vars (`apps/web` + `apps/api`) are set in the target environment.
 - Deploy using the standalone output (`cd apps/web && bun run build` then `cd apps/web && bun run start`, or the provided `apps/web/Dockerfile`).
+- API Docker builds include Playwright Chromium by default. For CDP-only PDF
+  rendering, build with `--build-arg INSTALL_PLAYWRIGHT_CHROMIUM=false` and set
+  `PDF_BROWSER_CDP_URL` at runtime.
 - Prefer service account credentials via environment variables for production.

@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { compilePdfFromHtmlWithCdp } from "@/lib/pdf/cdpPdf";
 import { getPlaywrightBrowser } from "@/lib/playwrightBrowser";
 
 export type CompilePdfOptions = {
@@ -29,24 +30,34 @@ const defaultOptions: Required<Omit<CompilePdfOptions, "landscape">> & {
     waitUntil: "networkidle",
 };
 
+export type ResolvedCompilePdfOptions = typeof defaultOptions;
+
 export async function compilePdfFromHtml(
     html: string,
     options: CompilePdfOptions = {}
 ): Promise<Uint8Array> {
-    const browser = await getPlaywrightBrowser(env.PDF_BROWSER_CDP_URL);
+    const resolvedOptions = {
+        ...defaultOptions,
+        ...options,
+        margin: {
+            ...defaultOptions.margin,
+            ...(options.margin ?? {}),
+        },
+    };
+
+    if (env.PDF_BROWSER_CDP_URL) {
+        return compilePdfFromHtmlWithCdp(
+            env.PDF_BROWSER_CDP_URL,
+            html,
+            resolvedOptions
+        );
+    }
+
+    const browser = await getPlaywrightBrowser();
     const context = await browser.newContext();
 
     try {
         const page = await context.newPage();
-
-        const resolvedOptions = {
-            ...defaultOptions,
-            ...options,
-            margin: {
-                ...defaultOptions.margin,
-                ...(options.margin ?? {}),
-            },
-        };
 
         await page.setContent(html, { waitUntil: resolvedOptions.waitUntil });
 

@@ -5,13 +5,11 @@ declare global {
     var __playwrightBrowserPromise: Promise<Browser> | undefined;
 }
 
-export async function getPlaywrightBrowser(cdpUrl?: string): Promise<Browser> {
+export async function getPlaywrightBrowser(): Promise<Browser> {
     if (globalThis.__playwrightBrowser) return globalThis.__playwrightBrowser;
 
     if (!globalThis.__playwrightBrowserPromise) {
-        globalThis.__playwrightBrowserPromise = cdpUrl
-            ? chromium.connectOverCDP(cdpUrl)
-            : chromium.launch();
+        globalThis.__playwrightBrowserPromise = chromium.launch();
     }
 
     try {

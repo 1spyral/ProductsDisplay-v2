@@ -2,7 +2,7 @@
 
 FROM oven/bun:1.3.12-slim AS deps
 WORKDIR /app
-ARG INSTALL_PLAYWRIGHT_CHROMIUM=true
+ARG INSTALL_PLAYWRIGHT_CHROMIUM=false
 
 COPY package.json bun.lock ./
 COPY apps/api/package.json ./apps/api/package.json
@@ -21,7 +21,7 @@ RUN if [ "$INSTALL_PLAYWRIGHT_CHROMIUM" = "true" ]; then \
 
 FROM oven/bun:1.3.12-slim AS runner
 WORKDIR /app
-ARG INSTALL_PLAYWRIGHT_CHROMIUM=true
+ARG INSTALL_PLAYWRIGHT_CHROMIUM=false
 
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0

@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import { getPlaywrightBrowser } from "@/lib/playwrightBrowser";
 
 export type CompilePdfOptions = {
@@ -32,7 +33,7 @@ export async function compilePdfFromHtml(
     html: string,
     options: CompilePdfOptions = {}
 ): Promise<Uint8Array> {
-    const browser = await getPlaywrightBrowser();
+    const browser = await getPlaywrightBrowser(env.PDF_BROWSER_CDP_URL);
     const context = await browser.newContext();
 
     try {

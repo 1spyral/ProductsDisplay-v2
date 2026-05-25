@@ -44,6 +44,7 @@ Key variables (see `apps/web/env.example` and `apps/api/env.example` for full li
 - `ADMIN_PASSWORD` – password required to log into `/admin`.
 - `DATABASE_URL` (API env) – Postgres connection string for API runtime/migrations.
 - `GOOGLE_CLOUD_*` (API env) – GCS configuration for image operations.
+- `PDF_BROWSER_CDP_URL` (API env) – optional CDP endpoint used for PDF rendering.
 
 ## Installing Dependencies
 

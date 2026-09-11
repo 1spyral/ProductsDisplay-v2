@@ -48,7 +48,7 @@ Key variables (see `apps/web/env.example` and `apps/api/env.example` for full li
 
 ## Installing Dependencies
 
-This project expects Bun version 1.3.4 or newer.
+This project expects Bun version 1.4.2 or newer.
 
     # Install bun (if needed)
     curl -fsSL https://bun.sh/install | bash

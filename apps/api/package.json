@@ -27,7 +27,7 @@
         "@fastify/helmet": "^13.0.2",
         "@fastify/multipart": "^10.1.1",
         "@fastify/rate-limit": "^10.3.0",
-        "@google-cloud/storage": "^7.19.0",
+        "@google-cloud/storage": "^8.1.0",
         "@productsdisplay/contracts": "workspace:*",
         "drizzle-orm": "^0.45.2",
         "fastify": "^5.8.5",

@@ -30,7 +30,7 @@
         "@google-cloud/storage": "^8.1.0",
         "@productsdisplay/contracts": "workspace:*",
         "drizzle-orm": "^0.45.2",
-        "fastify": "^5.8.5",
+        "fastify": "^5.12.4",
         "jose": "^6.2.3",
         "pino": "^10.3.1",
         "playwright": "^1.63.0",

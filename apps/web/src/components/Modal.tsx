@@ -1,5 +1,8 @@
 "use client";
 
+import Icon from "@/components/Icon";
+import CloseIcon from "@material-symbols/svg-400/rounded/close.svg";
+
 import React from "react";
 
 interface ModalProps {
@@ -91,20 +94,7 @@ export default function Modal({
             className="absolute top-0 right-0 z-50 border-b-4 border-l-4 border-slate-900 bg-slate-800 px-6 py-4 font-bold text-white transition-colors duration-200 hover:bg-red-700"
             aria-label="Close Modal"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={3}
-            >
-              <path
-                strokeLinecap="square"
-                strokeLinejoin="miter"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <Icon component={CloseIcon} size={24} className="h-6 w-6" />
           </button>
         )}
 
@@ -122,7 +112,7 @@ export default function Modal({
                 className="ml-auto text-2xl font-bold text-gray-500 hover:text-gray-700"
                 aria-label="Close Modal"
               >
-                ×
+                <Icon component={CloseIcon} size={24} />
               </button>
             )}
           </div>

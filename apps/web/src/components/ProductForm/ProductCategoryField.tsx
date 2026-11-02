@@ -1,5 +1,10 @@
 "use client";
 
+import Icon from "@/components/Icon";
+import ArrowDropDownIcon from "@material-symbols/svg-400/rounded/arrow_drop_down.svg";
+import ArrowDropUpIcon from "@material-symbols/svg-400/rounded/arrow_drop_up.svg";
+import CloseIcon from "@material-symbols/svg-400/rounded/close.svg";
+
 import Category from "@/types/Category";
 import { useEffect, useRef, useState } from "react";
 
@@ -117,11 +122,14 @@ export function ProductCategoryField({
                 className="text-gray-500 hover:text-gray-700"
                 aria-label="Clear category"
               >
-                ✕
+                <Icon component={CloseIcon} size={16} />
               </button>
             )}
             <span className="font-bold text-gray-600">
-              {isOpen ? "▲" : "▼"}
+              <Icon
+                component={isOpen ? ArrowDropUpIcon : ArrowDropDownIcon}
+                size={20}
+              />
             </span>
           </div>
         </div>

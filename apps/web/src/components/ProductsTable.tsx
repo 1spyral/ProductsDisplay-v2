@@ -1,6 +1,9 @@
+import Icon from "@/components/Icon";
 import ToggleableCheckbox from "@/components/ToggleableCheckbox";
 import Product from "@/types/Product";
 import { buildImageUrl } from "@/utils/photo";
+import ArrowDownwardIcon from "@material-symbols/svg-400/rounded/arrow_downward.svg";
+import ArrowUpwardIcon from "@material-symbols/svg-400/rounded/arrow_upward.svg";
 import Image from "next/image";
 
 type SortField = "id" | "name" | "category";
@@ -81,26 +84,73 @@ export default function ProductsTable({
             {columns.id && (
               <th
                 onClick={() => onSort("id")}
+                aria-sort={
+                  sortField === "id"
+                    ? sortOrder === "asc"
+                      ? "ascending"
+                      : "descending"
+                    : "none"
+                }
                 className="cursor-pointer p-2 text-left text-xs font-bold tracking-wide text-gray-900 uppercase transition-colors hover:bg-gray-100 sm:p-4 sm:text-sm"
               >
-                ID {sortField === "id" && (sortOrder === "asc" ? "↑" : "↓")}
+                ID{" "}
+                {sortField === "id" && (
+                  <Icon
+                    component={
+                      sortOrder === "asc" ? ArrowUpwardIcon : ArrowDownwardIcon
+                    }
+                    size={16}
+                    className="inline-block align-middle"
+                  />
+                )}
               </th>
             )}
             {columns.name && (
               <th
                 onClick={() => onSort("name")}
+                aria-sort={
+                  sortField === "name"
+                    ? sortOrder === "asc"
+                      ? "ascending"
+                      : "descending"
+                    : "none"
+                }
                 className="cursor-pointer p-2 text-left text-xs font-bold tracking-wide text-gray-900 uppercase transition-colors hover:bg-gray-100 sm:p-4 sm:text-sm"
               >
-                Name {sortField === "name" && (sortOrder === "asc" ? "↑" : "↓")}
+                Name{" "}
+                {sortField === "name" && (
+                  <Icon
+                    component={
+                      sortOrder === "asc" ? ArrowUpwardIcon : ArrowDownwardIcon
+                    }
+                    size={16}
+                    className="inline-block align-middle"
+                  />
+                )}
               </th>
             )}
             {columns.category && (
               <th
                 onClick={() => onSort("category")}
+                aria-sort={
+                  sortField === "category"
+                    ? sortOrder === "asc"
+                      ? "ascending"
+                      : "descending"
+                    : "none"
+                }
                 className="cursor-pointer p-2 text-left text-xs font-bold tracking-wide text-gray-900 uppercase transition-colors hover:bg-gray-100 sm:p-4 sm:text-sm"
               >
                 Category{" "}
-                {sortField === "category" && (sortOrder === "asc" ? "↑" : "↓")}
+                {sortField === "category" && (
+                  <Icon
+                    component={
+                      sortOrder === "asc" ? ArrowUpwardIcon : ArrowDownwardIcon
+                    }
+                    size={16}
+                    className="inline-block align-middle"
+                  />
+                )}
               </th>
             )}
             {columns.clearance && (

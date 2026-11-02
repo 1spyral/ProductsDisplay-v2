@@ -1,5 +1,10 @@
 "use client";
 
+import Icon from "@/components/Icon";
+import CloseIcon from "@material-symbols/svg-400/rounded/close.svg";
+import DragHandleIcon from "@material-symbols/svg-400/rounded/drag_handle.svg";
+import FilterAltIcon from "@material-symbols/svg-400/rounded/filter_alt.svg";
+
 import { createAdminSavedSelection, getAdminProducts } from "@/actions/admin";
 import Modal from "@/components/Modal";
 import type Product from "@/types/Product";
@@ -126,19 +131,7 @@ function SortableSelectedProduct({
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-gray-200 text-gray-500 hover:bg-red-50 hover:text-red-600"
           aria-label="Remove product"
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <Icon component={CloseIcon} size={16} className="h-4 w-4" />
         </button>
         <button
           type="button"
@@ -147,11 +140,7 @@ function SortableSelectedProduct({
           className="flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded border border-gray-200 text-gray-500 active:cursor-grabbing"
           aria-label="Drag to reorder"
         >
-          <span className="flex flex-col gap-1">
-            <span className="h-0.5 w-3.5 rounded bg-gray-400" />
-            <span className="h-0.5 w-3.5 rounded bg-gray-400" />
-            <span className="h-0.5 w-3.5 rounded bg-gray-400" />
-          </span>
+          <Icon component={DragHandleIcon} size={20} />
         </button>
       </div>
     </div>
@@ -298,19 +287,11 @@ function ProductSelectionPanel({
                   : "border-gray-300 text-gray-700 hover:bg-gray-50"
               }`}
             >
-              <svg
+              <Icon
+                component={FilterAltIcon}
+                size={14}
                 className="h-3.5 w-3.5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-.293.707L13 13.414V19a1 1 0 0 1-.553.894l-4 2A1 1 0 0 1 7 21v-7.586L3.293 6.707A1 1 0 0 1 3 6V4Z"
-                />
-              </svg>
+              />
               {selectedCategories.size > 0
                 ? `${selectedCategories.size}`
                 : "Filter"}

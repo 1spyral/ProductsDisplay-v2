@@ -1,3 +1,6 @@
+import Icon from "@/components/Icon";
+import ChevronLeftIcon from "@material-symbols/svg-400/rounded/chevron_left.svg";
+import ChevronRightIcon from "@material-symbols/svg-400/rounded/chevron_right.svg";
 import React from "react";
 
 export default function Arrows({
@@ -20,20 +23,7 @@ export default function Arrows({
         }}
         aria-label="Previous image"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          className="h-7 w-7"
-        >
-          <path
-            strokeLinecap="square"
-            strokeLinejoin="miter"
-            strokeWidth={3}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
+        <Icon component={ChevronLeftIcon} size={28} className="h-7 w-7" />
       </button>
 
       {/* Right Arrow */}
@@ -45,20 +35,7 @@ export default function Arrows({
         }}
         aria-label="Next image"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          className="h-7 w-7"
-        >
-          <path
-            strokeLinecap="square"
-            strokeLinejoin="miter"
-            strokeWidth={3}
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
+        <Icon component={ChevronRightIcon} size={28} className="h-7 w-7" />
       </button>
     </>
   );

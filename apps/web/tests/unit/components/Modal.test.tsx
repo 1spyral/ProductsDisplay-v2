@@ -86,6 +86,10 @@ describe("Modal", () => {
 
     const closeButtons = getAllByLabelText("Close Modal");
     expect(closeButtons).toHaveLength(2);
+    for (const button of closeButtons) {
+      fireEvent.click(button);
+    }
+    expect(onClose).toHaveBeenCalledTimes(2);
 
     const modalRoot = getByText("Body").parentElement
       ?.parentElement as HTMLElement;

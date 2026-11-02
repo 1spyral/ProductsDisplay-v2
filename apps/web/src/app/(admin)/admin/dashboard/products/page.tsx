@@ -1,5 +1,10 @@
 "use client";
 
+import Icon from "@/components/Icon";
+import ArrowDownwardIcon from "@material-symbols/svg-400/rounded/arrow_downward.svg";
+import ArrowDropDownIcon from "@material-symbols/svg-400/rounded/arrow_drop_down.svg";
+import ArrowUpwardIcon from "@material-symbols/svg-400/rounded/arrow_upward.svg";
+
 import {
   deleteAdminProduct,
   getAdminCategories,
@@ -144,7 +149,7 @@ function ProductsFilters({
               ))}
             </select>
             <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 font-bold text-gray-600">
-              ▼
+              <Icon component={ArrowDropDownIcon} size={20} />
             </div>
           </div>
         </div>
@@ -169,7 +174,7 @@ function ProductsFilters({
                 <option value="category">Category</option>
               </select>
               <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 font-bold text-gray-600">
-                ▼
+                <Icon component={ArrowDropDownIcon} size={20} />
               </div>
             </div>
             <button
@@ -177,7 +182,12 @@ function ProductsFilters({
               className="flex w-[42px] items-center justify-center border-2 border-gray-400 font-bold transition-colors hover:border-slate-700"
               title={sortOrder === "asc" ? "Ascending" : "Descending"}
             >
-              {sortOrder === "asc" ? "↑" : "↓"}
+              <Icon
+                component={
+                  sortOrder === "asc" ? ArrowUpwardIcon : ArrowDownwardIcon
+                }
+                size={20}
+              />
             </button>
           </div>
         </div>
@@ -203,7 +213,7 @@ function ProductsFilters({
               <option value="regular">Regular Only</option>
             </select>
             <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 font-bold text-gray-600">
-              ▼
+              <Icon component={ArrowDropDownIcon} size={20} />
             </div>
           </div>
         </div>
@@ -227,7 +237,7 @@ function ProductsFilters({
               <option value="hidden">Hidden Only</option>
             </select>
             <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 font-bold text-gray-600">
-              ▼
+              <Icon component={ArrowDropDownIcon} size={20} />
             </div>
           </div>
         </div>

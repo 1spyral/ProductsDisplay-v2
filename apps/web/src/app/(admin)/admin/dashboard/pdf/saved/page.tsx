@@ -1,5 +1,9 @@
 "use client";
 
+import Icon from "@/components/Icon";
+import ArrowBackIcon from "@material-symbols/svg-400/rounded/arrow_back.svg";
+import ChevronRightIcon from "@material-symbols/svg-400/rounded/chevron_right.svg";
+
 import {
   deleteAdminSavedSelection,
   getAdminSavedSelections,
@@ -118,7 +122,12 @@ export default function SavedSelectionsPage() {
           href="/admin/dashboard/pdf/editor"
           className="rounded border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
-          ← Back to Editor
+          <Icon
+            component={ArrowBackIcon}
+            size={16}
+            className="inline-block align-middle"
+          />{" "}
+          Back to Editor
         </Link>
       </div>
 
@@ -154,19 +163,11 @@ export default function SavedSelectionsPage() {
                     }
                     className="flex min-w-0 flex-1 items-center gap-3 text-left"
                   >
-                    <svg
+                    <Icon
+                      component={ChevronRightIcon}
+                      size={16}
                       className={`h-4 w-4 shrink-0 text-gray-500 transition-transform ${isExpanded ? "rotate-90" : ""}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
+                    />
                     <div className="min-w-0">
                       <div className="truncate text-sm font-semibold text-gray-900">
                         {selection.name}

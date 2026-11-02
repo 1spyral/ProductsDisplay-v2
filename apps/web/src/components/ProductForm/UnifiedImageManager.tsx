@@ -1,5 +1,11 @@
 "use client";
 
+import Icon from "@/components/Icon";
+import DeleteIcon from "@material-symbols/svg-400/rounded/delete.svg";
+import DragPanIcon from "@material-symbols/svg-400/rounded/drag_pan.svg";
+import ImageIcon from "@material-symbols/svg-400/rounded/image.svg";
+import UploadIcon from "@material-symbols/svg-400/rounded/upload.svg";
+
 import {
   deleteAdminProductImage,
   reorderAdminProductImages,
@@ -136,24 +142,7 @@ function SortableTile({
         className="bg-opacity-50 hover:bg-opacity-70 absolute top-1 left-1 z-10 flex cursor-move items-center justify-center rounded bg-black p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
         title="Drag to reorder"
       >
-        <svg
-          className="h-3 w-3"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          strokeWidth={2.5}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M8 18l4 4 4-4M8 6l4-4 4 4M6 8l-4 4 4 4M18 8l4 4-4 4"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 2v20M2 12h20"
-          />
-        </svg>
+        <Icon component={DragPanIcon} size={12} className="h-3 w-3" />
       </div>
 
       <div className="relative aspect-square">
@@ -195,13 +184,7 @@ function SortableTile({
             {isDeleting ? (
               <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
             ) : (
-              <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <Icon component={DeleteIcon} size={12} className="h-3 w-3" />
             )}
           </button>
         )}
@@ -301,17 +284,11 @@ function ImageGridSection({
       ) : (
         <div className="flex h-32 items-center justify-center text-gray-500">
           <div className="text-center">
-            <svg
+            <Icon
+              component={ImageIcon}
+              size={32}
               className="mx-auto mb-2 h-8 w-8 text-gray-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                clipRule="evenodd"
-              />
-            </svg>
+            />
             <p className="text-xs">
               {mode === "add" ? "No images selected" : "No images"}
             </p>
@@ -371,14 +348,11 @@ function UploadSection({
           </div>
         ) : (
           <>
-            <svg
+            <Icon
+              component={UploadIcon}
+              size={20}
               className="mx-auto mb-1 h-5 w-5 text-gray-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 12a1 1 0 001 1h2a1 1 0 001-1V9.414l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L8 9.414V12z" />
-              <path d="M3 7a1 1 0 011-1h1V5a3 3 0 016 0v1h1a1 1 0 011 1v8a3 3 0 01-3 3H6a3 3 0 01-3-3V7z" />
-            </svg>
+            />
             <p className="text-xs text-gray-600">
               <button
                 onClick={() => fileInputRef.current?.click()}

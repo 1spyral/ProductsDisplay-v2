@@ -1,5 +1,9 @@
 "use client";
 
+import Icon from "@/components/Icon";
+import LockIcon from "@material-symbols/svg-400/rounded/lock.svg";
+import LockOpenIcon from "@material-symbols/svg-400/rounded/lock_open.svg";
+
 import { CategoryValidationState } from "@/hooks/useCategoryFormValidation";
 
 interface CategoryIdFieldProps {
@@ -72,18 +76,10 @@ export default function CategoryIdField({
           >
             {isLocked ? (
               // Locked icon
-              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <Icon component={LockIcon} size={20} className="h-5 w-5" />
             ) : (
               // Unlocked icon
-              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z" />
-              </svg>
+              <Icon component={LockOpenIcon} size={20} className="h-5 w-5" />
             )}
           </button>
         )}

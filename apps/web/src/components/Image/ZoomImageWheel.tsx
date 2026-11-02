@@ -1,5 +1,8 @@
 "use client";
 
+import Icon from "@/components/Icon";
+import CloseIcon from "@material-symbols/svg-400/rounded/close.svg";
+
 import Photo from "@/types/Photo";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
@@ -131,20 +134,7 @@ export default function ZoomImageWheel({
             className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-black shadow-lg transition-all hover:bg-white active:scale-95"
             aria-label="Close fullscreen"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <Icon component={CloseIcon} size={24} className="h-6 w-6" />
           </button>
 
           {/* Image counter indicator */}

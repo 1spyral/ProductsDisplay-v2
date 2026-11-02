@@ -1,5 +1,10 @@
 "use client";
 
+import Icon from "@/components/Icon";
+import AddIcon from "@material-symbols/svg-400/rounded/add.svg";
+import CloseIcon from "@material-symbols/svg-400/rounded/close.svg";
+import RemoveIcon from "@material-symbols/svg-400/rounded/remove.svg";
+
 import { useCart } from "@/contexts/CartContext";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,7 +43,7 @@ export default function CartDrawer() {
             className="text-2xl font-bold text-gray-500 hover:text-gray-700"
             aria-label="Close cart"
           >
-            ×
+            <Icon component={CloseIcon} size={24} />
           </button>
         </div>
 
@@ -91,7 +96,7 @@ export default function CartDrawer() {
                         className="flex h-7 w-7 items-center justify-center rounded border border-gray-300 text-sm font-bold text-gray-600 hover:bg-gray-100"
                         aria-label="Decrease quantity"
                       >
-                        −
+                        <Icon component={RemoveIcon} size={20} />
                       </button>
                       <span className="w-6 text-center text-sm font-semibold text-gray-900">
                         {item.quantity}
@@ -104,7 +109,7 @@ export default function CartDrawer() {
                         className="flex h-7 w-7 items-center justify-center rounded border border-gray-300 text-sm font-bold text-gray-600 hover:bg-gray-100"
                         aria-label="Increase quantity"
                       >
-                        +
+                        <Icon component={AddIcon} size={20} />
                       </button>
                       <button
                         type="button"

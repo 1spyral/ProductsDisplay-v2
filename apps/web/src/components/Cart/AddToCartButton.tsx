@@ -1,5 +1,9 @@
 "use client";
 
+import Icon from "@/components/Icon";
+import AddIcon from "@material-symbols/svg-400/rounded/add.svg";
+import RemoveIcon from "@material-symbols/svg-400/rounded/remove.svg";
+
 import { useCart } from "@/contexts/CartContext";
 import { useState } from "react";
 
@@ -58,7 +62,7 @@ export default function AddToCartButton({
             className="flex h-11 w-11 items-center justify-center text-lg font-bold text-slate-700 transition-colors hover:bg-slate-100"
             aria-label="Decrease quantity"
           >
-            −
+            <Icon component={RemoveIcon} size={20} />
           </button>
           <input
             type="text"
@@ -87,7 +91,7 @@ export default function AddToCartButton({
             className="flex h-11 w-11 items-center justify-center text-lg font-bold text-slate-700 transition-colors hover:bg-slate-100"
             aria-label="Increase quantity"
           >
-            +
+            <Icon component={AddIcon} size={20} />
           </button>
         </div>
         <span className="text-sm font-semibold text-slate-600">in cart</span>

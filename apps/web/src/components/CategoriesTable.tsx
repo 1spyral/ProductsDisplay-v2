@@ -1,5 +1,6 @@
 "use client";
 
+import Icon from "@/components/Icon";
 import Category from "@/types/Category";
 import {
   closestCenter,
@@ -18,6 +19,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import DragHandleIcon from "@material-symbols/svg-400/rounded/drag_handle.svg";
 
 type CategoriesTableProps = {
   categories: Category[];
@@ -80,9 +82,7 @@ function SortableCategoryRow({
             title={dragLabel}
             className="flex h-7 w-7 items-center justify-center border-2 border-gray-400 bg-white text-sm leading-none text-gray-900 transition-colors hover:border-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <span className="material-symbols-rounded" aria-hidden="true">
-              drag_handle
-            </span>
+            <Icon component={DragHandleIcon} />
           </button>
           <span>{category.displayOrder + 1}</span>
         </div>

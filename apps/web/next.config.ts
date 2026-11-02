@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import { fileURLToPath } from "node:url";
+import svgrOptions from "./svgr.config.json";
 
 const allowedImageRemotePatterns = process.env
     .NEXT_ALLOWED_IMAGE_REMOTE_PATTERNS
@@ -16,6 +17,12 @@ const nextConfig: NextConfig = {
     transpilePackages: ["@productsdisplay/contracts"],
     turbopack: {
         root: repoRoot,
+        rules: {
+            "**/@material-symbols/svg-400/rounded/*.svg": {
+                loaders: [{ loader: "@svgr/webpack", options: svgrOptions }],
+                as: "*.js",
+            },
+        },
     },
     allowedDevOrigins: ["127.0.0.1"],
     images: {

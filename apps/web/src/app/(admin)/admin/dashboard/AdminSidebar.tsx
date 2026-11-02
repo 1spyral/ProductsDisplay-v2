@@ -1,6 +1,9 @@
 "use client";
 
 import { logoutAdmin } from "@/actions/admin/auth";
+import Icon from "@/components/Icon";
+import LeftPanelCloseIcon from "@material-symbols/svg-400/rounded/left_panel_close.svg";
+import LeftPanelOpenIcon from "@material-symbols/svg-400/rounded/left_panel_open.svg";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type RefObject, useEffect, useRef, useState } from "react";
@@ -35,9 +38,7 @@ function SidebarContent({
           onClick={onCollapse}
           className="inline-flex h-11 w-11 items-center justify-center rounded-md border-2 border-slate-500 hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
-          <span className="material-symbols-rounded" aria-hidden="true">
-            left_panel_close
-          </span>
+          <Icon component={LeftPanelCloseIcon} />
         </button>
       </div>
       <nav aria-label="Admin navigation" className="flex-1 space-y-2 p-4">
@@ -128,9 +129,7 @@ export default function AdminSidebar() {
         }}
         className={`${isCollapsed ? "hidden lg:block" : "hidden"} fixed top-4 left-4 z-40 h-11 w-11 rounded-md bg-slate-800 p-2.5 text-white shadow-lg hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-800`}
       >
-        <span className="material-symbols-rounded block" aria-hidden="true">
-          left_panel_open
-        </span>
+        <Icon component={LeftPanelOpenIcon} />
       </button>
       <button
         type="button"
@@ -141,9 +140,7 @@ export default function AdminSidebar() {
         onClick={() => setIsOpen(true)}
         className="fixed top-4 left-4 z-40 h-11 w-11 rounded-md bg-slate-800 p-2.5 text-white shadow-lg hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-800 lg:hidden"
       >
-        <span className="material-symbols-rounded block" aria-hidden="true">
-          left_panel_open
-        </span>
+        <Icon component={LeftPanelOpenIcon} />
       </button>
       <dialog
         ref={dialogRef}

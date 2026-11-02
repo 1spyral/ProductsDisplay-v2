@@ -96,6 +96,27 @@ The app will be available at http://localhost:3000.
 
 The build uses a standalone Next.js output and the `cp` script in `apps/web/package.json` to copy `public` and static assets into `.next/standalone` (used by `apps/web/Dockerfile`).
 
+## Icons
+
+Import individual Rounded SVGs from `@material-symbols/svg-400` and render them
+through the shared `Icon` component:
+
+```tsx
+import Icon from "@/components/Icon";
+import ShoppingCartIcon from "@material-symbols/svg-400/rounded/shopping_cart.svg";
+
+<Icon component={ShoppingCartIcon} size={28} />;
+```
+
+Icons default to 24px, inherit the text color, and are hidden from screen readers.
+Keep accessible labels on icon-only buttons. For standalone meaningful icons,
+pass `label` to expose the SVG as a named image.
+
+The Next.js Turbopack rule and Bun test preload transform these package SVGs with
+the shared `apps/web/svgr.config.json` settings. Import icons directly rather than
+through a registry that pulls in the full collection. No icon font is loaded.
+Update the package normally to receive new artwork; do not copy SVG paths locally.
+
 ## Linting and Formatting
 
     # Lint with ESLint

@@ -12,7 +12,10 @@ import { registerHappyDom, unregisterHappyDom } from "../../setup/happy-dom";
 
 const routerPush = mock((_href: string) => undefined);
 
+const navigation = { ...(await import("next/navigation")) };
+
 mock.module("next/navigation", () => ({
+  ...navigation,
   useRouter: () => ({
     push: routerPush,
   }),

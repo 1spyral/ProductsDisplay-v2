@@ -12,7 +12,7 @@ export async function handleAdminAuth(
     if (pathname === "/admin") {
         if (authenticated) {
             const response = NextResponse.redirect(
-                new URL("/admin/dashboard", request.url)
+                new URL("/admin/dashboard/products", request.url)
             );
             if (authStatus.status === "refresh") {
                 setAdminAccessCookie(response, authStatus.newAccessToken);
@@ -40,7 +40,7 @@ export async function handleAdminAuth(
     if (pathname === "/admin/login") {
         if (authenticated) {
             const response = NextResponse.redirect(
-                new URL("/admin/dashboard", request.url)
+                new URL("/admin/dashboard/products", request.url)
             );
             if (authStatus.status === "refresh") {
                 setAdminAccessCookie(response, authStatus.newAccessToken);

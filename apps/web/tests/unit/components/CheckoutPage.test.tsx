@@ -33,7 +33,10 @@ mock.module("@/actions/order", () => ({
   submitOrder,
 }));
 
+const navigation = { ...(await import("next/navigation")) };
+
 mock.module("next/navigation", () => ({
+  ...navigation,
   useRouter: () => ({
     push: routerPush,
   }),

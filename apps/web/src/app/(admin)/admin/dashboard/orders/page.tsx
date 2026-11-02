@@ -4,7 +4,6 @@ import { getAdminOrders } from "@/actions/admin/order";
 import type { OrderOverview } from "@/db/queries/orderQueries";
 import { buildImageUrl } from "@/utils/photo";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useReducer } from "react";
 
 type State = {
@@ -84,12 +83,6 @@ export default function AdminOrdersPage() {
               Review submitted customer orders and contact details
             </p>
           </div>
-          <Link
-            href="/admin/dashboard"
-            className="border-2 border-gray-400 px-4 py-2 text-center font-bold tracking-wide text-gray-700 uppercase transition-colors hover:border-slate-700 hover:text-slate-900 sm:px-6"
-          >
-            Back to Dashboard
-          </Link>
         </div>
       </div>
 

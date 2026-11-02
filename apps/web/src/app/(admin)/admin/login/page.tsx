@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
       const result = await loginAdmin(password);
 
       if (result.success) {
-        router.push("/admin/dashboard");
+        router.push("/admin/dashboard/products");
         router.refresh();
       } else {
         setError(result.error || "Invalid password");

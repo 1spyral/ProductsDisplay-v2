@@ -30,6 +30,7 @@
     "@productsdisplay/contracts": "workspace:*",
     "@vercel/analytics": "^2.0.1",
     "jose": "^6.2.3",
+    "material-symbols": "^0.48.2",
     "next": "^16.3.5",
     "pino": "^10.3.1",
     "postgres": "^3.4.9",

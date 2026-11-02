@@ -30,10 +30,14 @@ function SidebarContent({
         <button
           ref={collapseButtonRef}
           type="button"
+          aria-label="Collapse"
+          title="Collapse"
           onClick={onCollapse}
-          className="rounded-md border-2 border-slate-500 px-2 py-2 text-sm font-bold hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-md border-2 border-slate-500 hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
-          Collapse
+          <span className="material-symbols-outlined" aria-hidden="true">
+            left_panel_close
+          </span>
         </button>
       </div>
       <nav aria-label="Admin navigation" className="flex-1 space-y-2 p-4">
@@ -113,6 +117,8 @@ export default function AdminSidebar() {
       </aside>
       <button
         type="button"
+        aria-label="Expand"
+        title="Expand"
         aria-expanded={false}
         aria-controls="admin-sidebar"
         ref={expandRef}
@@ -120,18 +126,24 @@ export default function AdminSidebar() {
           setIsCollapsed(false);
           requestAnimationFrame(() => collapseRef.current?.focus());
         }}
-        className={`${isCollapsed ? "hidden lg:block" : "hidden"} fixed top-4 left-4 z-40 rounded-md bg-slate-800 px-4 py-3 font-bold text-white shadow-lg hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-800`}
+        className={`${isCollapsed ? "hidden lg:block" : "hidden"} fixed top-4 left-4 z-40 h-11 w-11 rounded-md bg-slate-800 p-2.5 text-white shadow-lg hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-800`}
       >
-        Expand
+        <span className="material-symbols-outlined block" aria-hidden="true">
+          left_panel_open
+        </span>
       </button>
       <button
         type="button"
+        aria-label="Expand"
+        title="Expand"
         aria-expanded={isOpen}
         aria-controls="admin-sidebar-drawer"
         onClick={() => setIsOpen(true)}
-        className="fixed top-4 left-4 z-40 rounded-md bg-slate-800 px-4 py-3 font-bold text-white shadow-lg hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-800 lg:hidden"
+        className="fixed top-4 left-4 z-40 h-11 w-11 rounded-md bg-slate-800 p-2.5 text-white shadow-lg hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-800 lg:hidden"
       >
-        Expand
+        <span className="material-symbols-outlined block" aria-hidden="true">
+          left_panel_open
+        </span>
       </button>
       <dialog
         ref={dialogRef}

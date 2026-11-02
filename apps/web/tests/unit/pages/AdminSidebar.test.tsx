@@ -109,7 +109,15 @@ describe("AdminSidebar", () => {
     );
     expect(sidebar.className).not.toContain("lg:flex");
     expect(expand.className).toContain("lg:block");
-    expect(expand.textContent).toBe("Expand");
+    expect(expand.getAttribute("aria-label")).toBe("Expand");
+    expect(
+      expand.querySelector('[aria-hidden="true"]')?.textContent?.trim()
+    ).toBe("left_panel_open");
+    expect(
+      sidebar
+        .querySelector('[aria-label="Collapse"] [aria-hidden="true"]')
+        ?.textContent?.trim()
+    ).toBe("left_panel_close");
     expect(expand.className).toContain("top-4 left-4");
     await act(async () => fireEvent.click(expand));
     expect(sidebar.className).toContain("lg:flex");

@@ -1,3 +1,4 @@
+import "material-symbols/outlined.css";
 import AdminSidebar from "./AdminSidebar";
 
 export default function AdminDashboardLayout({

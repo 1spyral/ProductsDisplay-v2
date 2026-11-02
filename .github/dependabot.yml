@@ -1,14 +1,52 @@
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference
 
 version: 2
 updates:
   - package-ecosystem: "bun"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    # Group related minor/patch updates; leave major upgrades separate.
+    groups:
+      nextjs:
+        patterns:
+          - "next"
+          - "eslint-config-next"
+        update-types: ["minor", "patch"]
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+        update-types: ["minor", "patch"]
+      playwright:
+        patterns:
+          - "playwright"
+          - "playwright-core"
+        update-types: ["minor", "patch"]
+      eslint-tooling:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@eslint/*"
+          - "typescript-eslint"
+          - "@typescript-eslint/*"
+        exclude-patterns:
+          - "eslint-config-next"
+        update-types: ["minor", "patch"]
   - package-ecosystem: "docker"
     directories:
       - "/apps/web"
       - "/apps/api"
+    schedule:
+      interval: "weekly"
+    # Update the shared Bun image across both services in one PR.
+    groups:
+      bun-runtime:
+        patterns: ["oven/bun"]
+        group-by: dependency-name
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
       interval: "weekly"

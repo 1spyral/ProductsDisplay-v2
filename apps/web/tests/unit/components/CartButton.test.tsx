@@ -52,13 +52,13 @@ describe("CartButton", () => {
   });
 
   test("does not render a badge when cart is empty", () => {
-    const { container } = setup();
-    expect(container.querySelector("span")).toBeNull();
+    const { queryByText } = setup();
+    expect(queryByText(/^\d+\+?$/)).toBeNull();
   });
 
   test("renders a badge showing the total item count", () => {
-    const { container } = setup(item(4));
-    expect(container.querySelector("span")?.textContent).toBe("4");
+    const { getByText } = setup(item(4));
+    expect(getByText("4")).toBeTruthy();
   });
 
   test("badge sums quantities across multiple items", () => {
@@ -78,13 +78,13 @@ describe("CartButton", () => {
         quantity: 3,
       },
     ];
-    const { container } = setup(items);
-    expect(container.querySelector("span")?.textContent).toBe("5");
+    const { getByText } = setup(items);
+    expect(getByText("5")).toBeTruthy();
   });
 
   test("caps badge at 99+ when total items exceed 99", () => {
-    const { container } = setup(item(100));
-    expect(container.querySelector("span")?.textContent).toBe("99+");
+    const { getByText } = setup(item(100));
+    expect(getByText("99+")).toBeTruthy();
   });
 
   test("aria-label includes item count when cart has items", () => {

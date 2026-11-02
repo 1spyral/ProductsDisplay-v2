@@ -80,7 +80,7 @@ function SortableCategoryRow({
             title={dragLabel}
             className="flex h-7 w-7 items-center justify-center border-2 border-gray-400 bg-white text-sm leading-none text-gray-900 transition-colors hover:border-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <span className="material-symbols-outlined" aria-hidden="true">
+            <span className="material-symbols-rounded" aria-hidden="true">
               drag_handle
             </span>
           </button>

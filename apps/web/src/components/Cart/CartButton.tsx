@@ -20,7 +20,7 @@ export default function CartButton() {
       aria-label={`Cart${visibleTotalItems > 0 ? `, ${visibleTotalItems} item${visibleTotalItems !== 1 ? "s" : ""}` : ""}`}
     >
       <span
-        className="material-symbols-outlined block h-7 w-7 text-[28px]!"
+        className="material-symbols-rounded block h-7 w-7 text-[28px]!"
         aria-hidden="true"
       >
         shopping_cart

@@ -1,5 +1,5 @@
 import { Analytics } from "@vercel/analytics/react";
-import "material-symbols/outlined.css";
+import "material-symbols/rounded.css";
 import "./globals.css";
 
 export default function RootLayout({

@@ -80,20 +80,9 @@ function SortableCategoryRow({
             title={dragLabel}
             className="flex h-7 w-7 items-center justify-center border-2 border-gray-400 bg-white text-sm leading-none text-gray-900 transition-colors hover:border-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="none"
-              className="h-4 w-4"
-              aria-hidden="true"
-            >
-              <path
-                d="M4 6h12M4 10h12M4 14h12"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-            </svg>
+            <span className="material-symbols-outlined" aria-hidden="true">
+              drag_handle
+            </span>
           </button>
           <span>{category.displayOrder + 1}</span>
         </div>
